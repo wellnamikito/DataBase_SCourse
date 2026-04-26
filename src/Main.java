@@ -1,3 +1,5 @@
+import generator.DataGenerator;
+
 import java.sql.*;
 import java.util.Scanner;
 
@@ -28,7 +30,7 @@ public class Main {
                     System.out.println("Выход...");
                     exit = true;
                 }
-                default -> System.out.println("❌ Неверный выбор!");
+                default -> System.out.println("Неверный выбор!");
             }
 
         } while (!exit);
