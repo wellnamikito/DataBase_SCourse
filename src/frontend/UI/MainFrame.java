@@ -14,16 +14,10 @@ import java.util.List;
 
 /**
  * Главное окно приложения «Видеопрокат».
- *
- * Содержит:
- * - JMenuBar с навигацией
- * - Toolbar: тумблер темы 🌙/☀️ + переключатель языка RU/EN
- * - CardLayout для переключения панелей
- * - Строка состояния (статус БД)
+ * Содержит toolbar с тумблером темы и переключателем языка.
  */
 public class MainFrame extends JFrame {
 
-    // DAO
     private final OwnerDAO    ownerDAO    = new OwnerDAO();
     private final VideoDAO    videoDAO    = new VideoDAO();
     private final FilmDAO     filmDAO     = new FilmDAO();
@@ -31,10 +25,8 @@ public class MainFrame extends JFrame {
     private final ReceiptDAO  receiptDAO  = new ReceiptDAO();
     private final SimpleDAO   simpleDAO   = new SimpleDAO();
 
-    // Карточки
     private final JPanel cardPanel = new JPanel(new CardLayout());
 
-    // Ключи карточек
     private static final String C_OWNERS   = "owners";
     private static final String C_VIDEO    = "video";
     private static final String C_FILM     = "film";
@@ -56,20 +48,15 @@ public class MainFrame extends JFrame {
     private static final String C_CHARTS   = "charts";
     private static final String C_REPORTS  = "reports";
 
-    // Панели таблиц
     private TablePanel pOwners, pVideo, pFilm, pCassette, pReceipt;
     private TablePanel pDistrict, pService, pQuality, pDirector, pStudio, pCountry;
     private TablePanel pVwFilms, pVwRevenue, pVwPeople, pVwCateg;
 
-    // Строка состояния
     private JLabel statusBar;
-
-    // Toolbar — тема и язык
     private JToggleButton btnTheme;
     private JComboBox<String> langCombo;
-    private JToolBar toolBar;
+    private JPanel toolBar;
 
-    // Меню — для обновления текстов при смене языка
     private JMenuBar menuBar;
     private JMenu menuTables, menuViews, menuQueries, menuCharts, menuReports, menuHelp;
 
@@ -88,63 +75,67 @@ public class MainFrame extends JFrame {
         showCard(C_MASTER);
         checkConnection();
 
-        // При смене языка — перестроить меню
-        I18n.addListener(this::rebuildMenuTexts);
+        // Слушатели — порядок важен
         ThemeManager.getInstance().addListener(this::applyFrameTheme);
+        I18n.addListener(this::rebuildMenuTexts);
+        I18n.addListener(this::updateToolbarTexts);
+
         applyFrameTheme();
     }
 
     // ======================== TOOLBAR ========================
 
     private void buildToolBar() {
-        toolBar = new JToolBar();
-        toolBar.setFloatable(false);
-        toolBar.setRollover(true);
-        toolBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0,
-                ThemeManager.borderColor()));
-
-        toolBar.add(Box.createHorizontalGlue());
+        toolBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 4));
 
         // Тумблер темы
-        btnTheme = new JToggleButton(
-                ThemeManager.getInstance().isDark() ? "☀️  Светлая" : "🌙  Тёмная");
-        btnTheme.setSelected(ThemeManager.getInstance().isDark());
-        btnTheme.setFocusPainted(false);
-        btnTheme.setBorderPainted(false);
-        btnTheme.setOpaque(true);
-        btnTheme.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btnTheme.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnTheme.setBorder(BorderFactory.createEmptyBorder(5, 14, 5, 14));
+        boolean dark = ThemeManager.getInstance().isDark();
+        btnTheme = new JToggleButton(dark ? "☀️ Светлая" : "🌙 Тёмная", dark);
+        styleToolBtn(btnTheme);
         btnTheme.addActionListener(e -> {
             ThemeManager.getInstance().toggle();
-            boolean dark = ThemeManager.getInstance().isDark();
-            btnTheme.setText(dark ? "☀️  " + I18n.t("settings.light") : "🌙  " + I18n.t("settings.dark"));
+            updateToolbarTexts();
         });
-        toolBar.add(btnTheme);
-        toolBar.addSeparator(new Dimension(12, 0));
 
-        // Переключатель языка
+        // Разделитель
+        JSeparator sep = new JSeparator(SwingConstants.VERTICAL);
+        sep.setPreferredSize(new Dimension(1, 24));
+
+        // Язык
         JLabel lblLang = new JLabel(I18n.t("settings.lang") + " ");
         lblLang.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        toolBar.add(lblLang);
 
         langCombo = new JComboBox<>(new String[]{"🇷🇺 Русский", "🇬🇧 English"});
         langCombo.setSelectedIndex(I18n.isRu() ? 0 : 1);
         langCombo.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         langCombo.setPreferredSize(new Dimension(140, 28));
-        langCombo.setMaximumSize(new Dimension(140, 28));
         langCombo.setFocusable(false);
         langCombo.addActionListener(e -> {
             I18n.Lang lang = langCombo.getSelectedIndex() == 0 ? I18n.Lang.RU : I18n.Lang.EN;
             I18n.setLang(lang);
-            boolean dark = ThemeManager.getInstance().isDark();
-            btnTheme.setText(dark ? "☀️  " + I18n.t("settings.light")
-                    : "🌙  " + I18n.t("settings.dark"));
         });
+
+        toolBar.add(btnTheme);
+        toolBar.add(sep);
+        toolBar.add(lblLang);
         toolBar.add(langCombo);
-        toolBar.addSeparator(new Dimension(10, 0));
 
         add(toolBar, BorderLayout.NORTH);
+    }
+
+    private void styleToolBtn(JToggleButton btn) {
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setOpaque(true);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.setBorder(BorderFactory.createEmptyBorder(5, 14, 5, 14));
+    }
+
+    private void updateToolbarTexts() {
+        boolean dark = ThemeManager.getInstance().isDark();
+        btnTheme.setText(dark ? "☀️ " + I18n.t("settings.light") : "🌙 " + I18n.t("settings.dark"));
+        btnTheme.setSelected(dark);
     }
 
     // ======================== МЕНЮ ========================
@@ -160,22 +151,15 @@ public class MainFrame extends JFrame {
         menuReports = new JMenu(I18n.t("menu.reports"));
         menuHelp    = new JMenu(I18n.t("menu.help"));
 
-        Font menuFont = new Font("Segoe UI", Font.PLAIN, 13);
-        for (JMenu m : new JMenu[]{menuTables, menuViews, menuQueries, menuCharts, menuReports, menuHelp})
-            m.setFont(menuFont);
+        Font mf = new Font("Segoe UI", Font.PLAIN, 13);
+        for (JMenu m : new JMenu[]{menuTables,menuViews,menuQueries,menuCharts,menuReports,menuHelp})
+            m.setFont(mf);
 
-        fillMenuTables();
-        fillMenuViews();
-        fillMenuQueries();
-        fillMenuCharts();
-        fillMenuReports();
-        fillMenuHelp();
+        fillMenuTables(); fillMenuViews(); fillMenuQueries();
+        fillMenuCharts(); fillMenuReports(); fillMenuHelp();
 
-        menuBar.add(menuTables);
-        menuBar.add(menuViews);
-        menuBar.add(menuQueries);
-        menuBar.add(menuCharts);
-        menuBar.add(menuReports);
+        menuBar.add(menuTables); menuBar.add(menuViews); menuBar.add(menuQueries);
+        menuBar.add(menuCharts); menuBar.add(menuReports);
         menuBar.add(Box.createHorizontalGlue());
         menuBar.add(menuHelp);
         setJMenuBar(menuBar);
@@ -198,54 +182,31 @@ public class MainFrame extends JFrame {
         menuTables.addSeparator();
         menuTables.add(mi(I18n.t("table.masterdetail"),() -> showCard(C_MASTER)));
     }
-
     private void fillMenuViews() {
         menuViews.removeAll();
-        menuViews.add(mi(I18n.t("view.films_full"), () -> { showCard(C_VW_FILMS); refreshVwFilms(); }));
-        menuViews.add(mi(I18n.t("view.revenue"),    () -> { showCard(C_VW_REV);   refreshVwRevenue(); }));
-        menuViews.add(mi(I18n.t("view.people"),     () -> { showCard(C_VW_PEOPLE);refreshVwPeople(); }));
-        menuViews.add(mi(I18n.t("view.category"),   () -> { showCard(C_VW_CATEG); refreshVwCateg(); }));
+        menuViews.add(mi(I18n.t("view.films_full"), () -> { showCard(C_VW_FILMS);  refreshVwFilms(); }));
+        menuViews.add(mi(I18n.t("view.revenue"),    () -> { showCard(C_VW_REV);    refreshVwRevenue(); }));
+        menuViews.add(mi(I18n.t("view.people"),     () -> { showCard(C_VW_PEOPLE); refreshVwPeople(); }));
+        menuViews.add(mi(I18n.t("view.category"),   () -> { showCard(C_VW_CATEG);  refreshVwCateg(); }));
         menuViews.add(mi(I18n.t("view.simple"),     () -> showCard(C_VW_SIMPLE)));
     }
-
-    private void fillMenuQueries() {
-        menuQueries.removeAll();
-        menuQueries.add(mi(I18n.t("menu.queries"), () -> showCard(C_QUERIES)));
-    }
-
-    private void fillMenuCharts() {
-        menuCharts.removeAll();
-        menuCharts.add(mi(I18n.t("menu.charts"), () -> showCard(C_CHARTS)));
-    }
-
-    private void fillMenuReports() {
-        menuReports.removeAll();
-        menuReports.add(mi(I18n.t("menu.reports"), () -> showCard(C_REPORTS)));
-    }
-
+    private void fillMenuQueries()  { menuQueries.removeAll();  menuQueries.add(mi(I18n.t("menu.queries"), () -> showCard(C_QUERIES))); }
+    private void fillMenuCharts()   { menuCharts.removeAll();   menuCharts.add(mi(I18n.t("menu.charts"),   () -> showCard(C_CHARTS))); }
+    private void fillMenuReports()  { menuReports.removeAll();  menuReports.add(mi(I18n.t("menu.reports"), () -> showCard(C_REPORTS))); }
     private void fillMenuHelp() {
         menuHelp.removeAll();
         menuHelp.add(mi(I18n.t("menu.about"), () ->
-                JOptionPane.showMessageDialog(this,
-                        I18n.t("about.text"), I18n.t("menu.about"), JOptionPane.INFORMATION_MESSAGE)));
+                JOptionPane.showMessageDialog(this, I18n.t("about.text"),
+                        I18n.t("menu.about"), JOptionPane.INFORMATION_MESSAGE)));
     }
 
-    /** Пересобрать тексты меню при смене языка */
     private void rebuildMenuTexts() {
-        menuTables.setText(I18n.t("menu.tables"));
-        menuViews.setText(I18n.t("menu.views"));
-        menuQueries.setText(I18n.t("menu.queries"));
-        menuCharts.setText(I18n.t("menu.charts"));
-        menuReports.setText(I18n.t("menu.reports"));
-        menuHelp.setText(I18n.t("menu.help"));
-        fillMenuTables();
-        fillMenuViews();
-        fillMenuQueries();
-        fillMenuCharts();
-        fillMenuReports();
-        fillMenuHelp();
-        menuBar.revalidate();
-        menuBar.repaint();
+        menuTables.setText(I18n.t("menu.tables")); menuViews.setText(I18n.t("menu.views"));
+        menuQueries.setText(I18n.t("menu.queries")); menuCharts.setText(I18n.t("menu.charts"));
+        menuReports.setText(I18n.t("menu.reports")); menuHelp.setText(I18n.t("menu.help"));
+        fillMenuTables(); fillMenuViews(); fillMenuQueries();
+        fillMenuCharts(); fillMenuReports(); fillMenuHelp();
+        menuBar.revalidate(); menuBar.repaint();
     }
 
     private JMenuItem mi(String text, Runnable action) {
@@ -269,18 +230,13 @@ public class MainFrame extends JFrame {
         pDirector = new TablePanel("panel.director", true);
         pStudio   = new TablePanel("panel.studio",   true);
         pCountry  = new TablePanel("panel.country",  true);
-
         pVwFilms   = new TablePanel("view.films_full", false);
         pVwRevenue = new TablePanel("view.revenue",    false);
         pVwPeople  = new TablePanel("view.people",     false);
         pVwCateg   = new TablePanel("view.category",   false);
 
-        wireOwnerCrud();
-        wireVideoCrud();
-        wireFilmCrud();
-        wireCassetteCrud();
-        wireReceiptCrud();
-        wireSimpleCrud();
+        wireOwnerCrud(); wireVideoCrud(); wireFilmCrud();
+        wireCassetteCrud(); wireReceiptCrud(); wireSimpleCrud();
 
         MasterDetailPanel masterDetail = new MasterDetailPanel();
         ViewSimplePanel   viewSimple   = new ViewSimplePanel();
@@ -288,27 +244,16 @@ public class MainFrame extends JFrame {
         DiagramPanel      chartPanel   = new DiagramPanel();
         ReportPanel       reportPanel  = new ReportPanel();
 
-        cardPanel.setBackground(ThemeManager.bgPanel());
-        cardPanel.add(pOwners,    C_OWNERS);
-        cardPanel.add(pVideo,     C_VIDEO);
-        cardPanel.add(pFilm,      C_FILM);
-        cardPanel.add(pCassette,  C_CASSETTE);
-        cardPanel.add(pReceipt,   C_RECEIPT);
-        cardPanel.add(pDistrict,  C_DISTRICT);
-        cardPanel.add(pService,   C_SERVICE);
-        cardPanel.add(pQuality,   C_QUALITY);
-        cardPanel.add(pDirector,  C_DIRECTOR);
-        cardPanel.add(pStudio,    C_STUDIO);
-        cardPanel.add(pCountry,   C_COUNTRY);
-        cardPanel.add(masterDetail, C_MASTER);
-        cardPanel.add(pVwFilms,   C_VW_FILMS);
-        cardPanel.add(pVwRevenue, C_VW_REV);
-        cardPanel.add(pVwPeople,  C_VW_PEOPLE);
-        cardPanel.add(viewSimple, C_VW_SIMPLE);
-        cardPanel.add(pVwCateg,   C_VW_CATEG);
-        cardPanel.add(queryPanel, C_QUERIES);
-        cardPanel.add(chartPanel, C_CHARTS);
-        cardPanel.add(reportPanel,C_REPORTS);
+        cardPanel.add(pOwners,    C_OWNERS);   cardPanel.add(pVideo,     C_VIDEO);
+        cardPanel.add(pFilm,      C_FILM);     cardPanel.add(pCassette,  C_CASSETTE);
+        cardPanel.add(pReceipt,   C_RECEIPT);  cardPanel.add(pDistrict,  C_DISTRICT);
+        cardPanel.add(pService,   C_SERVICE);  cardPanel.add(pQuality,   C_QUALITY);
+        cardPanel.add(pDirector,  C_DIRECTOR); cardPanel.add(pStudio,    C_STUDIO);
+        cardPanel.add(pCountry,   C_COUNTRY);  cardPanel.add(masterDetail,C_MASTER);
+        cardPanel.add(pVwFilms,   C_VW_FILMS); cardPanel.add(pVwRevenue, C_VW_REV);
+        cardPanel.add(pVwPeople,  C_VW_PEOPLE);cardPanel.add(viewSimple, C_VW_SIMPLE);
+        cardPanel.add(pVwCateg,   C_VW_CATEG); cardPanel.add(queryPanel, C_QUERIES);
+        cardPanel.add(chartPanel, C_CHARTS);   cardPanel.add(reportPanel,C_REPORTS);
 
         add(cardPanel, BorderLayout.CENTER);
     }
@@ -321,6 +266,7 @@ public class MainFrame extends JFrame {
         add(statusBar, BorderLayout.SOUTH);
     }
 
+    /** Перекраска всего фрейма при смене темы */
     private void applyFrameTheme() {
         Color bgPanel  = ThemeManager.bgPanel();
         Color bgHeader = ThemeManager.bgHeader();
@@ -328,39 +274,51 @@ public class MainFrame extends JFrame {
         Color fgDim    = ThemeManager.fgDim();
         Color border   = ThemeManager.borderColor();
         Color bgComp   = ThemeManager.bgComponent();
+        boolean dark   = ThemeManager.getInstance().isDark();
 
         getContentPane().setBackground(bgPanel);
         cardPanel.setBackground(bgPanel);
 
-        if (statusBar != null) {
-            statusBar.setBackground(bgHeader);
-            statusBar.setForeground(fgDim);
-            statusBar.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createMatteBorder(1, 0, 0, 0, border),
-                    BorderFactory.createEmptyBorder(3, 8, 3, 8)));
+        // Toolbar
+        toolBar.setBackground(bgHeader);
+        toolBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, border));
+        for (Component c : toolBar.getComponents()) {
+            if (c instanceof JLabel) {
+                ((JLabel) c).setForeground(fgText);
+                c.setBackground(bgHeader);
+                ((JLabel) c).setOpaque(true);
+            }
+            if (c instanceof JComboBox) {
+                c.setBackground(bgComp);
+                c.setForeground(fgText);
+            }
+            if (c instanceof JSeparator) {
+                ((JSeparator) c).setForeground(border);
+            }
         }
 
-        if (toolBar != null) {
-            toolBar.setBackground(bgHeader);
-            toolBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, border));
-            for (Component c : toolBar.getComponents()) {
-                if (c instanceof JLabel) {
-                    ((JLabel) c).setForeground(fgText);
-                    c.setBackground(bgHeader);
-                    ((JLabel) c).setOpaque(true);
-                }
-                if (c instanceof JComboBox) {
-                    c.setBackground(bgComp);
-                    c.setForeground(fgText);
-                }
-            }
-            if (btnTheme != null) {
-                boolean dark = ThemeManager.getInstance().isDark();
-                btnTheme.setBackground(dark ? new Color(59, 130, 246) : new Color(245, 158, 11));
-                btnTheme.setForeground(Color.WHITE);
-            }
+        // Тумблер темы
+        btnTheme.setBackground(dark ? new Color(59, 130, 246) : new Color(245, 158, 11));
+        btnTheme.setForeground(Color.WHITE);
+        updateToolbarTexts();
+
+        // Статусбар
+        statusBar.setBackground(bgHeader);
+        statusBar.setForeground(fgDim);
+        statusBar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(1, 0, 0, 0, border),
+                BorderFactory.createEmptyBorder(3, 8, 3, 8)));
+
+        // Menubar
+        menuBar.setBackground(bgHeader);
+        menuBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, border));
+        for (int i = 0; i < menuBar.getMenuCount(); i++) {
+            JMenu m = menuBar.getMenu(i);
+            if (m != null) { m.setBackground(bgHeader); m.setForeground(fgText); }
         }
+
         repaint();
+        revalidate();
     }
 
     private void showCard(String key) {
@@ -373,34 +331,26 @@ public class MainFrame extends JFrame {
         pOwners.setCrudListener(new TablePanel.CrudListener() {
             @Override public void onAdd() {
                 OwnerEditDialog d = new OwnerEditDialog(MainFrame.this, null);
-                d.setVisible(true);
-                if (d.isSaved()) refreshOwners();
+                d.setVisible(true); if (d.isSaved()) refreshOwners();
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
                 try {
-                    // Получаем по индексу из full списка (pOwners показывает без ID)
-                    List<Owner> list = ownerDAO.getAllList();
-                    // Ищем совпадение по фамилии из выбранной строки
-                    String fam = (String) pOwners.getSelectedValue(0);
-                    Owner owner = list.stream()
+                    String fam = String.valueOf(pOwners.getSelectedValue(0));
+                    Owner owner = ownerDAO.getAllList().stream()
                             .filter(o -> o.getFamilia().equals(fam)).findFirst().orElse(null);
                     OwnerEditDialog d = new OwnerEditDialog(MainFrame.this, owner);
-                    d.setVisible(true);
-                    if (d.isSaved()) refreshOwners();
+                    d.setVisible(true); if (d.isSaved()) refreshOwners();
                 } catch (SQLException e) { dbErr(e); }
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                String fam = (String) pOwners.getSelectedValue(0);
+                String fam = String.valueOf(pOwners.getSelectedValue(0));
                 if (confirm(I18n.t("msg.confirm_delete") + " (" + fam + ")")) {
                     try {
-                        List<Owner> list = ownerDAO.getAllList();
-                        list.stream().filter(o -> o.getFamilia().equals(fam))
-                                .findFirst().ifPresent(o -> {
-                                    try { ownerDAO.delete(o.getOwnerID()); }
-                                    catch (SQLException e) { dbErr(e); }
-                                });
+                        ownerDAO.getAllList().stream()
+                                .filter(o -> o.getFamilia().equals(fam)).findFirst()
+                                .ifPresent(o -> { try { ownerDAO.delete(o.getOwnerID()); } catch (SQLException e) { dbErr(e); } });
                         refreshOwners();
                     } catch (SQLException e) { dbErr(e); }
                 }
@@ -417,8 +367,7 @@ public class MainFrame extends JFrame {
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
-                // Название в первой колонке — найдём Video по caption
-                String caption = (String) pVideo.getSelectedValue(0);
+                String caption = String.valueOf(pVideo.getSelectedValue(0));
                 try {
                     Video v = videoDAO.getAllList().stream()
                             .filter(x -> x.getCaption().equals(caption)).findFirst().orElse(null);
@@ -428,15 +377,12 @@ public class MainFrame extends JFrame {
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                String caption = (String) pVideo.getSelectedValue(0);
+                String caption = String.valueOf(pVideo.getSelectedValue(0));
                 if (confirm(I18n.t("msg.confirm_delete") + " (" + caption + ")")) {
                     try {
                         videoDAO.getAllList().stream()
-                                .filter(x -> x.getCaption().equals(caption))
-                                .findFirst().ifPresent(v -> {
-                                    try { videoDAO.delete(v.getVideoId()); }
-                                    catch (SQLException e) { dbErr(e); }
-                                });
+                                .filter(x -> x.getCaption().equals(caption)).findFirst()
+                                .ifPresent(v -> { try { videoDAO.delete(v.getVideoId()); } catch (SQLException e) { dbErr(e); } });
                         refreshVideo();
                     } catch (SQLException e) { dbErr(e); }
                 }
@@ -453,7 +399,7 @@ public class MainFrame extends JFrame {
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
-                String caption = (String) pFilm.getSelectedValue(0);
+                String caption = String.valueOf(pFilm.getSelectedValue(0));
                 try {
                     Film f = filmDAO.getAllList().stream()
                             .filter(x -> x.getCaption().equals(caption)).findFirst().orElse(null);
@@ -463,15 +409,12 @@ public class MainFrame extends JFrame {
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                String caption = (String) pFilm.getSelectedValue(0);
+                String caption = String.valueOf(pFilm.getSelectedValue(0));
                 if (confirm(I18n.t("msg.confirm_delete") + " (" + caption + ")")) {
                     try {
                         filmDAO.getAllList().stream()
-                                .filter(x -> x.getCaption().equals(caption))
-                                .findFirst().ifPresent(f -> {
-                                    try { filmDAO.delete(f.getFilmId()); }
-                                    catch (SQLException e) { dbErr(e); }
-                                });
+                                .filter(x -> x.getCaption().equals(caption)).findFirst()
+                                .ifPresent(f -> { try { filmDAO.delete(f.getFilmId()); } catch (SQLException e) { dbErr(e); } });
                         refreshFilm();
                     } catch (SQLException e) { dbErr(e); }
                 }
@@ -486,16 +429,8 @@ public class MainFrame extends JFrame {
                 CassetteEditDialog d = new CassetteEditDialog(MainFrame.this, null, 0);
                 d.setVisible(true); if (d.isSaved()) refreshCassette();
             }
-            @Override public void onEdit(int row) {
-                if (row < 0) { noSel(); return; }
-                JOptionPane.showMessageDialog(MainFrame.this,
-                        "Редактирование кассеты доступно в Master-Detail панели");
-            }
-            @Override public void onDelete(int row) {
-                if (row < 0) { noSel(); return; }
-                JOptionPane.showMessageDialog(MainFrame.this,
-                        "Удаление кассеты доступно в Master-Detail панели");
-            }
+            @Override public void onEdit(int row) { JOptionPane.showMessageDialog(MainFrame.this, "Используйте Master-Detail панель"); }
+            @Override public void onDelete(int row) { JOptionPane.showMessageDialog(MainFrame.this, "Используйте Master-Detail панель"); }
             @Override public void onRefresh() { refreshCassette(); }
         });
     }
@@ -508,7 +443,6 @@ public class MainFrame extends JFrame {
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
-                // Первая колонка — № Чека
                 Object idVal = pReceipt.getSelectedValue(0);
                 Receipt r = new Receipt();
                 r.setReceiptId(((Number) idVal).intValue());
@@ -517,124 +451,43 @@ public class MainFrame extends JFrame {
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                Object idVal = pReceipt.getSelectedValue(0);
-                int id = ((Number) idVal).intValue();
-                if (confirm(I18n.t("msg.confirm_delete") + " (№" + id + ")")) {
-                    try { receiptDAO.delete(id); refreshReceipt(); }
-                    catch (SQLException e) { dbErr(e); }
-                }
+                int id = ((Number) pReceipt.getSelectedValue(0)).intValue();
+                if (confirm(I18n.t("msg.confirm_delete") + " (№" + id + ")"))
+                    try { receiptDAO.delete(id); refreshReceipt(); } catch (SQLException e) { dbErr(e); }
             }
             @Override public void onRefresh() { refreshReceipt(); }
         });
     }
 
     private void wireSimpleCrud() {
-        // Districts
-        pDistrict.setCrudListener(new TablePanel.CrudListener() {
-            @Override public void onAdd() {
-                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.add_item"), null,
-                        name -> { try { simpleDAO.insertDistrict(name); } catch (SQLException e) { dbErr(e); }});
-                d.setVisible(true); if (d.isSaved()) refreshDistrict();
-            }
-            @Override public void onEdit(int row) {
-                if (row < 0) { noSel(); return; }
-                String cur = (String) pDistrict.getSelectedValue(0);
-                try {
-                    int id = simpleDAO.getDistrictList().stream()
-                            .filter(x -> x.getDistrictName().equals(cur))
-                            .findFirst().map(x -> x.getDistrictId()).orElse(-1);
-                    SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.edit_item"), cur,
-                            name -> { try { simpleDAO.updateDistrict(id, name); } catch (SQLException e) { dbErr(e); }});
-                    d.setVisible(true); if (d.isSaved()) refreshDistrict();
-                } catch (SQLException e) { dbErr(e); }
-            }
-            @Override public void onDelete(int row) {
-                if (row < 0) { noSel(); return; }
-                String cur = (String) pDistrict.getSelectedValue(0);
-                if (confirm(I18n.t("msg.confirm_delete") + " (" + cur + ")")) {
-                    try {
-                        int id = simpleDAO.getDistrictList().stream()
-                                .filter(x -> x.getDistrictName().equals(cur))
-                                .findFirst().map(x -> x.getDistrictId()).orElse(-1);
-                        simpleDAO.deleteDistrict(id);
-                        refreshDistrict();
-                    } catch (SQLException e) { dbErr(e); }
-                }
-            }
-            @Override public void onRefresh() { refreshDistrict(); }
-        });
+        wireSingleField(pDistrict, "district",
+                name -> simpleDAO.insertDistrict(name),
+                (id, name) -> simpleDAO.updateDistrict(id, name),
+                id -> simpleDAO.deleteDistrict(id),
+                () -> simpleDAO.getDistrictList().stream().map(d -> new Object[]{d.getDistrictId(), d.getDistrictName()}).collect(java.util.stream.Collectors.toList()),
+                this::refreshDistrict);
 
-        // Service
-        pService.setCrudListener(new TablePanel.CrudListener() {
-            @Override public void onAdd() {
-                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.add_item"), null,
-                        name -> { try { simpleDAO.insertService(name); } catch (SQLException e) { dbErr(e); }});
-                d.setVisible(true); if (d.isSaved()) refreshService();
-            }
-            @Override public void onEdit(int row) {
-                if (row < 0) { noSel(); return; }
-                String cur = (String) pService.getSelectedValue(0);
-                try {
-                    int id = simpleDAO.getServiceList().stream()
-                            .filter(x -> x.getServiceName().equals(cur))
-                            .findFirst().map(x -> x.getServiceId()).orElse(-1);
-                    SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.edit_item"), cur,
-                            name -> { try { simpleDAO.updateService(id, name); } catch (SQLException e) { dbErr(e); }});
-                    d.setVisible(true); if (d.isSaved()) refreshService();
-                } catch (SQLException e) { dbErr(e); }
-            }
-            @Override public void onDelete(int row) {
-                if (row < 0) { noSel(); return; }
-                String cur = (String) pService.getSelectedValue(0);
-                if (confirm(I18n.t("msg.confirm_delete") + " (" + cur + ")")) {
-                    try {
-                        int id = simpleDAO.getServiceList().stream()
-                                .filter(x -> x.getServiceName().equals(cur))
-                                .findFirst().map(x -> x.getServiceId()).orElse(-1);
-                        simpleDAO.deleteService(id);
-                        refreshService();
-                    } catch (SQLException e) { dbErr(e); }
-                }
-            }
-            @Override public void onRefresh() { refreshService(); }
-        });
+        wireSingleField(pService, "service",
+                name -> simpleDAO.insertService(name),
+                (id, name) -> simpleDAO.updateService(id, name),
+                id -> simpleDAO.deleteService(id),
+                () -> simpleDAO.getServiceList().stream().map(s -> new Object[]{s.getServiceId(), s.getServiceName()}).collect(java.util.stream.Collectors.toList()),
+                this::refreshService);
 
-        // Quality
-        pQuality.setCrudListener(new TablePanel.CrudListener() {
-            @Override public void onAdd() {
-                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.add_item"), null,
-                        name -> { try { simpleDAO.insertQuality(name); } catch (SQLException e) { dbErr(e); }});
-                d.setVisible(true); if (d.isSaved()) refreshQuality();
-            }
-            @Override public void onEdit(int row) {
-                if (row < 0) { noSel(); return; }
-                String cur = (String) pQuality.getSelectedValue(0);
-                try {
-                    int id = simpleDAO.getQualityList().stream()
-                            .filter(x -> x.getQualityName().equals(cur))
-                            .findFirst().map(x -> x.getQualityId()).orElse(-1);
-                    SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.edit_item"), cur,
-                            name -> { try { simpleDAO.updateQuality(id, name); } catch (SQLException e) { dbErr(e); }});
-                    d.setVisible(true); if (d.isSaved()) refreshQuality();
-                } catch (SQLException e) { dbErr(e); }
-            }
-            @Override public void onDelete(int row) {
-                if (row < 0) { noSel(); return; }
-                String cur = (String) pQuality.getSelectedValue(0);
-                if (confirm(I18n.t("msg.confirm_delete") + " (" + cur + ")")) {
-                    try {
-                        int id = simpleDAO.getQualityList().stream()
-                                .filter(x -> x.getQualityName().equals(cur))
-                                .findFirst().map(x -> x.getQualityId()).orElse(-1);
-                        simpleDAO.deleteQuality(id);
-                        refreshQuality();
-                    } catch (SQLException e) { dbErr(e); }
-                }
-            }
-            @Override public void onRefresh() { refreshQuality(); }
-        });
+        wireSingleField(pQuality, "quality",
+                name -> simpleDAO.insertQuality(name),
+                (id, name) -> simpleDAO.updateQuality(id, name),
+                id -> simpleDAO.deleteQuality(id),
+                () -> simpleDAO.getQualityList().stream().map(q -> new Object[]{q.getQualityId(), q.getQualityName()}).collect(java.util.stream.Collectors.toList()),
+                this::refreshQuality);
 
-        // Director
+        wireSingleField(pCountry, "country",
+                name -> simpleDAO.insertCountry(name),
+                (id, name) -> simpleDAO.updateCountry(id, name),
+                id -> simpleDAO.deleteCountry(id),
+                () -> simpleDAO.getCountryList().stream().map(c -> new Object[]{c.getCountryId(), c.getCountryName()}).collect(java.util.stream.Collectors.toList()),
+                this::refreshCountry);
+
         pDirector.setCrudListener(new TablePanel.CrudListener() {
             @Override public void onAdd() {
                 DirectorEditDialog d = new DirectorEditDialog(MainFrame.this, null);
@@ -642,7 +495,7 @@ public class MainFrame extends JFrame {
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
-                String fam = (String) pDirector.getSelectedValue(0);
+                String fam = String.valueOf(pDirector.getSelectedValue(0));
                 try {
                     Director dir = simpleDAO.getDirectorList().stream()
                             .filter(x -> x.getFamilia().equals(fam)).findFirst().orElse(null);
@@ -652,110 +505,96 @@ public class MainFrame extends JFrame {
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                String fam = (String) pDirector.getSelectedValue(0);
-                if (confirm(I18n.t("msg.confirm_delete") + " (" + fam + ")")) {
+                String fam = String.valueOf(pDirector.getSelectedValue(0));
+                if (confirm(I18n.t("msg.confirm_delete")))
                     try {
-                        simpleDAO.getDirectorList().stream()
-                                .filter(x -> x.getFamilia().equals(fam))
-                                .findFirst().ifPresent(d -> {
-                                    try { simpleDAO.deleteDirector(d.getDirectorId()); }
-                                    catch (SQLException e) { dbErr(e); }
-                                });
+                        simpleDAO.getDirectorList().stream().filter(x -> x.getFamilia().equals(fam)).findFirst()
+                                .ifPresent(d -> { try { simpleDAO.deleteDirector(d.getDirectorId()); } catch (SQLException e) { dbErr(e); } });
                         refreshDirector();
                     } catch (SQLException e) { dbErr(e); }
-                }
             }
             @Override public void onRefresh() { refreshDirector(); }
         });
 
-        // Studio — упрощённо
         pStudio.setCrudListener(new TablePanel.CrudListener() {
-            @Override public void onAdd() {
-                JOptionPane.showMessageDialog(MainFrame.this,
-                        "Добавление студии:\nСначала добавьте страну в разделе 'Страны'");
-            }
-            @Override public void onEdit(int row) {
-                JOptionPane.showMessageDialog(MainFrame.this, "Редактирование студии — в разработке");
-            }
+            @Override public void onAdd() { JOptionPane.showMessageDialog(MainFrame.this, "Добавьте страну сначала в разделе Страны"); }
+            @Override public void onEdit(int row) { JOptionPane.showMessageDialog(MainFrame.this, "Редактирование студии — в разработке"); }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                String name = (String) pStudio.getSelectedValue(0);
-                if (confirm(I18n.t("msg.confirm_delete") + " (" + name + ")")) {
+                String name = String.valueOf(pStudio.getSelectedValue(0));
+                if (confirm(I18n.t("msg.confirm_delete") + " (" + name + ")"))
                     try {
-                        simpleDAO.getStudioList().stream()
-                                .filter(x -> x.getStudioName().equals(name))
-                                .findFirst().ifPresent(s -> {
-                                    try { simpleDAO.deleteStudio(s.getStudioId()); }
-                                    catch (SQLException e) { dbErr(e); }
-                                });
+                        simpleDAO.getStudioList().stream().filter(x -> x.getStudioName().equals(name)).findFirst()
+                                .ifPresent(s -> { try { simpleDAO.deleteStudio(s.getStudioId()); } catch (SQLException e) { dbErr(e); } });
                         refreshStudio();
                     } catch (SQLException e) { dbErr(e); }
-                }
             }
             @Override public void onRefresh() { refreshStudio(); }
         });
+    }
 
-        // Country
-        pCountry.setCrudListener(new TablePanel.CrudListener() {
+    @FunctionalInterface interface SqlConsumer1 { void accept(String s) throws SQLException; }
+    @FunctionalInterface interface SqlConsumer2 { void accept(int id, String s) throws SQLException; }
+    @FunctionalInterface interface SqlConsumer3 { void accept(int id) throws SQLException; }
+    @FunctionalInterface interface SqlSupplier  { java.util.List<Object[]> get() throws SQLException; }
+
+    private void wireSingleField(TablePanel panel, String entity,
+                                 SqlConsumer1 insert, SqlConsumer2 update, SqlConsumer3 delete,
+                                 SqlSupplier listSupplier, Runnable refresh) {
+        panel.setCrudListener(new TablePanel.CrudListener() {
             @Override public void onAdd() {
                 SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.add_item"), null,
-                        name -> { try { simpleDAO.insertCountry(name); } catch (SQLException e) { dbErr(e); }});
-                d.setVisible(true); if (d.isSaved()) refreshCountry();
+                        name -> { try { insert.accept(name); } catch (SQLException e) { dbErr(e); } });
+                d.setVisible(true); if (d.isSaved()) refresh.run();
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
-                String cur = (String) pCountry.getSelectedValue(0);
-                try {
-                    int id = simpleDAO.getCountryList().stream()
-                            .filter(x -> x.getCountryName().equals(cur))
-                            .findFirst().map(x -> x.getCountryId()).orElse(-1);
-                    SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.edit_item"), cur,
-                            name -> { try { simpleDAO.updateCountry(id, name); } catch (SQLException e) { dbErr(e); }});
-                    d.setVisible(true); if (d.isSaved()) refreshCountry();
-                } catch (SQLException e) { dbErr(e); }
+                // Найти ID: в таблице первая колонка = ID (мы добавили его в SimpleDAO)
+                Object idObj = panel.getSelectedValue(0);
+                Object nameObj = panel.getSelectedValue(1);
+                if (idObj == null) return;
+                int id = ((Number) idObj).intValue();
+                String cur = nameObj != null ? nameObj.toString() : "";
+                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.edit_item"), cur,
+                        name -> { try { update.accept(id, name); } catch (SQLException e) { dbErr(e); } });
+                d.setVisible(true); if (d.isSaved()) refresh.run();
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                String cur = (String) pCountry.getSelectedValue(0);
-                if (confirm(I18n.t("msg.confirm_delete") + " (" + cur + ")")) {
-                    try {
-                        int id = simpleDAO.getCountryList().stream()
-                                .filter(x -> x.getCountryName().equals(cur))
-                                .findFirst().map(x -> x.getCountryId()).orElse(-1);
-                        simpleDAO.deleteCountry(id);
-                        refreshCountry();
-                    } catch (SQLException e) { dbErr(e); }
-                }
+                Object idObj = panel.getSelectedValue(0);
+                if (idObj == null) return;
+                int id = ((Number) idObj).intValue();
+                if (confirm(I18n.t("msg.confirm_delete")))
+                    try { delete.accept(id); refresh.run(); } catch (SQLException e) { dbErr(e); }
             }
-            @Override public void onRefresh() { refreshCountry(); }
+            @Override public void onRefresh() { refresh.run(); }
         });
     }
 
     // ======================== Refresh ========================
 
-    private void refreshOwners()  { try { pOwners.loadData(ownerDAO.getAll()); }          catch (SQLException e) { dbErr(e); } }
-    private void refreshVideo()   { try { pVideo.loadData(videoDAO.getAll()); }            catch (SQLException e) { dbErr(e); } }
-    private void refreshFilm()    { try { pFilm.loadData(filmDAO.getAll()); }              catch (SQLException e) { dbErr(e); } }
-    private void refreshCassette(){ try { pCassette.loadData(cassetteDAO.getAll()); }      catch (SQLException e) { dbErr(e); } }
-    private void refreshReceipt() { try { pReceipt.loadData(receiptDAO.getAll()); }        catch (SQLException e) { dbErr(e); } }
-    private void refreshDistrict(){ try { pDistrict.loadData(simpleDAO.getDistricts()); }  catch (SQLException e) { dbErr(e); } }
-    private void refreshService() { try { pService.loadData(simpleDAO.getServices()); }    catch (SQLException e) { dbErr(e); } }
-    private void refreshQuality() { try { pQuality.loadData(simpleDAO.getQualities()); }   catch (SQLException e) { dbErr(e); } }
-    private void refreshDirector(){ try { pDirector.loadData(simpleDAO.getDirectors()); }  catch (SQLException e) { dbErr(e); } }
-    private void refreshStudio()  { try { pStudio.loadData(simpleDAO.getStudios()); }      catch (SQLException e) { dbErr(e); } }
-    private void refreshCountry() { try { pCountry.loadData(simpleDAO.getCountries()); }   catch (SQLException e) { dbErr(e); } }
-    private void refreshVwFilms()  { try { pVwFilms.loadData(filmDAO.getFilmsFullView()); } catch (SQLException e) { dbErr(e); } }
+    private void refreshOwners()   { try { pOwners.loadData(ownerDAO.getAll()); }           catch (SQLException e) { dbErr(e); } }
+    private void refreshVideo()    { try { pVideo.loadData(videoDAO.getAll()); }             catch (SQLException e) { dbErr(e); } }
+    private void refreshFilm()     { try { pFilm.loadData(filmDAO.getAll()); }               catch (SQLException e) { dbErr(e); } }
+    private void refreshCassette() { try { pCassette.loadData(cassetteDAO.getAll()); }       catch (SQLException e) { dbErr(e); } }
+    private void refreshReceipt()  { try { pReceipt.loadData(receiptDAO.getAll()); }         catch (SQLException e) { dbErr(e); } }
+    private void refreshDistrict() { try { pDistrict.loadData(simpleDAO.getDistricts()); }   catch (SQLException e) { dbErr(e); } }
+    private void refreshService()  { try { pService.loadData(simpleDAO.getServices()); }     catch (SQLException e) { dbErr(e); } }
+    private void refreshQuality()  { try { pQuality.loadData(simpleDAO.getQualities()); }    catch (SQLException e) { dbErr(e); } }
+    private void refreshDirector() { try { pDirector.loadData(simpleDAO.getDirectors()); }   catch (SQLException e) { dbErr(e); } }
+    private void refreshStudio()   { try { pStudio.loadData(simpleDAO.getStudios()); }       catch (SQLException e) { dbErr(e); } }
+    private void refreshCountry()  { try { pCountry.loadData(simpleDAO.getCountries()); }    catch (SQLException e) { dbErr(e); } }
+    private void refreshVwFilms()  { try { pVwFilms.loadData(filmDAO.getFilmsFullView()); }  catch (SQLException e) { dbErr(e); } }
     private void refreshVwRevenue(){ try { pVwRevenue.loadData(receiptDAO.getTotalRevenueView()); } catch (SQLException e) { dbErr(e); } }
-    private void refreshVwPeople() { try { pVwPeople.loadData(ownerDAO.getAll()); }         catch (SQLException e) { dbErr(e); } }
+    private void refreshVwPeople() { try { pVwPeople.loadData(ownerDAO.getAll()); }          catch (SQLException e) { dbErr(e); } }
     private void refreshVwCateg()  { try { pVwCateg.loadData(receiptDAO.getReceiptCategoryView()); } catch (SQLException e) { dbErr(e); } }
 
     // ======================== Утилиты ========================
 
     private void checkConnection() {
-        SwingWorker<Boolean, Void> worker = new SwingWorker<>() {
+        new SwingWorker<Boolean, Void>() {
             @Override protected Boolean doInBackground() {
-                try { DatabaseConnection.getConnection(); return true; }
-                catch (Exception e) { return false; }
+                try { DatabaseConnection.getConnection(); return true; } catch (Exception e) { return false; }
             }
             @Override protected void done() {
                 try {
@@ -764,35 +603,15 @@ public class MainFrame extends JFrame {
                     statusBar.setForeground(ok ? new Color(34, 197, 94) : new Color(239, 68, 68));
                 } catch (Exception e) { e.printStackTrace(); }
             }
-        };
-        worker.execute();
+        }.execute();
     }
 
-    private void noSel() {
-        JOptionPane.showMessageDialog(this,
-                I18n.t("msg.select_row"), I18n.t("msg.warning"), JOptionPane.WARNING_MESSAGE);
-    }
-
-    private boolean confirm(String msg) {
-        return JOptionPane.showConfirmDialog(this, msg,
-                I18n.t("msg.confirm_title"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
-    }
-
-    private void dbErr(SQLException e) {
-        JOptionPane.showMessageDialog(this,
-                I18n.t("msg.db_error") + "\n" + e.getMessage(),
-                I18n.t("msg.error"), JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-    }
-
-    // ======================== MAIN ========================
+    private void noSel() { JOptionPane.showMessageDialog(this, I18n.t("msg.select_row"), I18n.t("msg.warning"), JOptionPane.WARNING_MESSAGE); }
+    private boolean confirm(String msg) { return JOptionPane.showConfirmDialog(this, msg, I18n.t("msg.confirm_title"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION; }
+    private void dbErr(SQLException e) { JOptionPane.showMessageDialog(this, I18n.t("msg.db_error") + "\n" + e.getMessage(), I18n.t("msg.error"), JOptionPane.ERROR_MESSAGE); e.printStackTrace(); }
 
     public static void main(String[] args) {
-        // Применить сохранённую тему до создания окна
-        ThemeManager.getInstance();
-
-        SwingUtilities.invokeLater(() -> {
-            new MainFrame().setVisible(true);
-        });
+        ThemeManager.getInstance(); // применить сохранённую тему
+        SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
     }
 }

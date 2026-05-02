@@ -7,10 +7,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Базовый DAO.
- * Содержит утилиту renameColumns() — решает проблему кириллицы в алиасах на macOS JDBC.
- */
 public abstract class BaseDAO {
 
     protected DefaultTableModel executeQuery(String sql, Object... params) throws SQLException {
@@ -28,7 +24,6 @@ public abstract class BaseDAO {
         int cols = meta.getColumnCount();
         String[] columnNames = new String[cols];
         for (int i = 1; i <= cols; i++) columnNames[i - 1] = meta.getColumnLabel(i);
-
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
@@ -60,32 +55,24 @@ public abstract class BaseDAO {
         return -1;
     }
 
-    protected List<Object[]> fetchIdName(String sql) throws SQLException {
-        Connection conn = DatabaseConnection.getConnection();
-        List<Object[]> result = new ArrayList<>();
-        try (PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) result.add(new Object[]{rs.getInt(1), rs.getString(2)});
-        }
-        return result;
-    }
-
     /**
-     * Переименовать колонки модели — решает проблему кириллицы в SQL алиасах на macOS.
-     * Вызывать после executeQuery() если нужны русские заголовки.
+     * Переименовать колонки модели.
+     * Решает проблему кириллицы в SQL алиасах на macOS JDBC.
+     * names.length должен совпадать с model.getColumnCount().
      */
     protected void renameColumns(DefaultTableModel model, String[] names) {
-        for (int i = 0; i < Math.min(names.length, model.getColumnCount()); i++) {
-            model.getColumnName(i); // обращение для инициализации
-        }
-        // Пересоздать модель с новыми именами колонок
-        int cols = model.getColumnCount();
+        int cols = Math.min(names.length, model.getColumnCount());
         int rows = model.getRowCount();
-        Object[][] data = new Object[rows][cols];
+        Object[][] data = new Object[rows][model.getColumnCount()];
         for (int r = 0; r < rows; r++)
-            for (int c = 0; c < cols; c++)
+            for (int c = 0; c < model.getColumnCount(); c++)
                 data[r][c] = model.getValueAt(r, c);
 
-        model.setDataVector(data, names);
+        // Создать полный массив имён (остальные берём из оригинала)
+        Object[] allNames = new Object[model.getColumnCount()];
+        for (int c = 0; c < model.getColumnCount(); c++)
+            allNames[c] = c < names.length ? names[c] : model.getColumnName(c);
+
+        model.setDataVector(data, allNames);
     }
 }

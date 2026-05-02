@@ -1,33 +1,22 @@
 package backend.dao;
 
 import backend.model.Owner;
-import backend.util.DatabaseConnection;
+import backend.util.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO для таблицы Owners.
- * ВАЖНО: алиасы без кавычек — JDBC на macOS не обрабатывает кириллицу в двойных кавычках.
- * Переименование колонок делается в BaseDAO после получения ResultSet.
- */
 public class OwnerDAO extends BaseDAO {
 
     public DefaultTableModel getAll() throws SQLException {
-        // Простые алиасы без кавычек и кириллицы
-        DefaultTableModel model = executeQuery(
+        DefaultTableModel m = executeQuery(
                 "SELECT Familia, Name, Otchestvo FROM Owners ORDER BY Familia"
         );
-        // Переименовать колонки на русский
-        renameColumns(model, new String[]{"Фамилия", "Имя", "Отчество"});
-        return model;
-    }
-
-    public DefaultTableModel getAllWithId() throws SQLException {
-        return executeQuery(
-                "SELECT OwnerID, Familia, Name, Otchestvo FROM Owners ORDER BY OwnerID"
-        );
+        renameColumns(m, new String[]{
+                I18n.t("f.familia"), I18n.t("f.name"), I18n.t("f.otchestvo")
+        });
+        return m;
     }
 
     public List<Owner> getAllList() throws SQLException {
@@ -49,17 +38,13 @@ public class OwnerDAO extends BaseDAO {
     }
 
     public void insert(Owner o) throws SQLException {
-        executeInsertGetKey(
-                "INSERT INTO Owners(Familia, Name, Otchestvo) VALUES (?, ?, ?)",
-                o.getFamilia(), o.getName(), o.getOtchestvo()
-        );
+        executeInsertGetKey("INSERT INTO Owners(Familia, Name, Otchestvo) VALUES (?, ?, ?)",
+                o.getFamilia(), o.getName(), o.getOtchestvo());
     }
 
     public void update(Owner o) throws SQLException {
-        executeUpdate(
-                "UPDATE Owners SET Familia=?, Name=?, Otchestvo=? WHERE OwnerID=?",
-                o.getFamilia(), o.getName(), o.getOtchestvo(), o.getOwnerID()
-        );
+        executeUpdate("UPDATE Owners SET Familia=?, Name=?, Otchestvo=? WHERE OwnerID=?",
+                o.getFamilia(), o.getName(), o.getOtchestvo(), o.getOwnerID());
     }
 
     public void delete(int ownerId) throws SQLException {

@@ -1,7 +1,7 @@
 package backend.dao;
 
 import backend.model.*;
-import backend.util.DatabaseConnection;
+import backend.util.*;
 
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
@@ -10,10 +10,9 @@ import java.util.List;
 
 public class SimpleDAO extends BaseDAO {
 
-    // ======= Districts =======
     public DefaultTableModel getDistricts() throws SQLException {
         DefaultTableModel m = executeQuery("SELECT DistrictID, DistrictName FROM Districts ORDER BY DistrictName");
-        renameColumns(m, new String[]{"ID", "Название района"});
+        renameColumns(m, new String[]{"ID", I18n.t("col.district_name")});
         return m;
     }
     public List<District> getDistrictList() throws SQLException {
@@ -29,10 +28,9 @@ public class SimpleDAO extends BaseDAO {
     public void updateDistrict(int id, String name) throws SQLException { executeUpdate("UPDATE Districts SET DistrictName=? WHERE DistrictID=?", name, id); }
     public void deleteDistrict(int id) throws SQLException { executeUpdate("DELETE FROM Districts WHERE DistrictID=?", id); }
 
-    // ======= Service =======
     public DefaultTableModel getServices() throws SQLException {
         DefaultTableModel m = executeQuery("SELECT ServiceID, ServiceName FROM Service ORDER BY ServiceName");
-        renameColumns(m, new String[]{"ID", "Название услуги"});
+        renameColumns(m, new String[]{"ID", I18n.t("col.service_name")});
         return m;
     }
     public List<Service> getServiceList() throws SQLException {
@@ -48,10 +46,9 @@ public class SimpleDAO extends BaseDAO {
     public void updateService(int id, String name) throws SQLException { executeUpdate("UPDATE Service SET ServiceName=? WHERE ServiceID=?", name, id); }
     public void deleteService(int id) throws SQLException { executeUpdate("DELETE FROM Service WHERE ServiceID=?", id); }
 
-    // ======= Quality =======
     public DefaultTableModel getQualities() throws SQLException {
         DefaultTableModel m = executeQuery("SELECT QualityID, QualityName FROM Quality ORDER BY QualityName");
-        renameColumns(m, new String[]{"ID", "Качество"});
+        renameColumns(m, new String[]{"ID", I18n.t("f.quality")});
         return m;
     }
     public List<Quality> getQualityList() throws SQLException {
@@ -67,10 +64,9 @@ public class SimpleDAO extends BaseDAO {
     public void updateQuality(int id, String name) throws SQLException { executeUpdate("UPDATE Quality SET QualityName=? WHERE QualityID=?", name, id); }
     public void deleteQuality(int id) throws SQLException { executeUpdate("DELETE FROM Quality WHERE QualityID=?", id); }
 
-    // ======= Director =======
     public DefaultTableModel getDirectors() throws SQLException {
         DefaultTableModel m = executeQuery("SELECT Familia, Name, Otchestvo FROM Director ORDER BY Familia");
-        renameColumns(m, new String[]{"Фамилия", "Имя", "Отчество"});
+        renameColumns(m, new String[]{I18n.t("f.familia"), I18n.t("f.name"), I18n.t("f.otchestvo")});
         return m;
     }
     public List<Director> getDirectorList() throws SQLException {
@@ -86,12 +82,9 @@ public class SimpleDAO extends BaseDAO {
     public void updateDirector(Director d) throws SQLException { executeUpdate("UPDATE Director SET Familia=?,Name=?,Otchestvo=? WHERE DirectorID=?", d.getFamilia(), d.getName(), d.getOtchestvo(), d.getDirectorId()); }
     public void deleteDirector(int id) throws SQLException { executeUpdate("DELETE FROM Director WHERE DirectorID=?", id); }
 
-    // ======= Studio =======
     public DefaultTableModel getStudios() throws SQLException {
-        DefaultTableModel m = executeQuery(
-                "SELECT S.StudioName, C.CountryName FROM Studio S LEFT JOIN Country C ON C.CountryID=S.CountryID ORDER BY S.StudioName"
-        );
-        renameColumns(m, new String[]{"Студия", "Страна"});
+        DefaultTableModel m = executeQuery("SELECT S.StudioName, C.CountryName FROM Studio S LEFT JOIN Country C ON C.CountryID=S.CountryID ORDER BY S.StudioName");
+        renameColumns(m, new String[]{I18n.t("f.studio"), I18n.t("f.country")});
         return m;
     }
     public List<Studio> getStudioList() throws SQLException {
@@ -107,10 +100,9 @@ public class SimpleDAO extends BaseDAO {
     public void updateStudio(Studio s) throws SQLException { executeUpdate("UPDATE Studio SET StudioName=?, CountryID=? WHERE StudioID=?", s.getStudioName(), s.getCountryId(), s.getStudioId()); }
     public void deleteStudio(int id) throws SQLException { executeUpdate("DELETE FROM Studio WHERE StudioID=?", id); }
 
-    // ======= Country =======
     public DefaultTableModel getCountries() throws SQLException {
         DefaultTableModel m = executeQuery("SELECT CountryName FROM Country ORDER BY CountryName");
-        renameColumns(m, new String[]{"Страна"});
+        renameColumns(m, new String[]{I18n.t("f.country")});
         return m;
     }
     public List<Country> getCountryList() throws SQLException {
