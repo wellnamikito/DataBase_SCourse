@@ -5,6 +5,7 @@ import backend.model.*;
 import frontend.UI.Dialogs.*;
 import frontend.UI.Panels.*;
 import backend.util.DatabaseConnection;
+import backend.util.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,125 +13,163 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Главное окно приложения "Видеопрокат".
+ * Главное окно приложения «Видеопрокат».
  *
- * Структура:
- * - JMenuBar: Таблицы | Представления | Запросы | Диаграммы | Отчёты
- * - Центр: CardLayout с панелями
- * - Строка состояния: статус подключения
+ * Содержит:
+ * - JMenuBar с навигацией
+ * - Toolbar: тумблер темы 🌙/☀️ + переключатель языка RU/EN
+ * - CardLayout для переключения панелей
+ * - Строка состояния (статус БД)
  */
 public class MainFrame extends JFrame {
 
     // DAO
-    private final OwnerDAO   ownerDAO   = new OwnerDAO();
-    private final VideoDAO   videoDAO   = new VideoDAO();
-    private final FilmDAO    filmDAO    = new FilmDAO();
+    private final OwnerDAO    ownerDAO    = new OwnerDAO();
+    private final VideoDAO    videoDAO    = new VideoDAO();
+    private final FilmDAO     filmDAO     = new FilmDAO();
     private final CassetteDAO cassetteDAO = new CassetteDAO();
-    private final ReceiptDAO  receiptDAO = new ReceiptDAO();
-    private final SimpleDAO   simpleDAO  = new SimpleDAO();
+    private final ReceiptDAO  receiptDAO  = new ReceiptDAO();
+    private final SimpleDAO   simpleDAO   = new SimpleDAO();
 
-    // Центральная панель с CardLayout
+    // Карточки
     private final JPanel cardPanel = new JPanel(new CardLayout());
-    private final JLabel statusBar = new JLabel(" 🔌 Нет подключения");
 
     // Ключи карточек
-    private static final String CARD_OWNERS    = "owners";
-    private static final String CARD_VIDEO     = "video";
-    private static final String CARD_FILM      = "film";
-    private static final String CARD_CASSETTE  = "cassette";
-    private static final String CARD_RECEIPT   = "receipt";
-    private static final String CARD_DISTRICT  = "district";
-    private static final String CARD_SERVICE   = "service";
-    private static final String CARD_QUALITY   = "quality";
-    private static final String CARD_DIRECTOR  = "director";
-    private static final String CARD_STUDIO    = "studio";
-    private static final String CARD_COUNTRY   = "country";
-    private static final String CARD_MASTER    = "master_detail";
-    private static final String CARD_VW_FILMS  = "vw_films";
-    private static final String CARD_VW_REVENUE= "vw_revenue";
-    private static final String CARD_VW_PEOPLE = "vw_people";
-    private static final String CARD_VW_SIMPLE = "vw_video_simple";
-    private static final String CARD_VW_CATEG  = "vw_receipt_category";
-    private static final String CARD_QUERIES   = "queries";
-    private static final String CARD_CHARTS    = "charts";
-    private static final String CARD_REPORTS   = "reports";
+    private static final String C_OWNERS   = "owners";
+    private static final String C_VIDEO    = "video";
+    private static final String C_FILM     = "film";
+    private static final String C_CASSETTE = "cassette";
+    private static final String C_RECEIPT  = "receipt";
+    private static final String C_DISTRICT = "district";
+    private static final String C_SERVICE  = "service";
+    private static final String C_QUALITY  = "quality";
+    private static final String C_DIRECTOR = "director";
+    private static final String C_STUDIO   = "studio";
+    private static final String C_COUNTRY  = "country";
+    private static final String C_MASTER   = "master";
+    private static final String C_VW_FILMS = "vw_films";
+    private static final String C_VW_REV   = "vw_revenue";
+    private static final String C_VW_PEOPLE= "vw_people";
+    private static final String C_VW_SIMPLE= "vw_simple";
+    private static final String C_VW_CATEG = "vw_category";
+    private static final String C_QUERIES  = "queries";
+    private static final String C_CHARTS   = "charts";
+    private static final String C_REPORTS  = "reports";
 
-    // Таблица-панели
+    // Панели таблиц
     private TablePanel pOwners, pVideo, pFilm, pCassette, pReceipt;
     private TablePanel pDistrict, pService, pQuality, pDirector, pStudio, pCountry;
     private TablePanel pVwFilms, pVwRevenue, pVwPeople, pVwCateg;
 
+    // Строка состояния
+    private JLabel statusBar;
+
+    // Toolbar — тема и язык
+    private JToggleButton btnTheme;
+    private JComboBox<String> langCombo;
+    private JToolBar toolBar;
+
+    // Меню — для обновления текстов при смене языка
+    private JMenuBar menuBar;
+    private JMenu menuTables, menuViews, menuQueries, menuCharts, menuReports, menuHelp;
+
     public MainFrame() {
-        super("🎬 Видеопрокат — Информационная система");
+        super("🎬 Видеопрокат — ИС");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1200, 750);
-        setMinimumSize(new Dimension(900, 600));
+        setSize(1280, 800);
+        setMinimumSize(new Dimension(1000, 650));
         setLocationRelativeTo(null);
 
+        buildToolBar();
         buildMenu();
         buildCards();
         buildStatusBar();
 
-        // Стартовый экран
-        showCard(CARD_MASTER);
-
-        // Проверка подключения
+        showCard(C_MASTER);
         checkConnection();
+
+        // При смене языка — перестроить меню
+        I18n.addListener(this::rebuildMenuTexts);
+        ThemeManager.getInstance().addListener(this::applyFrameTheme);
+        applyFrameTheme();
+    }
+
+    // ======================== TOOLBAR ========================
+
+    private void buildToolBar() {
+        toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+        toolBar.setRollover(true);
+        toolBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0,
+                ThemeManager.borderColor()));
+
+        toolBar.add(Box.createHorizontalGlue());
+
+        // Тумблер темы
+        btnTheme = new JToggleButton(
+                ThemeManager.getInstance().isDark() ? "☀️  Светлая" : "🌙  Тёмная");
+        btnTheme.setSelected(ThemeManager.getInstance().isDark());
+        btnTheme.setFocusPainted(false);
+        btnTheme.setBorderPainted(false);
+        btnTheme.setOpaque(true);
+        btnTheme.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnTheme.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnTheme.setBorder(BorderFactory.createEmptyBorder(5, 14, 5, 14));
+        btnTheme.addActionListener(e -> {
+            ThemeManager.getInstance().toggle();
+            boolean dark = ThemeManager.getInstance().isDark();
+            btnTheme.setText(dark ? "☀️  " + I18n.t("settings.light") : "🌙  " + I18n.t("settings.dark"));
+        });
+        toolBar.add(btnTheme);
+        toolBar.addSeparator(new Dimension(12, 0));
+
+        // Переключатель языка
+        JLabel lblLang = new JLabel(I18n.t("settings.lang") + " ");
+        lblLang.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        toolBar.add(lblLang);
+
+        langCombo = new JComboBox<>(new String[]{"🇷🇺 Русский", "🇬🇧 English"});
+        langCombo.setSelectedIndex(I18n.isRu() ? 0 : 1);
+        langCombo.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        langCombo.setPreferredSize(new Dimension(140, 28));
+        langCombo.setMaximumSize(new Dimension(140, 28));
+        langCombo.setFocusable(false);
+        langCombo.addActionListener(e -> {
+            I18n.Lang lang = langCombo.getSelectedIndex() == 0 ? I18n.Lang.RU : I18n.Lang.EN;
+            I18n.setLang(lang);
+            boolean dark = ThemeManager.getInstance().isDark();
+            btnTheme.setText(dark ? "☀️  " + I18n.t("settings.light")
+                    : "🌙  " + I18n.t("settings.dark"));
+        });
+        toolBar.add(langCombo);
+        toolBar.addSeparator(new Dimension(10, 0));
+
+        add(toolBar, BorderLayout.NORTH);
     }
 
     // ======================== МЕНЮ ========================
 
     private void buildMenu() {
-        JMenuBar menuBar = new JMenuBar();
+        menuBar = new JMenuBar();
+        menuBar.setBorder(BorderFactory.createEmptyBorder());
 
-        // --- Таблицы ---
-        JMenu menuTables = menu("📂 Таблицы");
-        menuTables.add(menuItem("👥 Владельцы",    () -> { showCard(CARD_OWNERS);   refreshOwners(); }));
-        menuTables.add(menuItem("🏪 Видеосалоны",  () -> { showCard(CARD_VIDEO);    refreshVideo(); }));
-        menuTables.add(menuItem("🎬 Фильмы",       () -> { showCard(CARD_FILM);     refreshFilm(); }));
-        menuTables.add(menuItem("📼 Кассеты",      () -> { showCard(CARD_CASSETTE); refreshCassette(); }));
-        menuTables.add(menuItem("🧾 Квитанции",    () -> { showCard(CARD_RECEIPT);  refreshReceipt(); }));
-        menuTables.addSeparator();
-        menuTables.add(menuItem("📍 Районы",       () -> { showCard(CARD_DISTRICT); refreshDistrict(); }));
-        menuTables.add(menuItem("🔧 Услуги",       () -> { showCard(CARD_SERVICE);  refreshService(); }));
-        menuTables.add(menuItem("⭐ Качество",      () -> { showCard(CARD_QUALITY);  refreshQuality(); }));
-        menuTables.add(menuItem("🎭 Режиссёры",    () -> { showCard(CARD_DIRECTOR); refreshDirector(); }));
-        menuTables.add(menuItem("🏭 Студии",       () -> { showCard(CARD_STUDIO);   refreshStudio(); }));
-        menuTables.add(menuItem("🌍 Страны",       () -> { showCard(CARD_COUNTRY);  refreshCountry(); }));
-        menuTables.addSeparator();
-        menuTables.add(menuItem("🔗 Master-Detail (Video + Cassette)", () -> showCard(CARD_MASTER)));
+        menuTables  = new JMenu(I18n.t("menu.tables"));
+        menuViews   = new JMenu(I18n.t("menu.views"));
+        menuQueries = new JMenu(I18n.t("menu.queries"));
+        menuCharts  = new JMenu(I18n.t("menu.charts"));
+        menuReports = new JMenu(I18n.t("menu.reports"));
+        menuHelp    = new JMenu(I18n.t("menu.help"));
 
-        // --- Представления ---
-        JMenu menuViews = menu("👁️ Представления");
-        menuViews.add(menuItem("vw_films_full",       () -> { showCard(CARD_VW_FILMS);   refreshVwFilms(); }));
-        menuViews.add(menuItem("vw_total_revenue",    () -> { showCard(CARD_VW_REVENUE); refreshVwRevenue(); }));
-        menuViews.add(menuItem("vw_people",           () -> { showCard(CARD_VW_PEOPLE);  refreshVwPeople(); }));
-        menuViews.add(menuItem("vw_receipt_category", () -> { showCard(CARD_VW_CATEG);   refreshVwCateg(); }));
-        menuViews.add(menuItem("✏️ vw_video_simple (обновляемое)", () -> showCard(CARD_VW_SIMPLE)));
+        Font menuFont = new Font("Segoe UI", Font.PLAIN, 13);
+        for (JMenu m : new JMenu[]{menuTables, menuViews, menuQueries, menuCharts, menuReports, menuHelp})
+            m.setFont(menuFont);
 
-        // --- Запросы ---
-        JMenu menuQueries = menu("🔍 Запросы");
-        menuQueries.add(menuItem("Выполнить SQL-запросы из ТЗ", () -> showCard(CARD_QUERIES)));
-
-        // --- Диаграммы ---
-        JMenu menuCharts = menu("📊 Диаграммы");
-        menuCharts.add(menuItem("Открыть диаграммы", () -> showCard(CARD_CHARTS)));
-
-        // --- Отчёты ---
-        JMenu menuReports = menu("📋 Отчёты");
-        menuReports.add(menuItem("Открыть отчёты", () -> showCard(CARD_REPORTS)));
-
-        // --- О программе ---
-        JMenu menuHelp = menu("❓ Справка");
-        menuHelp.add(menuItem("О программе", () ->
-                JOptionPane.showMessageDialog(this,
-                        "<html><b>Видеопрокат — ИС</b><br>" +
-                                "Архитектура: MVC + DAO<br>" +
-                                "СУБД: PostgreSQL<br>" +
-                                "UI: Java Swing<br>" +
-                                "Charts: JFreeChart<br>" +
-                                "Export: Apache POI</html>",
-                        "О программе", JOptionPane.INFORMATION_MESSAGE)));
+        fillMenuTables();
+        fillMenuViews();
+        fillMenuQueries();
+        fillMenuCharts();
+        fillMenuReports();
+        fillMenuHelp();
 
         menuBar.add(menuTables);
         menuBar.add(menuViews);
@@ -142,13 +181,74 @@ public class MainFrame extends JFrame {
         setJMenuBar(menuBar);
     }
 
-    private JMenu menu(String text) {
-        JMenu m = new JMenu(text);
-        m.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        return m;
+    private void fillMenuTables() {
+        menuTables.removeAll();
+        menuTables.add(mi(I18n.t("table.owners"),      () -> { showCard(C_OWNERS);   refreshOwners(); }));
+        menuTables.add(mi(I18n.t("table.video"),       () -> { showCard(C_VIDEO);    refreshVideo(); }));
+        menuTables.add(mi(I18n.t("table.film"),        () -> { showCard(C_FILM);     refreshFilm(); }));
+        menuTables.add(mi(I18n.t("table.cassette"),    () -> { showCard(C_CASSETTE); refreshCassette(); }));
+        menuTables.add(mi(I18n.t("table.receipt"),     () -> { showCard(C_RECEIPT);  refreshReceipt(); }));
+        menuTables.addSeparator();
+        menuTables.add(mi(I18n.t("table.districts"),   () -> { showCard(C_DISTRICT); refreshDistrict(); }));
+        menuTables.add(mi(I18n.t("table.service"),     () -> { showCard(C_SERVICE);  refreshService(); }));
+        menuTables.add(mi(I18n.t("table.quality"),     () -> { showCard(C_QUALITY);  refreshQuality(); }));
+        menuTables.add(mi(I18n.t("table.director"),    () -> { showCard(C_DIRECTOR); refreshDirector(); }));
+        menuTables.add(mi(I18n.t("table.studio"),      () -> { showCard(C_STUDIO);   refreshStudio(); }));
+        menuTables.add(mi(I18n.t("table.country"),     () -> { showCard(C_COUNTRY);  refreshCountry(); }));
+        menuTables.addSeparator();
+        menuTables.add(mi(I18n.t("table.masterdetail"),() -> showCard(C_MASTER)));
     }
 
-    private JMenuItem menuItem(String text, Runnable action) {
+    private void fillMenuViews() {
+        menuViews.removeAll();
+        menuViews.add(mi(I18n.t("view.films_full"), () -> { showCard(C_VW_FILMS); refreshVwFilms(); }));
+        menuViews.add(mi(I18n.t("view.revenue"),    () -> { showCard(C_VW_REV);   refreshVwRevenue(); }));
+        menuViews.add(mi(I18n.t("view.people"),     () -> { showCard(C_VW_PEOPLE);refreshVwPeople(); }));
+        menuViews.add(mi(I18n.t("view.category"),   () -> { showCard(C_VW_CATEG); refreshVwCateg(); }));
+        menuViews.add(mi(I18n.t("view.simple"),     () -> showCard(C_VW_SIMPLE)));
+    }
+
+    private void fillMenuQueries() {
+        menuQueries.removeAll();
+        menuQueries.add(mi(I18n.t("menu.queries"), () -> showCard(C_QUERIES)));
+    }
+
+    private void fillMenuCharts() {
+        menuCharts.removeAll();
+        menuCharts.add(mi(I18n.t("menu.charts"), () -> showCard(C_CHARTS)));
+    }
+
+    private void fillMenuReports() {
+        menuReports.removeAll();
+        menuReports.add(mi(I18n.t("menu.reports"), () -> showCard(C_REPORTS)));
+    }
+
+    private void fillMenuHelp() {
+        menuHelp.removeAll();
+        menuHelp.add(mi(I18n.t("menu.about"), () ->
+                JOptionPane.showMessageDialog(this,
+                        I18n.t("about.text"), I18n.t("menu.about"), JOptionPane.INFORMATION_MESSAGE)));
+    }
+
+    /** Пересобрать тексты меню при смене языка */
+    private void rebuildMenuTexts() {
+        menuTables.setText(I18n.t("menu.tables"));
+        menuViews.setText(I18n.t("menu.views"));
+        menuQueries.setText(I18n.t("menu.queries"));
+        menuCharts.setText(I18n.t("menu.charts"));
+        menuReports.setText(I18n.t("menu.reports"));
+        menuHelp.setText(I18n.t("menu.help"));
+        fillMenuTables();
+        fillMenuViews();
+        fillMenuQueries();
+        fillMenuCharts();
+        fillMenuReports();
+        fillMenuHelp();
+        menuBar.revalidate();
+        menuBar.repaint();
+    }
+
+    private JMenuItem mi(String text, Runnable action) {
         JMenuItem item = new JMenuItem(text);
         item.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         item.addActionListener(e -> action.run());
@@ -158,26 +258,23 @@ public class MainFrame extends JFrame {
     // ======================== КАРТОЧКИ ========================
 
     private void buildCards() {
-        // Таблицы с CRUD
-        pOwners   = new TablePanel("Владельцы (Owners)", true);
-        pVideo    = new TablePanel("Видеосалоны (Video)", true);
-        pFilm     = new TablePanel("Фильмы (Film)", true);
-        pCassette = new TablePanel("Кассеты (Cassette)", true);
-        pReceipt  = new TablePanel("Квитанции (Receipt)", true);
-        pDistrict = new TablePanel("Районы (Districts)", true);
-        pService  = new TablePanel("Услуги (Service)", true);
-        pQuality  = new TablePanel("Качество (Quality)", true);
-        pDirector = new TablePanel("Режиссёры (Director)", true);
-        pStudio   = new TablePanel("Студии (Studio)", true);
-        pCountry  = new TablePanel("Страны (Country)", true);
+        pOwners   = new TablePanel("panel.owners",   true);
+        pVideo    = new TablePanel("panel.video",    true);
+        pFilm     = new TablePanel("panel.film",     true);
+        pCassette = new TablePanel("panel.cassette", true);
+        pReceipt  = new TablePanel("panel.receipt",  true);
+        pDistrict = new TablePanel("panel.districts",true);
+        pService  = new TablePanel("panel.service",  true);
+        pQuality  = new TablePanel("panel.quality",  true);
+        pDirector = new TablePanel("panel.director", true);
+        pStudio   = new TablePanel("panel.studio",   true);
+        pCountry  = new TablePanel("panel.country",  true);
 
-        // Представления (без CRUD)
-        pVwFilms   = new TablePanel("Представление: vw_films_full", false);
-        pVwRevenue = new TablePanel("Представление: vw_total_revenue", false);
-        pVwPeople  = new TablePanel("Представление: vw_people", false);
-        pVwCateg   = new TablePanel("Представление: vw_receipt_category", false);
+        pVwFilms   = new TablePanel("view.films_full", false);
+        pVwRevenue = new TablePanel("view.revenue",    false);
+        pVwPeople  = new TablePanel("view.people",     false);
+        pVwCateg   = new TablePanel("view.category",   false);
 
-        // CRUD-листенеры
         wireOwnerCrud();
         wireVideoCrud();
         wireFilmCrud();
@@ -185,44 +282,85 @@ public class MainFrame extends JFrame {
         wireReceiptCrud();
         wireSimpleCrud();
 
-        // Специальные панели
         MasterDetailPanel masterDetail = new MasterDetailPanel();
         ViewSimplePanel   viewSimple   = new ViewSimplePanel();
         QueryPanel        queryPanel   = new QueryPanel();
         DiagramPanel      chartPanel   = new DiagramPanel();
         ReportPanel       reportPanel  = new ReportPanel();
 
-        // Добавить карточки
-        cardPanel.add(pOwners,    CARD_OWNERS);
-        cardPanel.add(pVideo,     CARD_VIDEO);
-        cardPanel.add(pFilm,      CARD_FILM);
-        cardPanel.add(pCassette,  CARD_CASSETTE);
-        cardPanel.add(pReceipt,   CARD_RECEIPT);
-        cardPanel.add(pDistrict,  CARD_DISTRICT);
-        cardPanel.add(pService,   CARD_SERVICE);
-        cardPanel.add(pQuality,   CARD_QUALITY);
-        cardPanel.add(pDirector,  CARD_DIRECTOR);
-        cardPanel.add(pStudio,    CARD_STUDIO);
-        cardPanel.add(pCountry,   CARD_COUNTRY);
-        cardPanel.add(masterDetail, CARD_MASTER);
-        cardPanel.add(pVwFilms,   CARD_VW_FILMS);
-        cardPanel.add(pVwRevenue, CARD_VW_REVENUE);
-        cardPanel.add(pVwPeople,  CARD_VW_PEOPLE);
-        cardPanel.add(viewSimple, CARD_VW_SIMPLE);
-        cardPanel.add(pVwCateg,   CARD_VW_CATEG);
-        cardPanel.add(queryPanel, CARD_QUERIES);
-        cardPanel.add(chartPanel, CARD_CHARTS);
-        cardPanel.add(reportPanel, CARD_REPORTS);
+        cardPanel.setBackground(ThemeManager.bgPanel());
+        cardPanel.add(pOwners,    C_OWNERS);
+        cardPanel.add(pVideo,     C_VIDEO);
+        cardPanel.add(pFilm,      C_FILM);
+        cardPanel.add(pCassette,  C_CASSETTE);
+        cardPanel.add(pReceipt,   C_RECEIPT);
+        cardPanel.add(pDistrict,  C_DISTRICT);
+        cardPanel.add(pService,   C_SERVICE);
+        cardPanel.add(pQuality,   C_QUALITY);
+        cardPanel.add(pDirector,  C_DIRECTOR);
+        cardPanel.add(pStudio,    C_STUDIO);
+        cardPanel.add(pCountry,   C_COUNTRY);
+        cardPanel.add(masterDetail, C_MASTER);
+        cardPanel.add(pVwFilms,   C_VW_FILMS);
+        cardPanel.add(pVwRevenue, C_VW_REV);
+        cardPanel.add(pVwPeople,  C_VW_PEOPLE);
+        cardPanel.add(viewSimple, C_VW_SIMPLE);
+        cardPanel.add(pVwCateg,   C_VW_CATEG);
+        cardPanel.add(queryPanel, C_QUERIES);
+        cardPanel.add(chartPanel, C_CHARTS);
+        cardPanel.add(reportPanel,C_REPORTS);
 
         add(cardPanel, BorderLayout.CENTER);
     }
 
     private void buildStatusBar() {
+        statusBar = new JLabel("  " + I18n.t("msg.no_conn"));
         statusBar.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        statusBar.setBorder(BorderFactory.createEmptyBorder(2, 8, 2, 8));
         statusBar.setOpaque(true);
-        statusBar.setBackground(new Color(240, 240, 240));
+        statusBar.setBorder(BorderFactory.createEmptyBorder(3, 8, 3, 8));
         add(statusBar, BorderLayout.SOUTH);
+    }
+
+    private void applyFrameTheme() {
+        Color bgPanel  = ThemeManager.bgPanel();
+        Color bgHeader = ThemeManager.bgHeader();
+        Color fgText   = ThemeManager.fgText();
+        Color fgDim    = ThemeManager.fgDim();
+        Color border   = ThemeManager.borderColor();
+        Color bgComp   = ThemeManager.bgComponent();
+
+        getContentPane().setBackground(bgPanel);
+        cardPanel.setBackground(bgPanel);
+
+        if (statusBar != null) {
+            statusBar.setBackground(bgHeader);
+            statusBar.setForeground(fgDim);
+            statusBar.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createMatteBorder(1, 0, 0, 0, border),
+                    BorderFactory.createEmptyBorder(3, 8, 3, 8)));
+        }
+
+        if (toolBar != null) {
+            toolBar.setBackground(bgHeader);
+            toolBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, border));
+            for (Component c : toolBar.getComponents()) {
+                if (c instanceof JLabel) {
+                    ((JLabel) c).setForeground(fgText);
+                    c.setBackground(bgHeader);
+                    ((JLabel) c).setOpaque(true);
+                }
+                if (c instanceof JComboBox) {
+                    c.setBackground(bgComp);
+                    c.setForeground(fgText);
+                }
+            }
+            if (btnTheme != null) {
+                boolean dark = ThemeManager.getInstance().isDark();
+                btnTheme.setBackground(dark ? new Color(59, 130, 246) : new Color(245, 158, 11));
+                btnTheme.setForeground(Color.WHITE);
+            }
+        }
+        repaint();
     }
 
     private void showCard(String key) {
@@ -241,9 +379,12 @@ public class MainFrame extends JFrame {
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
                 try {
-                    int id = (int) pOwners.getSelectedValue(0);
+                    // Получаем по индексу из full списка (pOwners показывает без ID)
                     List<Owner> list = ownerDAO.getAllList();
-                    Owner owner = list.stream().filter(o -> o.getOwnerID() == id).findFirst().orElse(null);
+                    // Ищем совпадение по фамилии из выбранной строки
+                    String fam = (String) pOwners.getSelectedValue(0);
+                    Owner owner = list.stream()
+                            .filter(o -> o.getFamilia().equals(fam)).findFirst().orElse(null);
                     OwnerEditDialog d = new OwnerEditDialog(MainFrame.this, owner);
                     d.setVisible(true);
                     if (d.isSaved()) refreshOwners();
@@ -251,9 +392,17 @@ public class MainFrame extends JFrame {
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pOwners.getSelectedValue(0);
-                if (confirm("Удалить владельца ID=" + id + "?")) {
-                    try { ownerDAO.delete(id); refreshOwners(); } catch (SQLException e) { dbErr(e); }
+                String fam = (String) pOwners.getSelectedValue(0);
+                if (confirm(I18n.t("msg.confirm_delete") + " (" + fam + ")")) {
+                    try {
+                        List<Owner> list = ownerDAO.getAllList();
+                        list.stream().filter(o -> o.getFamilia().equals(fam))
+                                .findFirst().ifPresent(o -> {
+                                    try { ownerDAO.delete(o.getOwnerID()); }
+                                    catch (SQLException e) { dbErr(e); }
+                                });
+                        refreshOwners();
+                    } catch (SQLException e) { dbErr(e); }
                 }
             }
             @Override public void onRefresh() { refreshOwners(); }
@@ -268,18 +417,29 @@ public class MainFrame extends JFrame {
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
+                // Название в первой колонке — найдём Video по caption
+                String caption = (String) pVideo.getSelectedValue(0);
                 try {
-                    int id = (int) pVideo.getSelectedValue(0);
-                    Video v = videoDAO.getById(id);
+                    Video v = videoDAO.getAllList().stream()
+                            .filter(x -> x.getCaption().equals(caption)).findFirst().orElse(null);
                     VideoEditDialog d = new VideoEditDialog(MainFrame.this, v);
                     d.setVisible(true); if (d.isSaved()) refreshVideo();
                 } catch (SQLException e) { dbErr(e); }
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pVideo.getSelectedValue(0);
-                if (confirm("Удалить видеосалон ID=" + id + "?"))
-                    try { videoDAO.delete(id); refreshVideo(); } catch (SQLException e) { dbErr(e); }
+                String caption = (String) pVideo.getSelectedValue(0);
+                if (confirm(I18n.t("msg.confirm_delete") + " (" + caption + ")")) {
+                    try {
+                        videoDAO.getAllList().stream()
+                                .filter(x -> x.getCaption().equals(caption))
+                                .findFirst().ifPresent(v -> {
+                                    try { videoDAO.delete(v.getVideoId()); }
+                                    catch (SQLException e) { dbErr(e); }
+                                });
+                        refreshVideo();
+                    } catch (SQLException e) { dbErr(e); }
+                }
             }
             @Override public void onRefresh() { refreshVideo(); }
         });
@@ -293,18 +453,28 @@ public class MainFrame extends JFrame {
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
+                String caption = (String) pFilm.getSelectedValue(0);
                 try {
-                    int id = (int) pFilm.getSelectedValue(0);
-                    Film f = filmDAO.getAllList().stream().filter(x -> x.getFilmId()==id).findFirst().orElse(null);
+                    Film f = filmDAO.getAllList().stream()
+                            .filter(x -> x.getCaption().equals(caption)).findFirst().orElse(null);
                     FilmEditDialog d = new FilmEditDialog(MainFrame.this, f);
                     d.setVisible(true); if (d.isSaved()) refreshFilm();
                 } catch (SQLException e) { dbErr(e); }
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pFilm.getSelectedValue(0);
-                if (confirm("Удалить фильм ID=" + id + "?"))
-                    try { filmDAO.delete(id); refreshFilm(); } catch (SQLException e) { dbErr(e); }
+                String caption = (String) pFilm.getSelectedValue(0);
+                if (confirm(I18n.t("msg.confirm_delete") + " (" + caption + ")")) {
+                    try {
+                        filmDAO.getAllList().stream()
+                                .filter(x -> x.getCaption().equals(caption))
+                                .findFirst().ifPresent(f -> {
+                                    try { filmDAO.delete(f.getFilmId()); }
+                                    catch (SQLException e) { dbErr(e); }
+                                });
+                        refreshFilm();
+                    } catch (SQLException e) { dbErr(e); }
+                }
             }
             @Override public void onRefresh() { refreshFilm(); }
         });
@@ -318,15 +488,13 @@ public class MainFrame extends JFrame {
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pCassette.getSelectedValue(0);
-                CassetteEditDialog d = new CassetteEditDialog(MainFrame.this, id, 0);
-                d.setVisible(true); if (d.isSaved()) refreshCassette();
+                JOptionPane.showMessageDialog(MainFrame.this,
+                        "Редактирование кассеты доступно в Master-Detail панели");
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pCassette.getSelectedValue(0);
-                if (confirm("Удалить кассету ID=" + id + "?"))
-                    try { cassetteDAO.delete(id); refreshCassette(); } catch (SQLException e) { dbErr(e); }
+                JOptionPane.showMessageDialog(MainFrame.this,
+                        "Удаление кассеты доступно в Master-Detail панели");
             }
             @Override public void onRefresh() { refreshCassette(); }
         });
@@ -340,44 +508,58 @@ public class MainFrame extends JFrame {
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
-                // Упрощённо — создаём новый объект Receipt с ID
+                // Первая колонка — № Чека
+                Object idVal = pReceipt.getSelectedValue(0);
                 Receipt r = new Receipt();
-                r.setReceiptId((int) pReceipt.getSelectedValue(0));
+                r.setReceiptId(((Number) idVal).intValue());
                 ReceiptEditDialog d = new ReceiptEditDialog(MainFrame.this, r);
                 d.setVisible(true); if (d.isSaved()) refreshReceipt();
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pReceipt.getSelectedValue(0);
-                if (confirm("Удалить квитанцию ID=" + id + "?"))
-                    try { receiptDAO.delete(id); refreshReceipt(); } catch (SQLException e) { dbErr(e); }
+                Object idVal = pReceipt.getSelectedValue(0);
+                int id = ((Number) idVal).intValue();
+                if (confirm(I18n.t("msg.confirm_delete") + " (№" + id + ")")) {
+                    try { receiptDAO.delete(id); refreshReceipt(); }
+                    catch (SQLException e) { dbErr(e); }
+                }
             }
             @Override public void onRefresh() { refreshReceipt(); }
         });
     }
 
-    /** Справочники: Район, Услуга, Качество, Режиссёр, Студия, Страна */
     private void wireSimpleCrud() {
-        // District
+        // Districts
         pDistrict.setCrudListener(new TablePanel.CrudListener() {
             @Override public void onAdd() {
-                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, "Добавить район", null,
-                        name -> { try { simpleDAO.insertDistrict(name); } catch (SQLException e) { dbErr(e); } });
+                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.add_item"), null,
+                        name -> { try { simpleDAO.insertDistrict(name); } catch (SQLException e) { dbErr(e); }});
                 d.setVisible(true); if (d.isSaved()) refreshDistrict();
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pDistrict.getSelectedValue(0);
-                String cur = (String) pDistrict.getSelectedValue(1);
-                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, "Редактировать район", cur,
-                        name -> { try { simpleDAO.updateDistrict(id, name); } catch (SQLException e) { dbErr(e); } });
-                d.setVisible(true); if (d.isSaved()) refreshDistrict();
+                String cur = (String) pDistrict.getSelectedValue(0);
+                try {
+                    int id = simpleDAO.getDistrictList().stream()
+                            .filter(x -> x.getDistrictName().equals(cur))
+                            .findFirst().map(x -> x.getDistrictId()).orElse(-1);
+                    SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.edit_item"), cur,
+                            name -> { try { simpleDAO.updateDistrict(id, name); } catch (SQLException e) { dbErr(e); }});
+                    d.setVisible(true); if (d.isSaved()) refreshDistrict();
+                } catch (SQLException e) { dbErr(e); }
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pDistrict.getSelectedValue(0);
-                if (confirm("Удалить район ID=" + id + "?"))
-                    try { simpleDAO.deleteDistrict(id); refreshDistrict(); } catch (SQLException e) { dbErr(e); }
+                String cur = (String) pDistrict.getSelectedValue(0);
+                if (confirm(I18n.t("msg.confirm_delete") + " (" + cur + ")")) {
+                    try {
+                        int id = simpleDAO.getDistrictList().stream()
+                                .filter(x -> x.getDistrictName().equals(cur))
+                                .findFirst().map(x -> x.getDistrictId()).orElse(-1);
+                        simpleDAO.deleteDistrict(id);
+                        refreshDistrict();
+                    } catch (SQLException e) { dbErr(e); }
+                }
             }
             @Override public void onRefresh() { refreshDistrict(); }
         });
@@ -385,23 +567,34 @@ public class MainFrame extends JFrame {
         // Service
         pService.setCrudListener(new TablePanel.CrudListener() {
             @Override public void onAdd() {
-                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, "Добавить услугу", null,
-                        name -> { try { simpleDAO.insertService(name); } catch (SQLException e) { dbErr(e); } });
+                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.add_item"), null,
+                        name -> { try { simpleDAO.insertService(name); } catch (SQLException e) { dbErr(e); }});
                 d.setVisible(true); if (d.isSaved()) refreshService();
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pService.getSelectedValue(0);
-                String cur = (String) pService.getSelectedValue(1);
-                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, "Редактировать услугу", cur,
-                        name -> { try { simpleDAO.updateService(id, name); } catch (SQLException e) { dbErr(e); } });
-                d.setVisible(true); if (d.isSaved()) refreshService();
+                String cur = (String) pService.getSelectedValue(0);
+                try {
+                    int id = simpleDAO.getServiceList().stream()
+                            .filter(x -> x.getServiceName().equals(cur))
+                            .findFirst().map(x -> x.getServiceId()).orElse(-1);
+                    SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.edit_item"), cur,
+                            name -> { try { simpleDAO.updateService(id, name); } catch (SQLException e) { dbErr(e); }});
+                    d.setVisible(true); if (d.isSaved()) refreshService();
+                } catch (SQLException e) { dbErr(e); }
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pService.getSelectedValue(0);
-                if (confirm("Удалить услугу ID=" + id + "?"))
-                    try { simpleDAO.deleteService(id); refreshService(); } catch (SQLException e) { dbErr(e); }
+                String cur = (String) pService.getSelectedValue(0);
+                if (confirm(I18n.t("msg.confirm_delete") + " (" + cur + ")")) {
+                    try {
+                        int id = simpleDAO.getServiceList().stream()
+                                .filter(x -> x.getServiceName().equals(cur))
+                                .findFirst().map(x -> x.getServiceId()).orElse(-1);
+                        simpleDAO.deleteService(id);
+                        refreshService();
+                    } catch (SQLException e) { dbErr(e); }
+                }
             }
             @Override public void onRefresh() { refreshService(); }
         });
@@ -409,23 +602,34 @@ public class MainFrame extends JFrame {
         // Quality
         pQuality.setCrudListener(new TablePanel.CrudListener() {
             @Override public void onAdd() {
-                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, "Добавить качество", null,
-                        name -> { try { simpleDAO.insertQuality(name); } catch (SQLException e) { dbErr(e); } });
+                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.add_item"), null,
+                        name -> { try { simpleDAO.insertQuality(name); } catch (SQLException e) { dbErr(e); }});
                 d.setVisible(true); if (d.isSaved()) refreshQuality();
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pQuality.getSelectedValue(0);
-                String cur = (String) pQuality.getSelectedValue(1);
-                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, "Редактировать качество", cur,
-                        name -> { try { simpleDAO.updateQuality(id, name); } catch (SQLException e) { dbErr(e); } });
-                d.setVisible(true); if (d.isSaved()) refreshQuality();
+                String cur = (String) pQuality.getSelectedValue(0);
+                try {
+                    int id = simpleDAO.getQualityList().stream()
+                            .filter(x -> x.getQualityName().equals(cur))
+                            .findFirst().map(x -> x.getQualityId()).orElse(-1);
+                    SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.edit_item"), cur,
+                            name -> { try { simpleDAO.updateQuality(id, name); } catch (SQLException e) { dbErr(e); }});
+                    d.setVisible(true); if (d.isSaved()) refreshQuality();
+                } catch (SQLException e) { dbErr(e); }
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pQuality.getSelectedValue(0);
-                if (confirm("Удалить качество?"))
-                    try { simpleDAO.deleteQuality(id); refreshQuality(); } catch (SQLException e) { dbErr(e); }
+                String cur = (String) pQuality.getSelectedValue(0);
+                if (confirm(I18n.t("msg.confirm_delete") + " (" + cur + ")")) {
+                    try {
+                        int id = simpleDAO.getQualityList().stream()
+                                .filter(x -> x.getQualityName().equals(cur))
+                                .findFirst().map(x -> x.getQualityId()).orElse(-1);
+                        simpleDAO.deleteQuality(id);
+                        refreshQuality();
+                    } catch (SQLException e) { dbErr(e); }
+                }
             }
             @Override public void onRefresh() { refreshQuality(); }
         });
@@ -438,54 +642,90 @@ public class MainFrame extends JFrame {
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
+                String fam = (String) pDirector.getSelectedValue(0);
                 try {
-                    int id = (int) pDirector.getSelectedValue(0);
-                    Director dir = simpleDAO.getDirectorList().stream().filter(x -> x.getDirectorId()==id).findFirst().orElse(null);
+                    Director dir = simpleDAO.getDirectorList().stream()
+                            .filter(x -> x.getFamilia().equals(fam)).findFirst().orElse(null);
                     DirectorEditDialog d = new DirectorEditDialog(MainFrame.this, dir);
                     d.setVisible(true); if (d.isSaved()) refreshDirector();
                 } catch (SQLException e) { dbErr(e); }
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pDirector.getSelectedValue(0);
-                if (confirm("Удалить режиссёра?"))
-                    try { simpleDAO.deleteDirector(id); refreshDirector(); } catch (SQLException e) { dbErr(e); }
+                String fam = (String) pDirector.getSelectedValue(0);
+                if (confirm(I18n.t("msg.confirm_delete") + " (" + fam + ")")) {
+                    try {
+                        simpleDAO.getDirectorList().stream()
+                                .filter(x -> x.getFamilia().equals(fam))
+                                .findFirst().ifPresent(d -> {
+                                    try { simpleDAO.deleteDirector(d.getDirectorId()); }
+                                    catch (SQLException e) { dbErr(e); }
+                                });
+                        refreshDirector();
+                    } catch (SQLException e) { dbErr(e); }
+                }
             }
             @Override public void onRefresh() { refreshDirector(); }
         });
 
-        // Studio / Country — упрощённо
+        // Studio — упрощённо
         pStudio.setCrudListener(new TablePanel.CrudListener() {
-            @Override public void onAdd() { JOptionPane.showMessageDialog(MainFrame.this, "Добавление студии — через диалог StudioEditDialog (расширение)"); }
-            @Override public void onEdit(int row) { JOptionPane.showMessageDialog(MainFrame.this, "Редактирование студии — расширение"); }
+            @Override public void onAdd() {
+                JOptionPane.showMessageDialog(MainFrame.this,
+                        "Добавление студии:\nСначала добавьте страну в разделе 'Страны'");
+            }
+            @Override public void onEdit(int row) {
+                JOptionPane.showMessageDialog(MainFrame.this, "Редактирование студии — в разработке");
+            }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pStudio.getSelectedValue(0);
-                if (confirm("Удалить студию?"))
-                    try { simpleDAO.deleteStudio(id); refreshStudio(); } catch (SQLException e) { dbErr(e); }
+                String name = (String) pStudio.getSelectedValue(0);
+                if (confirm(I18n.t("msg.confirm_delete") + " (" + name + ")")) {
+                    try {
+                        simpleDAO.getStudioList().stream()
+                                .filter(x -> x.getStudioName().equals(name))
+                                .findFirst().ifPresent(s -> {
+                                    try { simpleDAO.deleteStudio(s.getStudioId()); }
+                                    catch (SQLException e) { dbErr(e); }
+                                });
+                        refreshStudio();
+                    } catch (SQLException e) { dbErr(e); }
+                }
             }
             @Override public void onRefresh() { refreshStudio(); }
         });
 
+        // Country
         pCountry.setCrudListener(new TablePanel.CrudListener() {
             @Override public void onAdd() {
-                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, "Добавить страну", null,
-                        name -> { try { simpleDAO.insertCountry(name); } catch (SQLException e) { dbErr(e); } });
+                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.add_item"), null,
+                        name -> { try { simpleDAO.insertCountry(name); } catch (SQLException e) { dbErr(e); }});
                 d.setVisible(true); if (d.isSaved()) refreshCountry();
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pCountry.getSelectedValue(0);
-                String cur = (String) pCountry.getSelectedValue(1);
-                SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, "Редактировать страну", cur,
-                        name -> { try { simpleDAO.updateCountry(id, name); } catch (SQLException e) { dbErr(e); } });
-                d.setVisible(true); if (d.isSaved()) refreshCountry();
+                String cur = (String) pCountry.getSelectedValue(0);
+                try {
+                    int id = simpleDAO.getCountryList().stream()
+                            .filter(x -> x.getCountryName().equals(cur))
+                            .findFirst().map(x -> x.getCountryId()).orElse(-1);
+                    SimpleEditDialog d = new SimpleEditDialog(MainFrame.this, I18n.t("dlg.edit_item"), cur,
+                            name -> { try { simpleDAO.updateCountry(id, name); } catch (SQLException e) { dbErr(e); }});
+                    d.setVisible(true); if (d.isSaved()) refreshCountry();
+                } catch (SQLException e) { dbErr(e); }
             }
             @Override public void onDelete(int row) {
                 if (row < 0) { noSel(); return; }
-                int id = (int) pCountry.getSelectedValue(0);
-                if (confirm("Удалить страну?"))
-                    try { simpleDAO.deleteCountry(id); refreshCountry(); } catch (SQLException e) { dbErr(e); }
+                String cur = (String) pCountry.getSelectedValue(0);
+                if (confirm(I18n.t("msg.confirm_delete") + " (" + cur + ")")) {
+                    try {
+                        int id = simpleDAO.getCountryList().stream()
+                                .filter(x -> x.getCountryName().equals(cur))
+                                .findFirst().map(x -> x.getCountryId()).orElse(-1);
+                        simpleDAO.deleteCountry(id);
+                        refreshCountry();
+                    } catch (SQLException e) { dbErr(e); }
+                }
             }
             @Override public void onRefresh() { refreshCountry(); }
         });
@@ -493,20 +733,20 @@ public class MainFrame extends JFrame {
 
     // ======================== Refresh ========================
 
-    private void refreshOwners()  { try { pOwners.loadData(ownerDAO.getAll()); } catch (SQLException e) { dbErr(e); } }
-    private void refreshVideo()   { try { pVideo.loadData(videoDAO.getAll()); } catch (SQLException e) { dbErr(e); } }
-    private void refreshFilm()    { try { pFilm.loadData(filmDAO.getAll()); } catch (SQLException e) { dbErr(e); } }
-    private void refreshCassette(){ try { pCassette.loadData(cassetteDAO.getAll()); } catch (SQLException e) { dbErr(e); } }
-    private void refreshReceipt() { try { pReceipt.loadData(receiptDAO.getAll()); } catch (SQLException e) { dbErr(e); } }
-    private void refreshDistrict(){ try { pDistrict.loadData(simpleDAO.getDistricts()); } catch (SQLException e) { dbErr(e); } }
-    private void refreshService() { try { pService.loadData(simpleDAO.getServices()); } catch (SQLException e) { dbErr(e); } }
-    private void refreshQuality() { try { pQuality.loadData(simpleDAO.getQualities()); } catch (SQLException e) { dbErr(e); } }
-    private void refreshDirector(){ try { pDirector.loadData(simpleDAO.getDirectors()); } catch (SQLException e) { dbErr(e); } }
-    private void refreshStudio()  { try { pStudio.loadData(simpleDAO.getStudios()); } catch (SQLException e) { dbErr(e); } }
-    private void refreshCountry() { try { pCountry.loadData(simpleDAO.getCountries()); } catch (SQLException e) { dbErr(e); } }
+    private void refreshOwners()  { try { pOwners.loadData(ownerDAO.getAll()); }          catch (SQLException e) { dbErr(e); } }
+    private void refreshVideo()   { try { pVideo.loadData(videoDAO.getAll()); }            catch (SQLException e) { dbErr(e); } }
+    private void refreshFilm()    { try { pFilm.loadData(filmDAO.getAll()); }              catch (SQLException e) { dbErr(e); } }
+    private void refreshCassette(){ try { pCassette.loadData(cassetteDAO.getAll()); }      catch (SQLException e) { dbErr(e); } }
+    private void refreshReceipt() { try { pReceipt.loadData(receiptDAO.getAll()); }        catch (SQLException e) { dbErr(e); } }
+    private void refreshDistrict(){ try { pDistrict.loadData(simpleDAO.getDistricts()); }  catch (SQLException e) { dbErr(e); } }
+    private void refreshService() { try { pService.loadData(simpleDAO.getServices()); }    catch (SQLException e) { dbErr(e); } }
+    private void refreshQuality() { try { pQuality.loadData(simpleDAO.getQualities()); }   catch (SQLException e) { dbErr(e); } }
+    private void refreshDirector(){ try { pDirector.loadData(simpleDAO.getDirectors()); }  catch (SQLException e) { dbErr(e); } }
+    private void refreshStudio()  { try { pStudio.loadData(simpleDAO.getStudios()); }      catch (SQLException e) { dbErr(e); } }
+    private void refreshCountry() { try { pCountry.loadData(simpleDAO.getCountries()); }   catch (SQLException e) { dbErr(e); } }
     private void refreshVwFilms()  { try { pVwFilms.loadData(filmDAO.getFilmsFullView()); } catch (SQLException e) { dbErr(e); } }
     private void refreshVwRevenue(){ try { pVwRevenue.loadData(receiptDAO.getTotalRevenueView()); } catch (SQLException e) { dbErr(e); } }
-    private void refreshVwPeople() { try { pVwPeople.loadData(ownerDAO.getAll()); } catch (SQLException e) { dbErr(e); } }
+    private void refreshVwPeople() { try { pVwPeople.loadData(ownerDAO.getAll()); }         catch (SQLException e) { dbErr(e); } }
     private void refreshVwCateg()  { try { pVwCateg.loadData(receiptDAO.getReceiptCategoryView()); } catch (SQLException e) { dbErr(e); } }
 
     // ======================== Утилиты ========================
@@ -519,13 +759,9 @@ public class MainFrame extends JFrame {
             }
             @Override protected void done() {
                 try {
-                    if (get()) {
-                        statusBar.setText(" ✅ Подключено к PostgreSQL (localhost:5432/videorental)");
-                        statusBar.setForeground(new Color(0, 120, 0));
-                    } else {
-                        statusBar.setText(" ❌ Нет подключения к БД — проверьте настройки в DatabaseConnection.java");
-                        statusBar.setForeground(Color.RED);
-                    }
+                    boolean ok = get();
+                    statusBar.setText("  " + I18n.t(ok ? "msg.connected" : "msg.no_conn"));
+                    statusBar.setForeground(ok ? new Color(34, 197, 94) : new Color(239, 68, 68));
                 } catch (Exception e) { e.printStackTrace(); }
             }
         };
@@ -533,30 +769,30 @@ public class MainFrame extends JFrame {
     }
 
     private void noSel() {
-        JOptionPane.showMessageDialog(this, "Выберите строку в таблице", "Предупреждение", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(this,
+                I18n.t("msg.select_row"), I18n.t("msg.warning"), JOptionPane.WARNING_MESSAGE);
     }
 
     private boolean confirm(String msg) {
-        return JOptionPane.showConfirmDialog(this, msg, "Подтверждение",
-                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+        return JOptionPane.showConfirmDialog(this, msg,
+                I18n.t("msg.confirm_title"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
     }
 
     private void dbErr(SQLException e) {
-        JOptionPane.showMessageDialog(this, "Ошибка БД:\n" + e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this,
+                I18n.t("msg.db_error") + "\n" + e.getMessage(),
+                I18n.t("msg.error"), JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
     }
 
     // ======================== MAIN ========================
 
     public static void main(String[] args) {
-        // Установить системный Look & Feel
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {}
+        // Применить сохранённую тему до создания окна
+        ThemeManager.getInstance();
 
         SwingUtilities.invokeLater(() -> {
-            MainFrame frame = new MainFrame();
-            frame.setVisible(true);
+            new MainFrame().setVisible(true);
         });
     }
 }

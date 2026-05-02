@@ -3,44 +3,48 @@ package backend.dao;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 
-/**
- * DAO для отчётов:
- * 1. Однотабличный: список владельцев
- * 2. Многотабличный: кассеты с фильмами и видеосалонами
- * 3. Агрегированный: выручка и аренда по видеосалонам (через VIEW)
- */
 public class ReportDAO extends BaseDAO {
 
-    /** Отчёт 1: однотабличный — все владельцы */
+    /** Отчёт 1: Однотабличный — владельцы */
     public DefaultTableModel reportOwners() throws SQLException {
-        return executeQuery("SELECT OwnerID, Familia, Name, Otchestvo FROM Owners ORDER BY Familia");
+        DefaultTableModel m = executeQuery(
+                "SELECT Familia, Name, Otchestvo FROM Owners ORDER BY Familia"
+        );
+        renameColumns(m, new String[]{"Фамилия", "Имя", "Отчество"});
+        return m;
     }
 
-    /** Отчёт 2: многотабличный — кассеты с полной информацией */
+    /** Отчёт 2: Многотабличный — кассеты с деталями */
     public DefaultTableModel reportCassettesDetailed() throws SQLException {
-        return executeQuery(
-                "SELECT C.CasseteID, F.Caption AS Фильм, F.Year AS Год, " +
-                        "V.Caption AS Видеосалон, Q.QualityName AS Качество, C.Demand AS Спрос " +
+        DefaultTableModel m = executeQuery(
+                "SELECT C.CasseteID, F.Caption, F.Year, V.Caption, Q.QualityName, C.Demand " +
                         "FROM Cassette C " +
                         "INNER JOIN Film F ON F.FilmID=C.FilmID " +
                         "INNER JOIN Video V ON V.VideoID=C.VideoID " +
                         "INNER JOIN Quality Q ON Q.QualityID=C.QualityID " +
                         "ORDER BY V.Caption, F.Caption"
         );
+        renameColumns(m, new String[]{"ID Кассеты", "Фильм", "Год", "Видеосалон", "Качество", "Спрос"});
+        return m;
     }
 
-    /** Отчёт 3: агрегированный — выручка по видеосалонам (использует VIEW vw_total_revenue) */
+    /** Отчёт 3: Агрегированный — выручка (использует VIEW vw_total_revenue) */
     public DefaultTableModel reportRevenueSummary() throws SQLException {
-        return executeQuery(
-                "SELECT Caption AS Видеосалон, " +
-                        "total_amount AS Общая_выручка, " +
-                        "rent_revenue AS Выручка_аренда " +
-                        "FROM vw_total_revenue ORDER BY total_amount DESC"
+        DefaultTableModel m = executeQuery(
+                "SELECT Caption, total_amount, rent_revenue FROM vw_total_revenue ORDER BY total_amount DESC"
         );
+        renameColumns(m, new String[]{"Видеосалон", "Общая выручка", "Выручка (аренда)"});
+        return m;
     }
 
-    /** Агрегированный отчёт с вызовом функции get_service_stats */
+    /** Функция get_service_stats */
     public DefaultTableModel reportServiceStats(String serviceName, int year) throws SQLException {
-        return executeQuery("SELECT * FROM get_service_stats(?, ?)", serviceName, year);
+        DefaultTableModel m = executeQuery(
+                "SELECT * FROM get_service_stats(?, ?)", serviceName, year
+        );
+        if (m.getColumnCount() >= 3) {
+            renameColumns(m, new String[]{"Услуга", "Кол-во клиентов", "Сумма затрат"});
+        }
+        return m;
     }
 }

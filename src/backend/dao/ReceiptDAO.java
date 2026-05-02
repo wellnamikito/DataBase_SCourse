@@ -8,17 +8,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/** DAO для таблицы Receipt */
 public class ReceiptDAO extends BaseDAO {
 
     public DefaultTableModel getAll() throws SQLException {
-        return executeQuery(
-                "SELECT R.ReceiptID, R.Date, R.Price, S.ServiceName, V.Caption AS Video " +
+        DefaultTableModel m = executeQuery(
+                "SELECT R.ReceiptID, R.Date, R.Price, S.ServiceName, V.Caption, C.CasseteID " +
                         "FROM Receipt R " +
                         "LEFT JOIN Service S ON S.ServiceID = R.ServiceID " +
                         "LEFT JOIN Video V ON V.VideoID = R.VideoID " +
-                        "ORDER BY R.ReceiptID"
+                        "LEFT JOIN Cassette C ON C.CasseteID = R.CassetteID " +
+                        "ORDER BY R.Date DESC, R.ReceiptID DESC"
         );
+        renameColumns(m, new String[]{"№ Чека", "Дата", "Цена (руб.)", "Услуга", "Видеосалон", "ID Кассеты"});
+        return m;
     }
 
     public void insert(Receipt r) throws SQLException {
@@ -41,40 +43,44 @@ public class ReceiptDAO extends BaseDAO {
         executeUpdate("DELETE FROM Receipt WHERE ReceiptID=?", id);
     }
 
-    /** Суммарная выручка и аренда по видеосалонам (VIEW) */
     public DefaultTableModel getTotalRevenueView() throws SQLException {
-        return executeQuery("SELECT * FROM vw_total_revenue ORDER BY 1");
+        DefaultTableModel m = executeQuery(
+                "SELECT Caption, total_amount, rent_revenue FROM vw_total_revenue ORDER BY total_amount DESC"
+        );
+        renameColumns(m, new String[]{"Видеосалон", "Общая выручка", "Выручка (аренда)"});
+        return m;
     }
 
-    /** Категории цен (VIEW) */
     public DefaultTableModel getReceiptCategoryView() throws SQLException {
-        return executeQuery("SELECT * FROM vw_receipt_category");
+        DefaultTableModel m = executeQuery("SELECT ReceiptID, price_category FROM vw_receipt_category");
+        renameColumns(m, new String[]{"№ Чека", "Категория цены"});
+        return m;
     }
 
-    /** Данные для pie-chart: количество квитанций по категориям цен */
     public List<Object[]> getPriceCategoryData() throws SQLException {
         Connection conn = DatabaseConnection.getConnection();
         List<Object[]> result = new ArrayList<>();
-        String sql = "SELECT CASE WHEN Price<=100 THEN 'Дешево' WHEN Price<=500 THEN 'Средне' ELSE 'Дорого' END AS cat, COUNT(*) FROM Receipt GROUP BY cat";
+        String sql =
+                "SELECT CASE WHEN Price<=100 THEN 'Дешево' " +
+                        "WHEN Price<=500 THEN 'Средне' ELSE 'Дорого' END AS cat, COUNT(*) " +
+                        "FROM Receipt GROUP BY cat";
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                result.add(new Object[]{rs.getString(1), rs.getLong(2)});
-            }
+            while (rs.next()) result.add(new Object[]{rs.getString(1), rs.getLong(2)});
         }
         return result;
     }
 
-    /** Данные для bar-chart: выручка по видеосалонам */
     public List<Object[]> getRevenueByVideo() throws SQLException {
         Connection conn = DatabaseConnection.getConnection();
         List<Object[]> result = new ArrayList<>();
-        String sql = "SELECT V.Caption, COALESCE(SUM(R.Price),0) FROM Video V LEFT JOIN Receipt R ON V.VideoID=R.VideoID GROUP BY V.VideoID, V.Caption ORDER BY 2 DESC LIMIT 10";
+        String sql =
+                "SELECT V.Caption, COALESCE(SUM(R.Price),0) " +
+                        "FROM Video V LEFT JOIN Receipt R ON V.VideoID=R.VideoID " +
+                        "GROUP BY V.VideoID, V.Caption ORDER BY 2 DESC LIMIT 10";
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                result.add(new Object[]{rs.getString(1), rs.getLong(2)});
-            }
+            while (rs.next()) result.add(new Object[]{rs.getString(1), rs.getLong(2)});
         }
         return result;
     }

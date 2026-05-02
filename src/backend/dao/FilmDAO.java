@@ -8,18 +8,20 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/** DAO для таблицы Film */
 public class FilmDAO extends BaseDAO {
 
     public DefaultTableModel getAll() throws SQLException {
-        return executeQuery(
-                "SELECT F.FilmID, F.Caption, F.Year, F.Duration, " +
-                        "D.Familia || ' ' || D.Name AS Director, S.StudioName " +
+        DefaultTableModel m = executeQuery(
+                "SELECT F.Caption, F.Year, F.Duration, " +
+                        "D.Familia || ' ' || D.Name AS DirectorName, " +
+                        "S.StudioName, F.Information " +
                         "FROM Film F " +
                         "LEFT JOIN Director D ON D.DirectorID = F.DirectorID " +
                         "LEFT JOIN Studio S ON S.StudioID = F.StudioID " +
-                        "ORDER BY F.FilmID"
+                        "ORDER BY F.Caption"
         );
+        renameColumns(m, new String[]{"Название", "Год", "Длит.(мин)", "Режиссёр", "Студия", "Описание"});
+        return m;
     }
 
     public List<Film> getAllList() throws SQLException {
@@ -62,8 +64,9 @@ public class FilmDAO extends BaseDAO {
         executeUpdate("DELETE FROM Film WHERE FilmID=?", id);
     }
 
-    /** VIEW: фильмы с режиссерами и студиями */
     public DefaultTableModel getFilmsFullView() throws SQLException {
-        return executeQuery("SELECT * FROM vw_films_full ORDER BY 1");
+        DefaultTableModel m = executeQuery("SELECT Caption, Familia, Name, Otchestvo, StudioName FROM vw_films_full ORDER BY 1");
+        renameColumns(m, new String[]{"Название фильма", "Фамилия реж.", "Имя реж.", "Отчество реж.", "Студия"});
+        return m;
     }
 }

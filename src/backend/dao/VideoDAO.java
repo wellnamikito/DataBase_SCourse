@@ -8,23 +8,24 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO для таблицы Video.
- * Поддерживает CRUD, поиск, обновление через VIEW vw_video_simple.
- */
 public class VideoDAO extends BaseDAO {
 
     public DefaultTableModel getAll() throws SQLException {
-        return executeQuery(
-                "SELECT V.VideoID, V.Caption, D.DistrictName, V.Address, V.Type, " +
+        DefaultTableModel model = executeQuery(
+                "SELECT V.Caption, D.DistrictName, V.Address, V.Type, " +
                         "V.Phone, V.Licence, V.TimeStart, V.TimeEnd, V.Amount, " +
-                        "V.OwnerId, " +
-                        "O.Familia || ' ' || O.Name AS Owner " +
+                        "O.Familia || ' ' || O.Name AS OwnerName " +
                         "FROM Video V " +
                         "LEFT JOIN Districts D ON D.DistrictID = V.DistrictID " +
                         "LEFT JOIN Owners O ON O.OwnerID = V.OwnerId " +
-                        "ORDER BY V.VideoID"
+                        "ORDER BY V.Caption"
         );
+        renameColumns(model, new String[]{
+                "Название", "Район", "Адрес", "Тип",
+                "Телефон", "Лицензия", "Откр.", "Закр.",
+                "Клиентов", "Владелец"
+        });
+        return model;
     }
 
     public List<Video> getAllList() throws SQLException {
@@ -32,10 +33,7 @@ public class VideoDAO extends BaseDAO {
         Connection conn = DatabaseConnection.getConnection();
         try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM Video ORDER BY VideoID");
              ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Video v = mapRow(rs);
-                list.add(v);
-            }
+            while (rs.next()) list.add(mapRow(rs));
         }
         return list;
     }
@@ -75,7 +73,6 @@ public class VideoDAO extends BaseDAO {
         executeUpdate("DELETE FROM Video WHERE VideoID=?", id);
     }
 
-    /** Обновить через модифицируемое VIEW (вызывает триггер trg_update_video) */
     public void updateViaView(int videoId, String caption, String address) throws SQLException {
         executeUpdate(
                 "UPDATE vw_video_simple SET Caption=?, Address=? WHERE VideoID=?",
@@ -83,12 +80,14 @@ public class VideoDAO extends BaseDAO {
         );
     }
 
-    /** Получить vw_video_simple */
     public DefaultTableModel getSimpleView() throws SQLException {
-        return executeQuery("SELECT VideoID, Caption, Address FROM vw_video_simple ORDER BY VideoID");
+        DefaultTableModel m = executeQuery(
+                "SELECT Caption, Address FROM vw_video_simple ORDER BY Caption"
+        );
+        renameColumns(m, new String[]{"Название", "Адрес"});
+        return m;
     }
 
-    /** Для chart: суммарная выручка по видеосалонам */
     public DefaultTableModel getRevenueChart() throws SQLException {
         return executeQuery(
                 "SELECT V.Caption, COALESCE(SUM(R.Price),0) AS Total " +
