@@ -5,112 +5,94 @@ import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 
 /**
- * Светлая тема приложения.
+ * Светлая тема.
+ * НЕ меняем LAF — только цвета через ColorUIResource.
  */
 public class LightTheme {
 
-    public static final Color BG_DARK       = new Color(245, 245, 245);
-    public static final Color BG_PANEL      = new Color(250, 250, 250);
-    public static final Color BG_COMPONENT  = Color.WHITE;
-    public static final Color BG_TABLE_ROW  = Color.WHITE;
-    public static final Color BG_SELECTED   = new Color(51, 122, 183);
-    public static final Color BG_HEADER     = new Color(236, 240, 241);
-
-    public static final Color FG_TEXT       = new Color(30, 30, 30);
-    public static final Color FG_DIM        = new Color(100, 100, 100);
-    public static final Color FG_WHITE      = Color.WHITE;
-
-    public static final Color BORDER_COLOR  = new Color(200, 200, 200);
-    public static final Color ACCENT        = new Color(51, 122, 183);
-
-    public static final Color BTN_ADD       = new Color(39, 174, 96);
-    public static final Color BTN_EDIT      = new Color(41, 128, 185);
-    public static final Color BTN_DELETE    = new Color(192, 57, 43);
-    public static final Color BTN_REFRESH   = new Color(127, 140, 141);
-    public static final Color BTN_EXPORT    = new Color(39, 174, 96);
-    public static final Color BTN_RUN       = new Color(41, 128, 185);
-
     public static void apply() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (Exception ignored) {}
+        // НЕ МЕНЯТЬ LAF
 
-        UIManager.put("Panel.background",               BG_PANEL);
-        UIManager.put("Label.foreground",               FG_TEXT);
-        UIManager.put("Label.background",               BG_PANEL);
-        UIManager.put("TextField.background",           BG_COMPONENT);
-        UIManager.put("TextField.foreground",           FG_TEXT);
-        UIManager.put("TextField.caretForeground",      FG_TEXT);
-        UIManager.put("TextField.border",               BorderFactory.createLineBorder(BORDER_COLOR));
-        UIManager.put("TextArea.background",            BG_COMPONENT);
-        UIManager.put("TextArea.foreground",            FG_TEXT);
-        UIManager.put("FormattedTextField.background",  BG_COMPONENT);
-        UIManager.put("FormattedTextField.foreground",  FG_TEXT);
+        Color transparent = new Color(0, 0, 0, 0);
 
-        UIManager.put("Button.background",              BG_COMPONENT);
-        UIManager.put("Button.foreground",              FG_TEXT);
-        UIManager.put("Button.border",                  BorderFactory.createLineBorder(BORDER_COLOR));
-        UIManager.put("Button.focus",                   new ColorUIResource(new Color(0,0,0,0)));
+        UIManager.put("Panel.background",              new ColorUIResource(250, 250, 250));
+        UIManager.put("Label.foreground",              new ColorUIResource(30, 30, 30));
+        UIManager.put("Label.background",              new ColorUIResource(250, 250, 250));
 
-        UIManager.put("Table.background",               BG_TABLE_ROW);
-        UIManager.put("Table.foreground",               FG_TEXT);
-        UIManager.put("Table.selectionBackground",      BG_SELECTED);
-        UIManager.put("Table.selectionForeground",      FG_WHITE);
-        UIManager.put("Table.gridColor",                BORDER_COLOR);
-        UIManager.put("TableHeader.background",         BG_HEADER);
-        UIManager.put("TableHeader.foreground",         FG_TEXT);
-        UIManager.put("TableHeader.cellBorder",         BorderFactory.createLineBorder(BORDER_COLOR));
+        UIManager.put("TextField.background",          new ColorUIResource(255, 255, 255));
+        UIManager.put("TextField.foreground",          new ColorUIResource(30, 30, 30));
+        UIManager.put("TextField.caretForeground",     new ColorUIResource(30, 30, 30));
+        UIManager.put("TextArea.background",           new ColorUIResource(255, 255, 255));
+        UIManager.put("TextArea.foreground",           new ColorUIResource(30, 30, 30));
+        UIManager.put("TextArea.caretForeground",      new ColorUIResource(30, 30, 30));
+        UIManager.put("FormattedTextField.background", new ColorUIResource(255, 255, 255));
+        UIManager.put("FormattedTextField.foreground", new ColorUIResource(30, 30, 30));
 
-        UIManager.put("ScrollPane.background",          BG_PANEL);
-        UIManager.put("ScrollPane.border",              BorderFactory.createLineBorder(BORDER_COLOR));
-        UIManager.put("Viewport.background",            BG_TABLE_ROW);
+        UIManager.put("Button.background",             new ColorUIResource(241, 243, 245));
+        UIManager.put("Button.foreground",             new ColorUIResource(30, 30, 30));
+        UIManager.put("Button.focus",                  new ColorUIResource(transparent));
+        UIManager.put("ToggleButton.background",       new ColorUIResource(241, 243, 245));
+        UIManager.put("ToggleButton.foreground",       new ColorUIResource(30, 30, 30));
+        UIManager.put("ToggleButton.focus",            new ColorUIResource(transparent));
 
-        UIManager.put("ComboBox.background",            BG_COMPONENT);
-        UIManager.put("ComboBox.foreground",            FG_TEXT);
-        UIManager.put("ComboBox.selectionBackground",   BG_SELECTED);
-        UIManager.put("ComboBox.selectionForeground",   FG_WHITE);
+        UIManager.put("Table.background",              new ColorUIResource(255, 255, 255));
+        UIManager.put("Table.foreground",              new ColorUIResource(30, 30, 30));
+        UIManager.put("Table.selectionBackground",     new ColorUIResource(59, 130, 246));
+        UIManager.put("Table.selectionForeground",     new ColorUIResource(255, 255, 255));
+        UIManager.put("Table.gridColor",               new ColorUIResource(210, 210, 210));
+        UIManager.put("TableHeader.background",        new ColorUIResource(241, 243, 245));
+        UIManager.put("TableHeader.foreground",        new ColorUIResource(30, 30, 30));
 
-        UIManager.put("Spinner.background",             BG_COMPONENT);
-        UIManager.put("Spinner.foreground",             FG_TEXT);
+        UIManager.put("ScrollPane.background",         new ColorUIResource(250, 250, 250));
+        UIManager.put("Viewport.background",           new ColorUIResource(255, 255, 255));
 
-        UIManager.put("CheckBox.background",            BG_PANEL);
-        UIManager.put("CheckBox.foreground",            FG_TEXT);
+        UIManager.put("ComboBox.background",           new ColorUIResource(255, 255, 255));
+        UIManager.put("ComboBox.foreground",           new ColorUIResource(30, 30, 30));
+        UIManager.put("ComboBox.selectionBackground",  new ColorUIResource(59, 130, 246));
+        UIManager.put("ComboBox.selectionForeground",  new ColorUIResource(255, 255, 255));
 
-        UIManager.put("TabbedPane.background",          BG_PANEL);
-        UIManager.put("TabbedPane.foreground",          FG_TEXT);
-        UIManager.put("TabbedPane.selected",            BG_COMPONENT);
-        UIManager.put("TabbedPane.contentAreaColor",    BG_PANEL);
+        UIManager.put("CheckBox.background",           new ColorUIResource(250, 250, 250));
+        UIManager.put("CheckBox.foreground",           new ColorUIResource(30, 30, 30));
+        UIManager.put("CheckBox.focus",                new ColorUIResource(transparent));
+        UIManager.put("RadioButton.background",        new ColorUIResource(250, 250, 250));
+        UIManager.put("RadioButton.foreground",        new ColorUIResource(30, 30, 30));
 
-        UIManager.put("SplitPane.background",           BG_PANEL);
-        UIManager.put("SplitPaneDivider.background",    BORDER_COLOR);
+        UIManager.put("Spinner.background",            new ColorUIResource(255, 255, 255));
+        UIManager.put("Spinner.foreground",            new ColorUIResource(30, 30, 30));
 
-        UIManager.put("MenuBar.background",             BG_HEADER);
-        UIManager.put("MenuBar.foreground",             FG_TEXT);
-        UIManager.put("MenuBar.border",                 BorderFactory.createMatteBorder(0,0,1,0, BORDER_COLOR));
-        UIManager.put("Menu.background",                BG_HEADER);
-        UIManager.put("Menu.foreground",                FG_TEXT);
-        UIManager.put("Menu.selectionBackground",       BG_SELECTED);
-        UIManager.put("Menu.selectionForeground",       FG_WHITE);
-        UIManager.put("MenuItem.background",            BG_COMPONENT);
-        UIManager.put("MenuItem.foreground",            FG_TEXT);
-        UIManager.put("MenuItem.selectionBackground",   BG_SELECTED);
-        UIManager.put("MenuItem.selectionForeground",   FG_WHITE);
-        UIManager.put("PopupMenu.background",           BG_COMPONENT);
-        UIManager.put("PopupMenu.border",               BorderFactory.createLineBorder(BORDER_COLOR));
+        UIManager.put("TabbedPane.background",         new ColorUIResource(250, 250, 250));
+        UIManager.put("TabbedPane.foreground",         new ColorUIResource(30, 30, 30));
+        UIManager.put("TabbedPane.selected",           new ColorUIResource(255, 255, 255));
+        UIManager.put("TabbedPane.focus",              new ColorUIResource(transparent));
 
-        UIManager.put("Dialog.background",              BG_PANEL);
-        UIManager.put("OptionPane.background",          BG_PANEL);
-        UIManager.put("OptionPane.messageForeground",   FG_TEXT);
+        UIManager.put("SplitPane.background",          new ColorUIResource(250, 250, 250));
+        UIManager.put("SplitPaneDivider.background",   new ColorUIResource(210, 210, 210));
 
-        UIManager.put("TitledBorder.titleColor",        FG_DIM);
-        UIManager.put("TitledBorder.border",            BorderFactory.createLineBorder(BORDER_COLOR));
+        UIManager.put("List.background",               new ColorUIResource(255, 255, 255));
+        UIManager.put("List.foreground",               new ColorUIResource(30, 30, 30));
+        UIManager.put("List.selectionBackground",      new ColorUIResource(59, 130, 246));
+        UIManager.put("List.selectionForeground",      new ColorUIResource(255, 255, 255));
 
-        UIManager.put("ToolTip.background",             new Color(255, 255, 220));
-        UIManager.put("ToolTip.foreground",             FG_TEXT);
+        UIManager.put("Tree.background",               new ColorUIResource(255, 255, 255));
+        UIManager.put("Tree.foreground",               new ColorUIResource(30, 30, 30));
 
-        UIManager.put("List.background",                BG_COMPONENT);
-        UIManager.put("List.foreground",                FG_TEXT);
-        UIManager.put("List.selectionBackground",       BG_SELECTED);
-        UIManager.put("List.selectionForeground",       FG_WHITE);
+        UIManager.put("OptionPane.background",         new ColorUIResource(250, 250, 250));
+        UIManager.put("OptionPane.messageForeground",  new ColorUIResource(30, 30, 30));
+
+        UIManager.put("ToolTip.background",            new ColorUIResource(255, 255, 220));
+        UIManager.put("ToolTip.foreground",            new ColorUIResource(30, 30, 30));
+
+        // Menu — только цвета
+        UIManager.put("MenuBar.background",            new ColorUIResource(241, 243, 245));
+        UIManager.put("MenuBar.foreground",            new ColorUIResource(30, 30, 30));
+        UIManager.put("Menu.background",               new ColorUIResource(241, 243, 245));
+        UIManager.put("Menu.foreground",               new ColorUIResource(30, 30, 30));
+        UIManager.put("Menu.selectionBackground",      new ColorUIResource(59, 130, 246));
+        UIManager.put("Menu.selectionForeground",      new ColorUIResource(255, 255, 255));
+        UIManager.put("MenuItem.background",           new ColorUIResource(250, 250, 250));
+        UIManager.put("MenuItem.foreground",           new ColorUIResource(30, 30, 30));
+        UIManager.put("MenuItem.selectionBackground",  new ColorUIResource(59, 130, 246));
+        UIManager.put("MenuItem.selectionForeground",  new ColorUIResource(255, 255, 255));
+        UIManager.put("PopupMenu.background",          new ColorUIResource(250, 250, 250));
     }
 }

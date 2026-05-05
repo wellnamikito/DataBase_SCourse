@@ -1,176 +1,118 @@
 package backend.util;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 
 /**
- * Тёмная тема для Swing-приложения.
- * Вызвать DarkTheme.apply() до создания любых окон.
+ * Тёмная тема.
+ *
+ * КРИТИЧНО для macOS:
+ * - НЕ вызываем setLookAndFeel() — оставляем нативный Aqua LAF
+ * - НЕ устанавливаем бордеры для Menu/MenuItem/PopupMenu/ComboBox
+ * - Только цвета через ColorUIResource
  */
 public class DarkTheme {
 
-    // Цвета темы
-    public static final Color BG_DARK       = new Color(30, 30, 30);
-    public static final Color BG_PANEL      = new Color(40, 40, 40);
-    public static final Color BG_COMPONENT  = new Color(55, 55, 55);
-    public static final Color BG_TABLE_ROW  = new Color(45, 45, 45);
-    public static final Color BG_TABLE_ALT  = new Color(50, 50, 50);
-    public static final Color BG_SELECTED   = new Color(70, 130, 180);
-    public static final Color BG_HEADER     = new Color(35, 35, 35);
-
-    public static final Color FG_TEXT       = new Color(220, 220, 220);
-    public static final Color FG_DIM        = new Color(160, 160, 160);
-    public static final Color FG_WHITE      = new Color(240, 240, 240);
-
-    public static final Color BORDER_COLOR  = new Color(70, 70, 70);
-    public static final Color ACCENT        = new Color(70, 130, 180);
-
-    // Кнопки
-    public static final Color BTN_ADD       = new Color(39, 174, 96);
-    public static final Color BTN_EDIT      = new Color(41, 128, 185);
-    public static final Color BTN_DELETE    = new Color(192, 57, 43);
-    public static final Color BTN_REFRESH   = new Color(90, 90, 90);
-    public static final Color BTN_EXPORT    = new Color(39, 174, 96);
-    public static final Color BTN_RUN       = new Color(41, 128, 185);
-
     public static void apply() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (Exception ignored) {}
+        // НЕ МЕНЯТЬ LAF на macOS — это ломает AquaMenuPainter
+        // UIManager.setLookAndFeel(...) — ЗАПРЕЩЕНО
 
-        // === Общие ===
-        UIManager.put("Panel.background",           BG_PANEL);
-        UIManager.put("OptionPane.background",      BG_PANEL);
-        UIManager.put("OptionPane.messageForeground",FG_TEXT);
+        Color transparent = new Color(0, 0, 0, 0);
+
+        // === Панели ===
+        UIManager.put("Panel.background",              new ColorUIResource(28, 28, 28));
 
         // === Текст ===
-        UIManager.put("Label.foreground",           FG_TEXT);
-        UIManager.put("Label.background",           BG_PANEL);
-        UIManager.put("TextField.background",       BG_COMPONENT);
-        UIManager.put("TextField.foreground",       FG_TEXT);
-        UIManager.put("TextField.caretForeground",  FG_WHITE);
-        UIManager.put("TextField.border",           BorderFactory.createLineBorder(BORDER_COLOR));
-        UIManager.put("TextArea.background",        BG_COMPONENT);
-        UIManager.put("TextArea.foreground",        FG_TEXT);
-        UIManager.put("TextArea.caretForeground",   FG_WHITE);
-        UIManager.put("FormattedTextField.background", BG_COMPONENT);
-        UIManager.put("FormattedTextField.foreground", FG_TEXT);
-        UIManager.put("PasswordField.background",   BG_COMPONENT);
-        UIManager.put("PasswordField.foreground",   FG_TEXT);
+        UIManager.put("Label.foreground",              new ColorUIResource(220, 220, 220));
+        UIManager.put("Label.background",              new ColorUIResource(28, 28, 28));
+        UIManager.put("TextField.background",          new ColorUIResource(42, 42, 42));
+        UIManager.put("TextField.foreground",          new ColorUIResource(220, 220, 220));
+        UIManager.put("TextField.caretForeground",     new ColorUIResource(220, 220, 220));
+        UIManager.put("TextArea.background",           new ColorUIResource(42, 42, 42));
+        UIManager.put("TextArea.foreground",           new ColorUIResource(220, 220, 220));
+        UIManager.put("TextArea.caretForeground",      new ColorUIResource(220, 220, 220));
+        UIManager.put("FormattedTextField.background", new ColorUIResource(42, 42, 42));
+        UIManager.put("FormattedTextField.foreground", new ColorUIResource(220, 220, 220));
+        UIManager.put("PasswordField.background",      new ColorUIResource(42, 42, 42));
+        UIManager.put("PasswordField.foreground",      new ColorUIResource(220, 220, 220));
 
         // === Кнопки ===
-        UIManager.put("Button.background",          BG_COMPONENT);
-        UIManager.put("Button.foreground",          FG_TEXT);
-        UIManager.put("Button.border",              BorderFactory.createLineBorder(BORDER_COLOR));
-        UIManager.put("Button.focus",               new ColorUIResource(new Color(0, 0, 0, 0)));
+        UIManager.put("Button.background",             new ColorUIResource(42, 42, 42));
+        UIManager.put("Button.foreground",             new ColorUIResource(220, 220, 220));
+        UIManager.put("Button.focus",                  new ColorUIResource(transparent));
+        UIManager.put("ToggleButton.background",       new ColorUIResource(42, 42, 42));
+        UIManager.put("ToggleButton.foreground",       new ColorUIResource(220, 220, 220));
+        UIManager.put("ToggleButton.focus",            new ColorUIResource(transparent));
 
         // === Таблица ===
-        UIManager.put("Table.background",           BG_TABLE_ROW);
-        UIManager.put("Table.foreground",           FG_TEXT);
-        UIManager.put("Table.selectionBackground",  BG_SELECTED);
-        UIManager.put("Table.selectionForeground",  FG_WHITE);
-        UIManager.put("Table.gridColor",            BORDER_COLOR);
-        UIManager.put("TableHeader.background",     BG_HEADER);
-        UIManager.put("TableHeader.foreground",     FG_TEXT);
-        UIManager.put("TableHeader.cellBorder",     BorderFactory.createLineBorder(BORDER_COLOR));
+        UIManager.put("Table.background",              new ColorUIResource(33, 33, 33));
+        UIManager.put("Table.foreground",              new ColorUIResource(220, 220, 220));
+        UIManager.put("Table.selectionBackground",     new ColorUIResource(59, 130, 246));
+        UIManager.put("Table.selectionForeground",     new ColorUIResource(255, 255, 255));
+        UIManager.put("Table.gridColor",               new ColorUIResource(55, 55, 55));
+        UIManager.put("TableHeader.background",        new ColorUIResource(22, 22, 22));
+        UIManager.put("TableHeader.foreground",        new ColorUIResource(220, 220, 220));
 
         // === ScrollPane ===
-        UIManager.put("ScrollPane.background",      BG_DARK);
-        UIManager.put("ScrollPane.border",          BorderFactory.createLineBorder(BORDER_COLOR));
-        UIManager.put("Viewport.background",        BG_TABLE_ROW);
+        UIManager.put("ScrollPane.background",         new ColorUIResource(28, 28, 28));
+        UIManager.put("Viewport.background",           new ColorUIResource(33, 33, 33));
 
-        // === ComboBox ===
-        UIManager.put("ComboBox.background",        BG_COMPONENT);
-        UIManager.put("ComboBox.foreground",        FG_TEXT);
-        UIManager.put("ComboBox.selectionBackground", BG_SELECTED);
-        UIManager.put("ComboBox.selectionForeground", FG_WHITE);
-        UIManager.put("ComboBox.border",            BorderFactory.createLineBorder(BORDER_COLOR));
+        // === ComboBox — ТОЛЬКО цвета, НЕТ бордеров ===
+        UIManager.put("ComboBox.background",           new ColorUIResource(42, 42, 42));
+        UIManager.put("ComboBox.foreground",           new ColorUIResource(220, 220, 220));
+        UIManager.put("ComboBox.selectionBackground",  new ColorUIResource(59, 130, 246));
+        UIManager.put("ComboBox.selectionForeground",  new ColorUIResource(255, 255, 255));
+
+        // === CheckBox / RadioButton ===
+        UIManager.put("CheckBox.background",           new ColorUIResource(28, 28, 28));
+        UIManager.put("CheckBox.foreground",           new ColorUIResource(220, 220, 220));
+        UIManager.put("CheckBox.focus",                new ColorUIResource(transparent));
+        UIManager.put("RadioButton.background",        new ColorUIResource(28, 28, 28));
+        UIManager.put("RadioButton.foreground",        new ColorUIResource(220, 220, 220));
 
         // === Spinner ===
-        UIManager.put("Spinner.background",         BG_COMPONENT);
-        UIManager.put("Spinner.foreground",         FG_TEXT);
-
-        // === CheckBox ===
-        UIManager.put("CheckBox.background",        BG_PANEL);
-        UIManager.put("CheckBox.foreground",        FG_TEXT);
+        UIManager.put("Spinner.background",            new ColorUIResource(42, 42, 42));
+        UIManager.put("Spinner.foreground",            new ColorUIResource(220, 220, 220));
 
         // === TabbedPane ===
-        UIManager.put("TabbedPane.background",      BG_DARK);
-        UIManager.put("TabbedPane.foreground",      FG_TEXT);
-        UIManager.put("TabbedPane.selected",        BG_COMPONENT);
-        UIManager.put("TabbedPane.contentAreaColor",BG_PANEL);
-        UIManager.put("TabbedPane.shadow",          BORDER_COLOR);
-        UIManager.put("TabbedPane.darkShadow",      BORDER_COLOR);
-        UIManager.put("TabbedPane.light",           BG_COMPONENT);
-        UIManager.put("TabbedPane.highlight",       BG_COMPONENT);
+        UIManager.put("TabbedPane.background",         new ColorUIResource(28, 28, 28));
+        UIManager.put("TabbedPane.foreground",         new ColorUIResource(220, 220, 220));
+        UIManager.put("TabbedPane.selected",           new ColorUIResource(42, 42, 42));
+        UIManager.put("TabbedPane.focus",              new ColorUIResource(transparent));
 
         // === SplitPane ===
-        UIManager.put("SplitPane.background",       BG_DARK);
-        UIManager.put("SplitPane.dividerSize",      6);
-        UIManager.put("SplitPaneDivider.background",BG_COMPONENT);
+        UIManager.put("SplitPane.background",          new ColorUIResource(28, 28, 28));
+        UIManager.put("SplitPaneDivider.background",   new ColorUIResource(55, 55, 55));
 
-        // === MenuBar / Menu ===
-        UIManager.put("MenuBar.background",         BG_HEADER);
-        UIManager.put("MenuBar.foreground",         FG_TEXT);
-        UIManager.put("MenuBar.border",             BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER_COLOR));
-        UIManager.put("Menu.background",            BG_HEADER);
-        UIManager.put("Menu.foreground",            FG_TEXT);
-        UIManager.put("Menu.selectionBackground",   BG_SELECTED);
-        UIManager.put("Menu.selectionForeground",   FG_WHITE);
-        UIManager.put("MenuItem.background",        BG_PANEL);
-        UIManager.put("MenuItem.foreground",        FG_TEXT);
-        UIManager.put("MenuItem.selectionBackground", BG_SELECTED);
-        UIManager.put("MenuItem.selectionForeground", FG_WHITE);
-        UIManager.put("PopupMenu.background",       BG_PANEL);
-        UIManager.put("PopupMenu.border",           BorderFactory.createLineBorder(BORDER_COLOR));
-        UIManager.put("Separator.background",       BORDER_COLOR);
-        UIManager.put("Separator.foreground",       BORDER_COLOR);
+        // === List ===
+        UIManager.put("List.background",               new ColorUIResource(42, 42, 42));
+        UIManager.put("List.foreground",               new ColorUIResource(220, 220, 220));
+        UIManager.put("List.selectionBackground",      new ColorUIResource(59, 130, 246));
+        UIManager.put("List.selectionForeground",      new ColorUIResource(255, 255, 255));
 
-        // === Dialog / OptionPane ===
-        UIManager.put("Dialog.background",          BG_PANEL);
-        UIManager.put("OptionPane.background",      BG_PANEL);
-        UIManager.put("OptionPane.foreground",      FG_TEXT);
+        // === Tree ===
+        UIManager.put("Tree.background",               new ColorUIResource(42, 42, 42));
+        UIManager.put("Tree.foreground",               new ColorUIResource(220, 220, 220));
 
-        // === TitledBorder ===
-        UIManager.put("TitledBorder.titleColor",    FG_DIM);
-        UIManager.put("TitledBorder.border",        BorderFactory.createLineBorder(BORDER_COLOR));
+        // === OptionPane ===
+        UIManager.put("OptionPane.background",         new ColorUIResource(28, 28, 28));
+        UIManager.put("OptionPane.messageForeground",  new ColorUIResource(220, 220, 220));
 
         // === ToolTip ===
-        UIManager.put("ToolTip.background",         BG_COMPONENT);
-        UIManager.put("ToolTip.foreground",         FG_TEXT);
-        UIManager.put("ToolTip.border",             BorderFactory.createLineBorder(BORDER_COLOR));
+        UIManager.put("ToolTip.background",            new ColorUIResource(42, 42, 42));
+        UIManager.put("ToolTip.foreground",            new ColorUIResource(220, 220, 220));
 
-        // === FileChooser ===
-        UIManager.put("FileChooser.background",     BG_PANEL);
-        UIManager.put("FileView.background",        BG_PANEL);
-        UIManager.put("List.background",            BG_COMPONENT);
-        UIManager.put("List.foreground",            FG_TEXT);
-        UIManager.put("List.selectionBackground",   BG_SELECTED);
-        UIManager.put("List.selectionForeground",   FG_WHITE);
-    }
-
-    /** Создать стилизованную кнопку */
-    public static JButton button(String text, Color bg) {
-        JButton btn = new JButton(text);
-        btn.setBackground(bg);
-        btn.setForeground(FG_WHITE);
-        btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        return btn;
-    }
-
-    /** Создать TitledBorder в стиле тёмной темы */
-    public static Border titledBorder(String title) {
-        return BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(BORDER_COLOR),
-                title,
-                javax.swing.border.TitledBorder.LEFT,
-                javax.swing.border.TitledBorder.TOP,
-                new Font("Segoe UI", Font.PLAIN, 11),
-                FG_DIM
-        );
+        // === Menu — ТОЛЬКО цвета, НЕТ бордеров (macOS Aqua NPE!) ===
+        UIManager.put("MenuBar.background",            new ColorUIResource(22, 22, 22));
+        UIManager.put("MenuBar.foreground",            new ColorUIResource(220, 220, 220));
+        UIManager.put("Menu.background",               new ColorUIResource(22, 22, 22));
+        UIManager.put("Menu.foreground",               new ColorUIResource(220, 220, 220));
+        UIManager.put("Menu.selectionBackground",      new ColorUIResource(59, 130, 246));
+        UIManager.put("Menu.selectionForeground",      new ColorUIResource(255, 255, 255));
+        UIManager.put("MenuItem.background",           new ColorUIResource(28, 28, 28));
+        UIManager.put("MenuItem.foreground",           new ColorUIResource(220, 220, 220));
+        UIManager.put("MenuItem.selectionBackground",  new ColorUIResource(59, 130, 246));
+        UIManager.put("MenuItem.selectionForeground",  new ColorUIResource(255, 255, 255));
+        UIManager.put("PopupMenu.background",          new ColorUIResource(28, 28, 28));
     }
 }
