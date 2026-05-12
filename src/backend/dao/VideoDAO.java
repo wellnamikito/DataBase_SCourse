@@ -73,11 +73,27 @@ public class VideoDAO extends BaseDAO {
         executeUpdate("DELETE FROM Video WHERE VideoID=?", id);
     }
 
-    public void updateViaView(int videoId, String caption, String address) throws SQLException {
-        executeUpdate(
-                "UPDATE vw_video_simple SET Caption=?, Address=? WHERE VideoID=?",
-                caption, address, videoId
-        );
+    public void updateViaView(int id, String caption, String address) throws SQLException {
+
+        String sql =
+                "UPDATE vw_video_edit " +
+                        "SET Caption = ?, Address = ? " +
+                        "WHERE VideoID = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            conn.setAutoCommit(true); // можно оставить, но не обязательно
+
+            ps.setString(1, caption);
+            ps.setString(2, address);
+            ps.setInt(3, id);
+
+            int affected = ps.executeUpdate();
+
+            // 🔥 ДИАГНОСТИКА (очень важно!)
+            System.out.println("UPDATED ROWS = " + affected);
+        }
     }
 
     public DefaultTableModel getSimpleView() throws SQLException {
@@ -111,4 +127,35 @@ public class VideoDAO extends BaseDAO {
         v.setOwnerId(rs.getInt("OwnerId"));
         return v;
     }
+
+
+    public DefaultTableModel getAllWithId() throws SQLException {
+        DefaultTableModel model = executeQuery(
+                "SELECT V.VideoID, V.Caption, D.DistrictName, V.Address, V.Type, " +
+                        "V.Phone, V.Licence, V.TimeStart, V.TimeEnd, V.Amount, " +
+                        "O.Familia || ' ' || O.Name AS OwnerName " +
+                        "FROM Video V " +
+                        "LEFT JOIN Districts D ON D.DistrictID = V.DistrictID " +
+                        "LEFT JOIN Owners O ON O.OwnerID = V.OwnerId " +
+                        "ORDER BY V.Caption"
+        );
+
+        renameColumns(model, new String[]{
+                "ID",
+                "Название",
+                "Район",
+                "Адрес",
+                "Тип",
+                "Телефон",
+                "Лицензия",
+                "Откр.",
+                "Закр.",
+                "Клиентов",
+                "Владелец"
+        });
+
+        return model;
+    }
+
+
 }

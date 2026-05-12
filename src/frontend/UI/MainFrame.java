@@ -42,18 +42,14 @@ public class MainFrame extends JFrame {
     private static final String C_STUDIO   = "studio";
     private static final String C_COUNTRY  = "country";
     private static final String C_MASTER   = "masterdetail";
-    private static final String C_VW_FILMS = "vw_films";
-    private static final String C_VW_REV   = "vw_revenue";
-    private static final String C_VW_PEOPLE= "vw_people";
-    private static final String C_VW_SIMPLE= "vw_simple";
-    private static final String C_VW_CATEG = "vw_category";
     private static final String C_QUERIES  = "queries";
     private static final String C_CHARTS   = "charts";
     private static final String C_REPORTS  = "reports";
+    private static final String C_VIEWS = "views";
 
     private TablePanel pOwners, pVideo, pFilm, pCassette, pReceipt;
     private TablePanel pDistrict, pService, pQuality, pDirector, pStudio, pCountry;
-    private TablePanel pVwFilms, pVwRevenue, pVwPeople, pVwCateg;
+
 
     private JLabel       statusBar;
 //    private JToggleButton btnTheme;
@@ -221,11 +217,7 @@ public class MainFrame extends JFrame {
 
     private void fillMenuViews() {
         menuViews.setText(I18n.t("menu.views")); menuViews.removeAll();
-        menuViews.add(mi(I18n.t("view.films_full"), () -> { showCard(C_VW_FILMS);  refreshVwFilms(); }));
-        menuViews.add(mi(I18n.t("view.revenue"),    () -> { showCard(C_VW_REV);    refreshVwRevenue(); }));
-        menuViews.add(mi(I18n.t("view.people"),     () -> { showCard(C_VW_PEOPLE); refreshVwPeople(); }));
-        menuViews.add(mi(I18n.t("view.category"),   () -> { showCard(C_VW_CATEG);  refreshVwCateg(); }));
-        menuViews.add(mi(I18n.t("view.simple"),     () -> showCard(C_VW_SIMPLE)));
+        menuViews.add(mi("Все представления", () -> showCard(C_VIEWS)));
     }
 
     private void fillMenuQueries() {
@@ -280,10 +272,7 @@ public class MainFrame extends JFrame {
         pDirector = new TablePanel("panel.director", true);
         pStudio   = new TablePanel("panel.studio",   true);
         pCountry  = new TablePanel("panel.country",  true);
-        pVwFilms   = new TablePanel("view.films_full", false);
-        pVwRevenue = new TablePanel("view.revenue",    false);
-        pVwPeople  = new TablePanel("view.people",     false);
-        pVwCateg   = new TablePanel("view.category",   false);
+
 
         wireOwnerCrud(); wireVideoCrud(); wireFilmCrud();
         wireCassetteCrud(); wireReceiptCrud(); wireSimpleCrud();
@@ -293,6 +282,8 @@ public class MainFrame extends JFrame {
         QueryPanel        queryPanel   = new QueryPanel();
         DiagramPanel      chartPanel   = new DiagramPanel();
         ReportPanel       reportPanel  = new ReportPanel();
+        ViewPanel viewPanel = new ViewPanel();
+        cardPanel.add(viewPanel, C_VIEWS);
 
         cardPanel.add(pOwners,    C_OWNERS);   cardPanel.add(pVideo,     C_VIDEO);
         cardPanel.add(pFilm,      C_FILM);     cardPanel.add(pCassette,  C_CASSETTE);
@@ -300,9 +291,7 @@ public class MainFrame extends JFrame {
         cardPanel.add(pService,   C_SERVICE);  cardPanel.add(pQuality,   C_QUALITY);
         cardPanel.add(pDirector,  C_DIRECTOR); cardPanel.add(pStudio,    C_STUDIO);
         cardPanel.add(pCountry,   C_COUNTRY);  cardPanel.add(masterDetail,C_MASTER);
-        cardPanel.add(pVwFilms,   C_VW_FILMS); cardPanel.add(pVwRevenue, C_VW_REV);
-        cardPanel.add(pVwPeople,  C_VW_PEOPLE);cardPanel.add(viewSimple, C_VW_SIMPLE);
-        cardPanel.add(pVwCateg,   C_VW_CATEG); cardPanel.add(queryPanel, C_QUERIES);
+        cardPanel.add(queryPanel, C_QUERIES);
         cardPanel.add(chartPanel, C_CHARTS);   cardPanel.add(reportPanel,C_REPORTS);
 
         add(cardPanel, BorderLayout.CENTER);
@@ -654,10 +643,7 @@ public class MainFrame extends JFrame {
     private void refreshDirector() { try { pDirector.loadData(simpleDAO.getDirectors()); }   catch (SQLException e) { dbErr(e); } }
     private void refreshStudio()   { try { pStudio.loadData(simpleDAO.getStudios()); }       catch (SQLException e) { dbErr(e); } }
     private void refreshCountry()  { try { pCountry.loadData(simpleDAO.getCountries()); }    catch (SQLException e) { dbErr(e); } }
-    private void refreshVwFilms()  { try { pVwFilms.loadData(filmDAO.getFilmsFullView()); }  catch (SQLException e) { dbErr(e); } }
-    private void refreshVwRevenue(){ try { pVwRevenue.loadData(receiptDAO.getTotalRevenueView()); } catch (SQLException e) { dbErr(e); } }
-    private void refreshVwPeople() { try { pVwPeople.loadData(ownerDAO.getAll()); }          catch (SQLException e) { dbErr(e); } }
-    private void refreshVwCateg()  { try { pVwCateg.loadData(receiptDAO.getReceiptCategoryView()); } catch (SQLException e) { dbErr(e); } }
+
 
     // ══════════════════════════════════════════════════
     //  УТИЛИТЫ
