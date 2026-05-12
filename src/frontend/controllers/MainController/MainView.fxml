@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="frontend.controllers.MainController"
+            styleClass="main-root">
+
+    <!-- ══════════ SIDEBAR ══════════ -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="220" spacing="0">
+
+            <!-- Logo -->
+            <VBox styleClass="sidebar-logo" alignment="CENTER" spacing="4">
+                <Label text="🎬 VideoRental" styleClass="sidebar-logo-text"/>
+                <Label fx:id="lblRoleBadge" text="ADMIN" styleClass="role-badge-admin"/>
+            </VBox>
+
+            <!-- User info -->
+            <VBox styleClass="sidebar-user" spacing="2">
+                <Label fx:id="lblUsername" text="postgres" styleClass="sidebar-username"/>
+                <Label fx:id="lblDbName"   text="videorental" styleClass="sidebar-dbname"/>
+            </VBox>
+
+            <Separator styleClass="sidebar-sep"/>
+
+            <!-- Navigation -->
+            <VBox styleClass="sidebar-nav" spacing="2" VBox.vgrow="ALWAYS">
+                <Label text="НАВИГАЦИЯ" styleClass="sidebar-section-label"/>
+
+                <Button fx:id="btnTables"  text="📋  Таблицы"    styleClass="nav-btn" maxWidth="Infinity" onAction="#showTables"/>
+                <Button fx:id="btnViews"   text="👁  Представления" styleClass="nav-btn" maxWidth="Infinity" onAction="#showViews"/>
+                <Button fx:id="btnQueries" text="🔍  Запросы"     styleClass="nav-btn" maxWidth="Infinity" onAction="#showQueries"/>
+                <Button fx:id="btnCharts"  text="📊  Диаграммы"   styleClass="nav-btn" maxWidth="Infinity" onAction="#showCharts"/>
+                <Button fx:id="btnReports" text="📄  Отчёты"      styleClass="nav-btn" maxWidth="Infinity" onAction="#showReports"/>
+                <Button fx:id="btnSources" text="🔗  Источники"   styleClass="nav-btn" maxWidth="Infinity" onAction="#showSources"/>
+
+                <Label text="СИСТЕМА" styleClass="sidebar-section-label"/>
+                <Button fx:id="btnAudit"   text="🔐  Аудит"       styleClass="nav-btn" maxWidth="Infinity" onAction="#showAudit"/>
+            </VBox>
+
+            <!-- Logout -->
+            <VBox styleClass="sidebar-bottom" spacing="4">
+                <Separator styleClass="sidebar-sep"/>
+                <Button text="⇠  Выйти" styleClass="btn-logout" maxWidth="Infinity" onAction="#onLogout"/>
+            </VBox>
+
+        </VBox>
+    </left>
+
+    <!-- ══════════ CONTENT ══════════ -->
+    <center>
+        <VBox styleClass="content-area">
+
+            <!-- Top bar -->
+            <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="16">
+                <Label fx:id="lblPageTitle" text="Таблицы" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblStatus" text="" styleClass="status-ok"/>
+                <Label fx:id="lblTime" styleClass="topbar-time"/>
+            </HBox>
+
+            <!-- Main content — StackPane with pages -->
+            <StackPane fx:id="contentStack" VBox.vgrow="ALWAYS" styleClass="content-stack">
+
+                <!-- PAGE: TABLES -->
+                <VBox fx:id="pageTables" styleClass="page" spacing="12">
+                    <HBox spacing="8" alignment="CENTER_LEFT" styleClass="table-toolbar">
+                        <Label text="Таблица:" styleClass="toolbar-label"/>
+                        <ComboBox fx:id="cmbTableSelect" promptText="Выберите таблицу..."
+                                  styleClass="cmb-table" prefWidth="220" onAction="#onTableSelected"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnAdd"    text="＋ Добавить"  styleClass="btn-success" onAction="#onAdd"    visible="false"/>
+                        <Button fx:id="btnEdit"   text="✎ Изменить"  styleClass="btn-warning" onAction="#onEdit"   visible="false"/>
+                        <Button fx:id="btnDelete" text="✕ Удалить"   styleClass="btn-danger"  onAction="#onDelete" visible="false"/>
+                        <Button text="↻ Обновить" styleClass="btn-secondary" onAction="#onRefresh"/>
+                    </HBox>
+                    <TableView fx:id="tableView" VBox.vgrow="ALWAYS" styleClass="main-table"
+                               placeholder="Выберите таблицу для отображения данных"/>
+                </VBox>
+
+                <!-- PAGE: VIEWS -->
+                <VBox fx:id="pageViews" styleClass="page" spacing="12" visible="false">
+                    <HBox spacing="8" alignment="CENTER_LEFT" styleClass="table-toolbar">
+                        <Label text="Представление:" styleClass="toolbar-label"/>
+                        <ComboBox fx:id="cmbViewSelect" promptText="Выберите представление..."
+                                  styleClass="cmb-table" prefWidth="300" onAction="#onViewSelected"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="↻ Обновить" styleClass="btn-secondary" onAction="#onRefreshView"/>
+                    </HBox>
+                    <TableView fx:id="viewTable" VBox.vgrow="ALWAYS" styleClass="main-table"
+                               placeholder="Выберите представление для отображения данных"/>
+                </VBox>
+
+                <!-- PAGE: QUERIES -->
+                <VBox fx:id="pageQueries" styleClass="page" spacing="12" visible="false">
+                    <HBox spacing="8" alignment="CENTER_LEFT" styleClass="table-toolbar">
+                        <Label text="Запрос:" styleClass="toolbar-label"/>
+                        <ComboBox fx:id="cmbQuerySelect" promptText="Выберите запрос..."
+                                  styleClass="cmb-table" prefWidth="320" onAction="#onQuerySelected"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnRunQuery" text="▶ Выполнить" styleClass="btn-primary" onAction="#onRunQuery"/>
+                    </HBox>
+
+                    <!-- Dynamic query params panel -->
+                    <VBox fx:id="queryParamsPanel" styleClass="params-panel" spacing="12"/>
+
+                    <TableView fx:id="queryTable" VBox.vgrow="ALWAYS" styleClass="main-table"
+                               placeholder="Выберите запрос и укажите параметры"/>
+                </VBox>
+
+                <!-- PAGE: CHARTS -->
+                <VBox fx:id="pageCharts" styleClass="page" spacing="12" visible="false">
+                    <HBox spacing="8" alignment="CENTER_LEFT" styleClass="table-toolbar">
+                        <Label text="Диаграмма:" styleClass="toolbar-label"/>
+                        <ComboBox fx:id="cmbChartSelect" promptText="Выберите диаграмму..."
+                                  styleClass="cmb-table" prefWidth="280" onAction="#onChartSelected"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="↻ Обновить" styleClass="btn-secondary" onAction="#onRefreshChart"/>
+                    </HBox>
+                    <StackPane fx:id="chartContainer" VBox.vgrow="ALWAYS" styleClass="chart-container"/>
+                </VBox>
+
+                <!-- PAGE: REPORTS -->
+                <VBox fx:id="pageReports" styleClass="page" spacing="16" visible="false">
+                    <Label text="Отчёты системы" styleClass="section-title"/>
+                    <HBox spacing="16">
+                        <!-- Report 1 -->
+                        <VBox styleClass="report-card" spacing="12" HBox.hgrow="ALWAYS">
+                            <Label text="📋 Однотабличный отчёт" styleClass="report-card-title"/>
+                            <Label text="Список владельцев видеопрокатов с контактными данными"
+                                   styleClass="report-card-desc" wrapText="true"/>
+                            <Region VBox.vgrow="ALWAYS"/>
+                            <HBox spacing="8">
+                                <Button text="👁 Просмотр" styleClass="btn-primary" onAction="#viewReport1"/>
+                                <Button text="📊 Excel"    styleClass="btn-success"  onAction="#exportReport1Excel"/>
+                                <Button text="📝 TXT"      styleClass="btn-secondary" onAction="#exportReport1Txt"/>
+                                <Button text="🌐 HTML"     styleClass="btn-secondary" onAction="#exportReport1Html"/>
+                            </HBox>
+                        </VBox>
+                        <!-- Report 2 -->
+                        <VBox styleClass="report-card" spacing="12" HBox.hgrow="ALWAYS">
+                            <Label text="🎬 Многотабличный отчёт" styleClass="report-card-title"/>
+                            <Label text="Фильмы с режиссёрами, студиями и странами производства"
+                                   styleClass="report-card-desc" wrapText="true"/>
+                            <Region VBox.vgrow="ALWAYS"/>
+                            <HBox spacing="8">
+                                <Button text="👁 Просмотр" styleClass="btn-primary" onAction="#viewReport2"/>
+                                <Button text="📊 Excel"    styleClass="btn-success"  onAction="#exportReport2Excel"/>
+                                <Button text="📝 TXT"      styleClass="btn-secondary" onAction="#exportReport2Txt"/>
+                                <Button text="🌐 HTML"     styleClass="btn-secondary" onAction="#exportReport2Html"/>
+                            </HBox>
+                        </VBox>
+                        <!-- Report 3 -->
+                        <VBox styleClass="report-card" spacing="12" HBox.hgrow="ALWAYS">
+                            <Label text="💰 Агрегированный отчёт" styleClass="report-card-title"/>
+                            <Label text="Выручка по видеосалонам с агрегированными показателями"
+                                   styleClass="report-card-desc" wrapText="true"/>
+                            <Region VBox.vgrow="ALWAYS"/>
+                            <HBox spacing="8">
+                                <Button text="👁 Просмотр" styleClass="btn-primary" onAction="#viewReport3"/>
+                                <Button text="📊 Excel"    styleClass="btn-success"  onAction="#exportReport3Excel"/>
+                                <Button text="📝 TXT"      styleClass="btn-secondary" onAction="#exportReport3Txt"/>
+                                <Button text="🌐 HTML"     styleClass="btn-secondary" onAction="#exportReport3Html"/>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+                    <!-- Report preview table -->
+                    <TableView fx:id="reportTable" VBox.vgrow="ALWAYS" styleClass="main-table"
+                               placeholder="Выберите отчёт для предварительного просмотра"/>
+                </VBox>
+
+                <!-- PAGE: SOURCES -->
+                <VBox fx:id="pageSources" styleClass="page" spacing="16" visible="false">
+                    <Label text="Источники данных" styleClass="section-title"/>
+                    <VBox styleClass="sources-card" spacing="12">
+                        <Label text="📚 Нормативные документы и стандарты" styleClass="sources-group-title"/>
+                        <Hyperlink text="PostgreSQL Documentation — postgresql.org/docs"
+                                   onAction="#openLink" userData="https://www.postgresql.org/docs/" styleClass="source-link"/>
+                        <Hyperlink text="JavaFX Documentation — openjfx.io"
+                                   onAction="#openLink" userData="https://openjfx.io/" styleClass="source-link"/>
+                        <Hyperlink text="Apache POI — poi.apache.org"
+                                   onAction="#openLink" userData="https://poi.apache.org/" styleClass="source-link"/>
+                        <Hyperlink text="HikariCP — github.com/brettwooldridge/HikariCP"
+                                   onAction="#openLink" userData="https://github.com/brettwooldridge/HikariCP" styleClass="source-link"/>
+                        <Hyperlink text="Maven Central Repository — mvnrepository.com"
+                                   onAction="#openLink" userData="https://mvnrepository.com/" styleClass="source-link"/>
+                    </VBox>
+                    <VBox styleClass="sources-card" spacing="12">
+                        <Label text="🏢 Организация-заказчик (условная)" styleClass="sources-group-title"/>
+                        <Label text="Система автоматизации видеопрокатов — учебный проект" styleClass="source-label"/>
+                        <Label text="Разработчик: Кучев Ярослав Игоревич" styleClass="source-label"/>
+                        <Label text="СУБД: PostgreSQL 15+" styleClass="source-label"/>
+                        <Label text="Технологии: Java 17 + JavaFX 21 + HikariCP + Apache POI" styleClass="source-label"/>
+                    </VBox>
+                </VBox>
+
+                <!-- PAGE: AUDIT -->
+                <VBox fx:id="pageAudit" styleClass="page" spacing="12" visible="false">
+                    <HBox spacing="8" alignment="CENTER_LEFT" styleClass="table-toolbar">
+                        <Label text="🔐 Журнал аудита операций" styleClass="toolbar-label"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="↻ Обновить" styleClass="btn-secondary" onAction="#onRefreshAudit"/>
+                    </HBox>
+                    <TableView fx:id="auditTable" VBox.vgrow="ALWAYS" styleClass="main-table"/>
+                </VBox>
+
+            </StackPane>
+        </VBox>
+    </center>
+</BorderPane>

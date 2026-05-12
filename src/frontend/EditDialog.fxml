@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="frontend.controllers.EditDialogController"
+      styleClass="dialog-root" spacing="0" minWidth="480">
+
+    <!-- Header -->
+    <HBox styleClass="dialog-header" alignment="CENTER_LEFT">
+        <Label fx:id="lblDialogTitle" text="Редактирование записи" styleClass="dialog-title"/>
+    </HBox>
+
+    <!-- Body: dynamic fields injected programmatically -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-border-color: transparent;">
+        <GridPane fx:id="fieldsGrid" styleClass="dialog-body"
+                  vgap="10" hgap="12" maxWidth="Infinity"/>
+    </ScrollPane>
+
+    <!-- Footer -->
+    <HBox styleClass="dialog-footer" alignment="CENTER_RIGHT" spacing="10">
+        <Label fx:id="lblDialogError" text="" style="-fx-text-fill:#dc2626; -fx-font-size:12px;" HBox.hgrow="ALWAYS"/>
+        <Button text="Отмена" styleClass="btn-secondary" onAction="#onCancel"/>
+        <Button fx:id="btnSave" text="Сохранить" styleClass="btn-primary" onAction="#onSave"/>
+    </HBox>
+</VBox>

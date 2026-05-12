@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="frontend.controllers.LoginController"
+           styleClass="login-root">
+
+    <!-- Background gradient overlay -->
+    <VBox alignment="CENTER" styleClass="login-bg">
+
+        <!-- Card -->
+        <VBox styleClass="login-card" alignment="CENTER" spacing="0">
+
+            <!-- Header -->
+            <VBox styleClass="login-header" alignment="CENTER" spacing="8">
+                <Label text="🎬" styleClass="login-icon"/>
+                <Label text="VideoRental" styleClass="login-title"/>
+                <Label fx:id="lblSubtitle" text="Система управления видеопрокатом" styleClass="login-subtitle"/>
+            </VBox>
+
+            <!-- Divider -->
+            <Separator styleClass="login-divider"/>
+
+            <!-- Form -->
+            <VBox styleClass="login-form" spacing="16" alignment="CENTER_LEFT">
+
+                <!-- DB Info row -->
+                <HBox spacing="16">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Сервер" styleClass="form-label"/>
+                        <TextField fx:id="txtHost" promptText="localhost" styleClass="form-field" prefWidth="160"/>
+                    </VBox>
+                    <VBox spacing="4">
+                        <Label text="Порт" styleClass="form-label"/>
+                        <TextField fx:id="txtPort" promptText="5432" styleClass="form-field" prefWidth="80"/>
+                    </VBox>
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="База данных" styleClass="form-label"/>
+                        <TextField fx:id="txtDatabase" promptText="videorental" styleClass="form-field" prefWidth="160"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Credentials -->
+                <VBox spacing="4">
+                    <Label text="Логин" styleClass="form-label"/>
+                    <TextField fx:id="txtUsername" promptText="postgres" styleClass="form-field"/>
+                </VBox>
+
+                <VBox spacing="4">
+                    <Label text="Пароль" styleClass="form-label"/>
+                    <PasswordField fx:id="txtPassword" promptText="••••••••" styleClass="form-field"/>
+                </VBox>
+
+                <!-- Error label -->
+                <Label fx:id="lblError" text="" styleClass="error-label" wrapText="true" maxWidth="Infinity"/>
+
+                <!-- Login button -->
+                <Button fx:id="btnLogin" text="Войти в систему →"
+                        styleClass="btn-primary" maxWidth="Infinity"
+                        onAction="#onLogin"/>
+
+            </VBox>
+
+            <!-- Footer -->
+            <VBox styleClass="login-footer" alignment="CENTER" spacing="4">
+                <Label fx:id="lblDeveloper" styleClass="footer-text"/>
+                <Label fx:id="lblDb" styleClass="footer-db"/>
+            </VBox>
+
+        </VBox>
+    </VBox>
+</StackPane>
