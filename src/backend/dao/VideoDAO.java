@@ -11,37 +11,37 @@ import java.util.List;
 public class VideoDAO extends BaseDAO {
 
     public DefaultTableModel getAll() throws SQLException {
-        DefaultTableModel model = executeQuery(
-                "SELECT V.Caption, D.DistrictName, V.Address, V.Type, " +
+        return executeQuery(
+                "SELECT V.VideoID, V.Caption, D.DistrictName, V.Address, V.Type, " +
                         "V.Phone, V.Licence, V.TimeStart, V.TimeEnd, V.Amount, " +
                         "O.Familia || ' ' || O.Name AS OwnerName " +
                         "FROM Video V " +
                         "LEFT JOIN Districts D ON D.DistrictID = V.DistrictID " +
                         "LEFT JOIN Owners O ON O.OwnerID = V.OwnerId " +
-                        "ORDER BY V.Caption"
+                        "ORDER BY V.VideoID"
         );
-        renameColumns(model, new String[]{
-                "Название", "Район", "Адрес", "Тип",
-                "Телефон", "Лицензия", "Откр.", "Закр.",
-                "Клиентов", "Владелец"
-        });
-        return model;
     }
 
+    // ✅ ВАЖНО: этот метод у тебя ломал MainFrame
     public List<Video> getAllList() throws SQLException {
         List<Video> list = new ArrayList<>();
-        Connection conn = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM Video ORDER BY VideoID");
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement("SELECT * FROM Video ORDER BY VideoID");
              ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) list.add(mapRow(rs));
         }
+
         return list;
     }
 
     public Video getById(int id) throws SQLException {
-        Connection conn = DatabaseConnection.getConnection();
-        try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM Video WHERE VideoID=?")) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement("SELECT * FROM Video WHERE VideoID=?")) {
+
             ps.setInt(1, id);
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return mapRow(rs);
             }
@@ -49,8 +49,9 @@ public class VideoDAO extends BaseDAO {
         return null;
     }
 
+    // ✅ INSERT
     public void insert(Video v) throws SQLException {
-        executeInsertGetKey(
+        executeUpdate(
                 "INSERT INTO Video(Caption, DistrictID, Address, Type, Phone, Licence, " +
                         "TimeStart, TimeEnd, Amount, OwnerId) VALUES(?,?,?,?,?,?,?,?,?,?)",
                 v.getCaption(), v.getDistrictId(), v.getAddress(), v.getType(),
@@ -59,6 +60,7 @@ public class VideoDAO extends BaseDAO {
         );
     }
 
+    // ✅ UPDATE
     public void update(Video v) throws SQLException {
         executeUpdate(
                 "UPDATE Video SET Caption=?, DistrictID=?, Address=?, Type=?, Phone=?, Licence=?, " +
@@ -71,45 +73,6 @@ public class VideoDAO extends BaseDAO {
 
     public void delete(int id) throws SQLException {
         executeUpdate("DELETE FROM Video WHERE VideoID=?", id);
-    }
-
-    public void updateViaView(int id, String caption, String address) throws SQLException {
-
-        String sql =
-                "UPDATE vw_video_edit " +
-                        "SET Caption = ?, Address = ? " +
-                        "WHERE VideoID = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            conn.setAutoCommit(true); // можно оставить, но не обязательно
-
-            ps.setString(1, caption);
-            ps.setString(2, address);
-            ps.setInt(3, id);
-
-            int affected = ps.executeUpdate();
-
-            // 🔥 ДИАГНОСТИКА (очень важно!)
-            System.out.println("UPDATED ROWS = " + affected);
-        }
-    }
-
-    public DefaultTableModel getSimpleView() throws SQLException {
-        DefaultTableModel m = executeQuery(
-                "SELECT Caption, Address FROM vw_video_simple ORDER BY Caption"
-        );
-        renameColumns(m, new String[]{"Название", "Адрес"});
-        return m;
-    }
-
-    public DefaultTableModel getRevenueChart() throws SQLException {
-        return executeQuery(
-                "SELECT V.Caption, COALESCE(SUM(R.Price),0) AS Total " +
-                        "FROM Video V LEFT JOIN Receipt R ON V.VideoID = R.VideoID " +
-                        "GROUP BY V.VideoID, V.Caption ORDER BY Total DESC"
-        );
     }
 
     private Video mapRow(ResultSet rs) throws SQLException {
@@ -128,34 +91,36 @@ public class VideoDAO extends BaseDAO {
         return v;
     }
 
-
     public DefaultTableModel getAllWithId() throws SQLException {
-        DefaultTableModel model = executeQuery(
+        return executeQuery(
                 "SELECT V.VideoID, V.Caption, D.DistrictName, V.Address, V.Type, " +
                         "V.Phone, V.Licence, V.TimeStart, V.TimeEnd, V.Amount, " +
                         "O.Familia || ' ' || O.Name AS OwnerName " +
                         "FROM Video V " +
                         "LEFT JOIN Districts D ON D.DistrictID = V.DistrictID " +
                         "LEFT JOIN Owners O ON O.OwnerID = V.OwnerId " +
-                        "ORDER BY V.Caption"
+                        "ORDER BY V.VideoID"
         );
-
-        renameColumns(model, new String[]{
-                "ID",
-                "Название",
-                "Район",
-                "Адрес",
-                "Тип",
-                "Телефон",
-                "Лицензия",
-                "Откр.",
-                "Закр.",
-                "Клиентов",
-                "Владелец"
-        });
-
-        return model;
     }
 
+    public DefaultTableModel getSimpleView() throws SQLException {
+        return executeQuery("SELECT Caption, Address FROM vw_video_simple");
+    }
 
+    public void updateViaView(int id, String caption, String address) throws SQLException {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     "UPDATE vw_video_edit SET Caption=?, Address=? WHERE VideoID=?")) {
+
+            conn.setAutoCommit(false);
+
+            ps.setString(1, caption);
+            ps.setString(2, address);
+            ps.setInt(3, id);
+
+            ps.executeUpdate();
+
+            conn.commit();
+        }
+    }
 }

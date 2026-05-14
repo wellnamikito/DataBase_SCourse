@@ -1,7 +1,8 @@
 package frontend.UI.Panels;
-import backend.util.DarkTheme;
+
 import backend.util.I18n;
 import backend.util.ThemeManager;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -9,12 +10,6 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-/**
- * Универсальная панель с JTable, поиском и CRUD кнопками.
- *
- * ИСПРАВЛЕНИЕ: titleKey теперь может быть как ключом i18n (содержит точку),
- * так и прямым текстом. Так решается проблема "panel.owners" в заголовке.
- */
 public class TablePanel extends JPanel {
 
     protected JTable table;
@@ -26,11 +21,9 @@ public class TablePanel extends JPanel {
     private final JLabel lblSearch;
     private JButton btnAdd, btnEdit, btnDelete, btnRefresh, btnClear;
 
-    // Хранить ключ или прямой текст
     private final String titleKey;
     private final boolean showCrud;
 
-    // Ссылки на панели для перекраски
     private JPanel northPanel, searchPanel, btnPanel;
     private JScrollPane scrollPane;
 
@@ -44,73 +37,81 @@ public class TablePanel extends JPanel {
     private CrudListener crudListener;
 
     public TablePanel(String titleKey, boolean showCrud) {
-        this.titleKey  = titleKey;
-        this.showCrud  = showCrud;
-        setLayout(new BorderLayout(0, 0));
+        this.titleKey = titleKey;
+        this.showCrud = showCrud;
 
-        // === Заголовок ===
-        lblTitle = new JLabel("  " + resolveTitle(), SwingConstants.LEFT);
+        setLayout(new BorderLayout());
+
+        // ===== TITLE =====
+        lblTitle = new JLabel("  " + resolveTitle());
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblTitle.setOpaque(true);
-        lblTitle.setBorder(BorderFactory.createEmptyBorder(10, 8, 10, 8));
 
-        // === Поиск ===
-        searchPanel = new JPanel(new BorderLayout(8, 0));
-        searchPanel.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
+        // ===== SEARCH =====
+        searchPanel = new JPanel(new BorderLayout(6, 6));
 
         lblSearch = new JLabel(I18n.t("search.label"));
-        lblSearch.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        searchPanel.add(lblSearch, BorderLayout.WEST);
-
         searchField = new JTextField();
-        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        searchField.addKeyListener(new KeyAdapter() {
-            @Override public void keyReleased(KeyEvent e) { applyFilter(); }
-        });
-        searchPanel.add(searchField, BorderLayout.CENTER);
 
-        btnClear = new JButton("✕");
-        btnClear.setPreferredSize(new Dimension(32, 28));
-        btnClear.setFocusPainted(false);
-        btnClear.setBorderPainted(false);
-        btnClear.setOpaque(true);
-        btnClear.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        btnClear.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnClear.addActionListener(e -> { searchField.setText(""); applyFilter(); });
+        searchField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                applyFilter();
+            }
+        });
+
+        btnClear = new JButton("X");
+        btnClear.addActionListener(e -> {
+            searchField.setText("");
+            applyFilter();
+        });
+
+        searchPanel.add(lblSearch, BorderLayout.WEST);
+        searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(btnClear, BorderLayout.EAST);
 
-        // === Таблица ===
+        // ===== TABLE =====
         tableModel = new DefaultTableModel() {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+            @Override
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
+
         table = new JTable(tableModel);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.setRowHeight(26);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        table.setShowGrid(true);
-        table.setIntercellSpacing(new Dimension(1, 1));
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
-        table.getTableHeader().setReorderingAllowed(false);
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.setRowHeight(25);
 
         sorter = new TableRowSorter<>(tableModel);
         table.setRowSorter(sorter);
 
         scrollPane = new JScrollPane(table);
 
-        // === Кнопки CRUD ===
-        btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 6));
+        // ===== CRUD =====
+        btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         if (showCrud) {
-            btnAdd     = makeBtn(I18n.t("btn.add"),     ThemeManager.btnAdd());
-            btnEdit    = makeBtn(I18n.t("btn.edit"),    ThemeManager.btnEdit());
-            btnDelete  = makeBtn(I18n.t("btn.delete"),  ThemeManager.btnDelete());
-            btnRefresh = makeBtn(I18n.t("btn.refresh"), ThemeManager.btnRefresh());
+            btnAdd = new JButton("Add");
+            btnEdit = new JButton("Edit");
+            btnDelete = new JButton("Delete");
+            btnRefresh = new JButton("Refresh");
 
-            btnAdd.addActionListener(e     -> { if (crudListener != null) crudListener.onAdd(); });
-            btnEdit.addActionListener(e    -> { if (crudListener != null) crudListener.onEdit(getSelectedModelRow()); });
-            btnDelete.addActionListener(e  -> { if (crudListener != null) crudListener.onDelete(getSelectedModelRow()); });
-            btnRefresh.addActionListener(e -> { if (crudListener != null) crudListener.onRefresh(); });
+            btnAdd.addActionListener(e -> {
+                if (crudListener != null) crudListener.onAdd();
+            });
+
+            btnEdit.addActionListener(e -> {
+                if (crudListener != null)
+                    crudListener.onEdit(getSelectedModelRow());
+            });
+
+            btnDelete.addActionListener(e -> {
+                if (crudListener != null)
+                    crudListener.onDelete(getSelectedModelRow());
+            });
+
+            btnRefresh.addActionListener(e -> {
+                if (crudListener != null) crudListener.onRefresh();
+            });
 
             btnPanel.add(btnAdd);
             btnPanel.add(btnEdit);
@@ -118,139 +119,68 @@ public class TablePanel extends JPanel {
             btnPanel.add(btnRefresh);
         }
 
-        // === Сборка ===
+        // ===== LAYOUT =====
         northPanel = new JPanel(new BorderLayout());
-        northPanel.add(lblTitle,    BorderLayout.NORTH);
+        northPanel.add(lblTitle, BorderLayout.NORTH);
         northPanel.add(searchPanel, BorderLayout.CENTER);
 
         add(northPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
+
         if (showCrud) add(btnPanel, BorderLayout.SOUTH);
 
-        // Применить тему сразу
         applyTheme();
-
-        // Слушатели
-        ThemeManager.getInstance().addListener(this::applyTheme);
-        I18n.addListener(this::updateTexts);
     }
 
-    /** Разрешить заголовок: если есть точка — это i18n ключ, иначе прямой текст */
     private String resolveTitle() {
-        String resolved = I18n.t(titleKey);
-        // I18n возвращает "[key]" если ключ не найден
-        if (resolved.startsWith("[") && resolved.endsWith("]")) return titleKey;
-        return resolved;
-    }
-
-    private JButton makeBtn(String text, Color bg) {
-        JButton btn = new JButton(text);
-        btn.setBackground(bg);
-        btn.setForeground(Color.WHITE);
-        btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
-        btn.setOpaque(true);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btn.setBorder(BorderFactory.createEmptyBorder(6, 14, 6, 14));
-        return btn;
+        String t = I18n.t(titleKey);
+        return (t.startsWith("[") ? titleKey : t);
     }
 
     public void applyTheme() {
-        boolean dark   = ThemeManager.getInstance().isDark();
-        Color bgPanel  = ThemeManager.bgPanel();
-        Color bgHeader = ThemeManager.bgHeader();
-        Color bgTable  = dark ? new Color(33, 33, 33) : Color.WHITE;
-        Color fgText   = ThemeManager.fgText();
-        Color fgDim    = ThemeManager.fgDim();
-        Color border   = ThemeManager.borderColor();
-        Color bgComp   = ThemeManager.bgComponent();
-        Color bgSelected = ThemeManager.bgSelected();
+        setBackground(ThemeManager.bgPanel());
 
-        setBackground(bgPanel);
+        lblTitle.setBackground(ThemeManager.bgHeader());
+        lblTitle.setForeground(ThemeManager.fgText());
 
-        // Заголовок
-        lblTitle.setBackground(bgHeader);
-        lblTitle.setForeground(fgText);
-        lblTitle.setText("  " + resolveTitle());
+        searchPanel.setBackground(ThemeManager.bgPanel());
+        searchField.setBackground(ThemeManager.bgComponent());
+        searchField.setForeground(ThemeManager.fgText());
 
-        // Поиск
-        searchPanel.setBackground(bgPanel);
-        lblSearch.setForeground(fgDim);
-        searchField.setBackground(bgComp);
-        searchField.setForeground(fgText);
-        searchField.setCaretColor(fgText);
-        searchField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(border),
-                BorderFactory.createEmptyBorder(2, 6, 2, 6)
-        ));
-        btnClear.setBackground(ThemeManager.btnRefresh());
-        btnClear.setForeground(Color.WHITE);
-
-        // North panel
-        northPanel.setBackground(bgPanel);
-
-        // Таблица
-        table.setBackground(bgTable);
-        table.setForeground(fgText);
-        table.setSelectionBackground(bgSelected);
-        table.setSelectionForeground(Color.WHITE);
-        table.setGridColor(border);
-        table.getTableHeader().setBackground(bgHeader);
-        table.getTableHeader().setForeground(fgText);
-        table.getTableHeader().setBorder(
-                BorderFactory.createMatteBorder(0, 0, 1, 0, border));
-
-        // ScrollPane — убрать белые рамки
-        scrollPane.setBorder(BorderFactory.createLineBorder(border));
-        scrollPane.setBackground(bgPanel);
-        scrollPane.getViewport().setBackground(bgTable);
-
-        // Кнопочная панель
-        btnPanel.setBackground(bgPanel);
-        btnPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, border));
-
-        if (showCrud && btnAdd != null) {
-            btnAdd.setBackground(ThemeManager.btnAdd());
-            btnEdit.setBackground(ThemeManager.btnEdit());
-            btnDelete.setBackground(ThemeManager.btnDelete());
-            btnRefresh.setBackground(ThemeManager.btnRefresh());
-        }
-
-        repaint();
-        revalidate();
-    }
-
-    private void updateTexts() {
-        lblTitle.setText("  " + resolveTitle());
-        lblSearch.setText(I18n.t("search.label"));
-        if (showCrud && btnAdd != null) {
-            btnAdd.setText(I18n.t("btn.add"));
-            btnEdit.setText(I18n.t("btn.edit"));
-            btnDelete.setText(I18n.t("btn.delete"));
-            btnRefresh.setText(I18n.t("btn.refresh"));
-        }
+        table.setBackground(ThemeManager.bgPanel());
+        table.setForeground(ThemeManager.fgText());
+        table.setSelectionBackground(ThemeManager.bgSelected());
     }
 
     public void applyFilter() {
         String text = searchField.getText().trim();
-        if (text.isEmpty()) sorter.setRowFilter(null);
-        else sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+        if (text.isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+        }
     }
 
     public void loadData(DefaultTableModel model) {
-        int cols = model.getColumnCount();
-        int rows = model.getRowCount();
-        Object[] colNames = new Object[cols];
-        for (int c = 0; c < cols; c++) colNames[c] = model.getColumnName(c);
-        Object[][] data = new Object[rows][cols];
-        for (int r = 0; r < rows; r++)
-            for (int c = 0; c < cols; c++)
-                data[r][c] = model.getValueAt(r, c);
-        tableModel.setDataVector(data, colNames);
-        sorter = new TableRowSorter<>(tableModel);
-        table.setRowSorter(sorter);
-        applyFilter();
+        tableModel.setDataVector(
+                toData(model),
+                toColumns(model)
+        );
+    }
+
+    private Object[][] toData(DefaultTableModel m) {
+        Object[][] data = new Object[m.getRowCount()][m.getColumnCount()];
+        for (int r = 0; r < m.getRowCount(); r++)
+            for (int c = 0; c < m.getColumnCount(); c++)
+                data[r][c] = m.getValueAt(r, c);
+        return data;
+    }
+
+    private Object[] toColumns(DefaultTableModel m) {
+        Object[] cols = new Object[m.getColumnCount()];
+        for (int i = 0; i < m.getColumnCount(); i++)
+            cols[i] = m.getColumnName(i);
+        return cols;
     }
 
     public int getSelectedModelRow() {
@@ -265,7 +195,17 @@ public class TablePanel extends JPanel {
         return tableModel.getValueAt(row, column);
     }
 
-    public void setCrudListener(CrudListener l) { this.crudListener = l; }
-    public JTable getTable()                     { return table; }
-    public DefaultTableModel getTableModel()     { return tableModel; }
+    public JTable getTable() {
+        return table;
+    }
+
+    public DefaultTableModel getTableModel() {
+        return tableModel;
+    }
+
+    public void setCrudListener(CrudListener l) {
+        this.crudListener = l;
+    }
+
+    
 }

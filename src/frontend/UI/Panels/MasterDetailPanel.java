@@ -172,4 +172,6 @@ public class MasterDetailPanel extends JPanel {
                 "Ошибка БД:\n" + e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
     }
+
+
 }

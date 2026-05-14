@@ -21,6 +21,7 @@ import java.util.List;
  */
 public class MainFrame extends JFrame {
 
+    private User user;
     private final OwnerDAO    ownerDAO    = new OwnerDAO();
     private final VideoDAO    videoDAO    = new VideoDAO();
     private final FilmDAO     filmDAO     = new FilmDAO();
@@ -63,8 +64,9 @@ public class MainFrame extends JFrame {
     private JMenuBar menuBar;
     private JMenu menuTables, menuViews, menuQueries, menuCharts, menuReports, menuHelp;
 
-    public MainFrame() {
+    public MainFrame(User user) {
         super("🎬 Видеопрокат — Информационная система");
+        this.user = user;
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1280, 800);
         setMinimumSize(new Dimension(1000, 650));
@@ -85,6 +87,7 @@ public class MainFrame extends JFrame {
 
         // Обновление темы через FlatLaf уже применяется в main
     }
+
 
     // ══════════════════════════════════════════════════
     //  TOOLBAR
@@ -699,8 +702,29 @@ public class MainFrame extends JFrame {
         }
 
         SwingUtilities.invokeLater(() -> {
-            MainFrame frame = new MainFrame();
+
+            // ===== АВТОРИЗАЦИЯ =====
+
+            LoginDialog loginDialog = new LoginDialog(null);
+
+            loginDialog.setVisible(true);
+
+            User user = loginDialog.getUser();
+
+            // Если окно закрыли или авторизация не прошла
+
+            if (user == null) {
+
+                System.exit(0);
+
+            }
+
+            // ===== ЗАПУСК ГЛАВНОГО ОКНА =====
+
+            MainFrame frame = new MainFrame(user);
+
             frame.setVisible(true);
+
         });
     }
 }
