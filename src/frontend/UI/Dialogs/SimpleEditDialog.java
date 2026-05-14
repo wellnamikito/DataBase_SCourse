@@ -45,7 +45,44 @@ public class SimpleEditDialog extends JDialog {
         add(btnPanel, BorderLayout.SOUTH);
         pack();
         setLocationRelativeTo(parent);
+
+        btnSave.addActionListener(e -> {
+            String val = field.getText().trim();
+            if (val.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Поле не может быть пустым");
+                return;
+            }
+            onSave.accept(val);
+            saved = true;
+            dispose();
+        });
+
+        btnCancel.addActionListener(e -> dispose());
+
+        //  клавиатура
+        setupKeyboardBehavior(btnSave);
     }
 
     public boolean isSaved() { return saved; }
+
+    /**
+     * Enter = сохранить
+     * Tab = стандартная навигация
+     */
+    private void setupKeyboardBehavior(JButton defaultButton) {
+
+        // Enter → кнопка Save
+        getRootPane().setDefaultButton(defaultButton);
+
+        // нормальный TAB flow
+        setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
+        setFocusTraversalPolicyProvider(true);
+
+        // стабилизация Swing traversal
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .setDefaultFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
+
+        // Enter прямо в поле тоже сохраняет
+        field.addActionListener(e -> defaultButton.doClick());
+    }
 }

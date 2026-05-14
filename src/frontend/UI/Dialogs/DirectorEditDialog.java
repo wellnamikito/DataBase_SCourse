@@ -2,6 +2,7 @@ package frontend.UI.Dialogs;
 
 import backend.dao.SimpleDAO;
 import backend.model.Director;
+import backend.util.UIUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,15 +20,18 @@ public class DirectorEditDialog extends JDialog {
     private final JTextField fOtch = new JTextField(20);
 
     public DirectorEditDialog(Window parent, Director director) {
-        super(parent, director == null ? "Добавить режиссера" : "Редактировать режиссера",
+        super(parent,
+                director == null ? "Добавить режиссера" : "Редактировать режиссера",
                 ModalityType.APPLICATION_MODAL);
+
         this.director = director;
 
         JPanel form = new JPanel(new GridLayout(3, 2, 8, 8));
         form.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
-        form.add(new JLabel("Фамилия:")); form.add(fFam);
-        form.add(new JLabel("Имя:"));    form.add(fName);
-        form.add(new JLabel("Отчество:")); form.add(fOtch);
+
+        form.add(new JLabel("Фамилия:"));   form.add(fFam);
+        form.add(new JLabel("Имя:"));       form.add(fName);
+        form.add(new JLabel("Отчество:"));  form.add(fOtch);
 
         if (director != null) {
             fFam.setText(director.getFamilia());
@@ -37,14 +41,29 @@ public class DirectorEditDialog extends JDialog {
 
         JButton btnSave   = new JButton("💾 Сохранить");
         JButton btnCancel = new JButton("Отмена");
+
         btnSave.addActionListener(e -> save());
         btnCancel.addActionListener(e -> dispose());
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        btnPanel.add(btnSave); btnPanel.add(btnCancel);
+        btnPanel.add(btnSave);
+        btnPanel.add(btnCancel);
+
         setLayout(new BorderLayout());
         add(form, BorderLayout.CENTER);
         add(btnPanel, BorderLayout.SOUTH);
+
+
+        // 🔥 ENTER + TAB UX
+
+        UIUtils.enableEnterToNextField(form);
+
+        // Enter в последнем поле → сохранить
+        fOtch.addActionListener(e -> save());
+
+        // Enter = кнопка по умолчанию
+        getRootPane().setDefaultButton(btnSave);
+
         pack();
         setLocationRelativeTo(parent);
     }

@@ -50,6 +50,12 @@ public class OwnerEditDialog extends JDialog {
         add(btnPanel, BorderLayout.SOUTH);
         pack();
         setLocationRelativeTo(parent);
+
+        btnSave.addActionListener(e -> save());
+        btnCancel.addActionListener(e -> dispose());
+
+        // ВАЖНО: добавляем поведение клавиш
+        setupKeyboardBehavior(btnSave);
     }
 
     private void save() {
@@ -102,4 +108,23 @@ public class OwnerEditDialog extends JDialog {
     }
 
     public boolean isSaved() { return saved; }
+
+    /**
+     * Настройка клавиатуры:
+     * Enter → сохранить
+     * Tab → нормальная навигация по полям
+     */
+    private void setupKeyboardBehavior(JButton defaultButton) {
+
+        // Enter = нажать кнопку
+        getRootPane().setDefaultButton(defaultButton);
+
+        // Улучшение навигации Tab (явно задаём порядок фокуса)
+        setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
+        setFocusTraversalPolicyProvider(true);
+
+        // (не обязательно, но стабилизирует поведение Swing)
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .setDefaultFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
+    }
 }

@@ -6,6 +6,7 @@ import backend.dao.SimpleDAO;
 import backend.model.Cassette;
 import backend.model.Film;
 import backend.model.Quality;
+import backend.util.UIUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +33,7 @@ public class CassetteEditDialog extends JDialog {
     public CassetteEditDialog(Window parent, Integer cassetteId, int videoId) {
         super(parent, cassetteId == null ? "Добавить кассету" : "Редактировать кассету",
                 ModalityType.APPLICATION_MODAL);
+
         this.videoId = videoId;
         this.editCassetteId = cassetteId;
 
@@ -40,7 +42,8 @@ public class CassetteEditDialog extends JDialog {
             qualities = simpleDAO.getQualityList();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(parent, "Ошибка: " + e.getMessage());
-            dispose(); return;
+            dispose();
+            return;
         }
 
         filmCombo    = new JComboBox<>(films.stream().map(Film::toString).toArray(String[]::new));
@@ -49,12 +52,14 @@ public class CassetteEditDialog extends JDialog {
 
         JPanel form = new JPanel(new GridLayout(3, 2, 8, 8));
         form.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
-        form.add(new JLabel("Фильм:"));   form.add(filmCombo);
-        form.add(new JLabel("Качество:")); form.add(qualityCombo);
-        form.add(new JLabel("Спрос:"));   form.add(cbDemand);
+
+        form.add(new JLabel("Фильм:"));    form.add(filmCombo);
+        form.add(new JLabel("Качество:"));  form.add(qualityCombo);
+        form.add(new JLabel("Спрос:"));     form.add(cbDemand);
 
         JButton btnSave   = new JButton("💾 Сохранить");
         JButton btnCancel = new JButton("Отмена");
+
         btnSave.addActionListener(e -> save());
         btnCancel.addActionListener(e -> dispose());
 
@@ -65,6 +70,20 @@ public class CassetteEditDialog extends JDialog {
         setLayout(new BorderLayout());
         add(form, BorderLayout.CENTER);
         add(btnPanel, BorderLayout.SOUTH);
+
+
+        // 🔥 ENTER / UX ДОБАВЛЕНИЯ
+
+
+        // Enter → следующий компонент
+        UIUtils.enableEnterToNextField(form);
+
+        // Enter → сохранить (как fallback)
+        cbDemand.addActionListener(e -> save());
+
+        // Enter → кнопка по умолчанию
+        getRootPane().setDefaultButton(btnSave);
+
         pack();
         setLocationRelativeTo(parent);
     }

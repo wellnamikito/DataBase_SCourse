@@ -5,6 +5,7 @@ import backend.dao.SimpleDAO;
 import backend.model.Director;
 import backend.model.Film;
 import backend.model.Studio;
+import backend.util.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -84,6 +85,27 @@ public class FilmEditDialog extends JDialog {
         add(btnPanel, BorderLayout.SOUTH);
         pack();
         setLocationRelativeTo(parent);
+
+        // ==============================
+        // 🔥 KEYBOARD NAVIGATION (ENTER / TAB)
+        // ==============================
+
+        // Tab + Enter по полям (кроме textarea)
+        UIUtils.enableEnterToNextField(form);
+
+        // JTextArea не поддерживает Enter-логику как поле ввода → пропускаем
+
+        // Enter в последнем поле формы → сохранить
+        studioCombo.addActionListener(e -> save());
+
+        // Enter в year тоже можно оставить как переход/сохранение
+        fYear.addActionListener(e -> fDuration.requestFocus());
+
+        // Enter в caption → year
+        fCaption.addActionListener(e -> fYear.requestFocus());
+
+        // Enter = кнопка "Сохранить"
+        getRootPane().setDefaultButton(btnSave);
     }
 
     private void addRow(JPanel p, GridBagConstraints gbc, int row, String label, JComponent comp) {

@@ -111,6 +111,12 @@ public class VideoEditDialog extends JDialog {
 
         pack();
         setLocationRelativeTo(parent);
+
+        btnSave.addActionListener(e -> save());
+        btnCancel.addActionListener(e -> dispose());
+
+        // клавиатура (Enter + Tab поведение)
+        setupKeyboardBehavior(btnSave);
     }
 
     private void save() {
@@ -177,5 +183,29 @@ public class VideoEditDialog extends JDialog {
 
     public boolean isSaved() {
         return saved;
+    }
+
+    /**
+     * Enter → сохранить
+     * Tab → нормальная навигация по форме
+     */
+    private void setupKeyboardBehavior(JButton defaultButton) {
+
+        // ENTER = кнопка Save
+        getRootPane().setDefaultButton(defaultButton);
+
+        // корректный Tab order (GridLayout иногда ломает порядок)
+        setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
+        setFocusTraversalPolicyProvider(true);
+
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .setDefaultFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
+
+        // Enter прямо в текстовых полях = сохранить
+        fCaption.addActionListener(e -> defaultButton.doClick());
+        fAddress.addActionListener(e -> defaultButton.doClick());
+        fType.addActionListener(e -> defaultButton.doClick());
+        fPhone.addActionListener(e -> defaultButton.doClick());
+        fLicence.addActionListener(e -> defaultButton.doClick());
     }
 }

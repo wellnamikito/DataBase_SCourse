@@ -78,6 +78,12 @@ public class ReceiptEditDialog extends JDialog {
         add(btnPanel, BorderLayout.SOUTH);
         pack();
         setLocationRelativeTo(parent);
+
+        btnSave.addActionListener(e -> save());
+        btnCancel.addActionListener(e -> dispose());
+
+        //  добавляем поведение клавиатуры
+        setupKeyboardBehavior(btnSave);
     }
 
     private void save() {
@@ -101,4 +107,26 @@ public class ReceiptEditDialog extends JDialog {
     }
 
     public boolean isSaved() { return saved; }
+
+    /**
+     * Enter → сохранить
+     * Tab → нормальная навигация
+     */
+    private void setupKeyboardBehavior(JButton defaultButton) {
+
+        // Enter = кнопка "Сохранить"
+        getRootPane().setDefaultButton(defaultButton);
+
+        // нормальный tab-order
+        setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
+        setFocusTraversalPolicyProvider(true);
+
+        // глобально стабилизируем traversal (Swing иногда глючит)
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .setDefaultFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
+
+        // 🔥 улучшение UX: Enter в полях тоже сохраняет (опционально)
+        fCassetteId.addActionListener(e -> defaultButton.doClick());
+        fDate.addActionListener(e -> defaultButton.doClick());
+    }
 }
