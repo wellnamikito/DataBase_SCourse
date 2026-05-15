@@ -1,6 +1,7 @@
 package backend.dao;
 
 import backend.util.DatabaseConnection;
+import backend.util.I18n;
 
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
@@ -9,59 +10,80 @@ import java.util.Map;
 
 public class ViewDAO {
 
-    private static final Map<String, String> VIEW_DEFINITIONS = new LinkedHashMap<>();
+    // Внутренние ключи -> SQL. Названия берём из I18n по тому же ключу.
+    private static final Map<String, String> VIEW_SQL = new LinkedHashMap<>();
 
     static {
-
-        VIEW_DEFINITIONS.put("Фильмы + режиссеры", "SELECT * FROM vw_films_full");
-        VIEW_DEFINITIONS.put("Кассеты + фильмы", "SELECT * FROM vw_cassettes_full");
-        VIEW_DEFINITIONS.put("Квитанции + услуги", "SELECT * FROM vw_receipts_services");
-        VIEW_DEFINITIONS.put("Видео + кассеты", "SELECT * FROM vw_video_with_cassettes");
-        VIEW_DEFINITIONS.put("Общая выручка", "SELECT * FROM vw_total_revenue");
-        VIEW_DEFINITIONS.put("Все люди", "SELECT * FROM vw_people");
-        VIEW_DEFINITIONS.put("Категории квитанций", "SELECT * FROM vw_receipt_category");
-        VIEW_DEFINITIONS.put("Использованные кассеты", "SELECT * FROM vw_used_cassettes");
-        VIEW_DEFINITIONS.put("Неиспользованные кассеты", "SELECT * FROM vw_unused_cassettes");
-        VIEW_DEFINITIONS.put("Видео без квитанций", "SELECT * FROM vw_videos_without_receipts");
-        VIEW_DEFINITIONS.put("Фильмы выше среднего", "SELECT * FROM vw_films_above_average");
-        VIEW_DEFINITIONS.put("Лучшие/худшие видеосалоны", "SELECT * FROM vw_best_worst_videos");
-        VIEW_DEFINITIONS.put("Разница выручки", "SELECT * FROM vw_revenue_difference");
-        VIEW_DEFINITIONS.put("Ночные видеотеки", "SELECT * FROM vw_night_video_percent");
-        VIEW_DEFINITIONS.put("Среднее число клиентов", "SELECT * FROM vw_avg_clients");
-        VIEW_DEFINITIONS.put("Редактируемое VIEW", "SELECT * FROM vw_video_edit");
+        VIEW_SQL.put("view.films_directors",   "SELECT * FROM vw_films_full");
+        VIEW_SQL.put("view.cassettes_films",   "SELECT * FROM vw_cassettes_full");
+        VIEW_SQL.put("view.receipts_services", "SELECT * FROM vw_receipts_services");
+        VIEW_SQL.put("view.video_cassettes",   "SELECT * FROM vw_video_with_cassettes");
+        VIEW_SQL.put("view.total_revenue",     "SELECT * FROM vw_total_revenue");
+        VIEW_SQL.put("view.people",            "SELECT * FROM vw_people");
+        VIEW_SQL.put("view.receipt_category",  "SELECT * FROM vw_receipt_category");
+        VIEW_SQL.put("view.used_cassettes",    "SELECT * FROM vw_used_cassettes");
+        VIEW_SQL.put("view.unused_cassettes",  "SELECT * FROM vw_unused_cassettes");
+        VIEW_SQL.put("view.without_receipts",  "SELECT * FROM vw_videos_without_receipts");
+        VIEW_SQL.put("view.above_average",     "SELECT * FROM vw_films_above_average");
+        VIEW_SQL.put("view.best_worst",        "SELECT * FROM vw_best_worst_videos");
+        VIEW_SQL.put("view.revenue_diff",      "SELECT * FROM vw_revenue_difference");
+        VIEW_SQL.put("view.night_video",       "SELECT * FROM vw_night_video_percent");
+        VIEW_SQL.put("view.avg_clients",       "SELECT * FROM vw_avg_clients");
+        VIEW_SQL.put("view.editable",          "SELECT * FROM vw_video_edit");
     }
 
-    public static Map<String, String> getViews() {
-        return VIEW_DEFINITIONS;
+    /**
+     * Возвращает карту: локализованное название -> i18n-ключ.
+     * ViewPanel использует это для заполнения combo.
+     */
+    public static Map<String, String> getLocalizedViews() {
+        Map<String, String> result = new LinkedHashMap<>();
+        for (String key : VIEW_SQL.keySet()) {
+            result.put(I18n.t(key), key);
+        }
+        return result;
     }
 
-    public DefaultTableModel executeView(String name) throws SQLException {
-
-        String sql = VIEW_DEFINITIONS.get(name);
-
+    /**
+     * Выполнить VIEW по i18n-ключу (например "view.films_directors").
+     */
+    public DefaultTableModel executeViewByKey(String i18nKey) throws SQLException {
+        String sql = VIEW_SQL.get(i18nKey);
         if (sql == null)
-            throw new SQLException("VIEW не найден: " + name);
+            throw new SQLException("VIEW не найден: " + i18nKey);
+        return runQuery(sql);
+    }
 
+    /**
+     * Выполнить VIEW по локализованному названию (обратная совместимость).
+     */
+    public DefaultTableModel executeView(String localizedName) throws SQLException {
+        // Ищем ключ по локализованному названию
+        for (Map.Entry<String, String> entry : getLocalizedViews().entrySet()) {
+            if (entry.getKey().equals(localizedName)) {
+                return executeViewByKey(entry.getValue());
+            }
+        }
+        throw new SQLException("VIEW не найден: " + localizedName);
+    }
+
+    private DefaultTableModel runQuery(String sql) throws SQLException {
         try (Connection conn = DatabaseConnection.getConnection();
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
             ResultSetMetaData meta = rs.getMetaData();
-
             DefaultTableModel model = new DefaultTableModel();
 
             for (int i = 1; i <= meta.getColumnCount(); i++) {
-                model.addColumn(meta.getColumnLabel(i)); // 👈 лучше чем getColumnName
+                model.addColumn(meta.getColumnLabel(i));
             }
 
             while (rs.next()) {
-
                 Object[] row = new Object[meta.getColumnCount()];
-
                 for (int i = 1; i <= meta.getColumnCount(); i++) {
                     row[i - 1] = rs.getObject(i);
                 }
-
                 model.addRow(row);
             }
 

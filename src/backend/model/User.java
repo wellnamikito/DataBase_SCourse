@@ -5,6 +5,7 @@ public class User {
     private int userId;
     private String login;
     private String roleName;
+    private String role;
 
     public User(int userId, String login, String roleName) {
         this.userId = userId;
@@ -26,5 +27,9 @@ public class User {
 
     public boolean isAdmin() {
         return "ADMIN".equalsIgnoreCase(roleName);
+    }
+
+    public String getRole() {
+        return roleName;
     }
 }

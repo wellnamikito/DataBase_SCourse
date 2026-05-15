@@ -11,13 +11,6 @@ import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 import java.sql.SQLException;
 
-/**
- * Master-Detail панель.
- *
- * ИСПРАВЛЕНИЕ: VideoDAO.getAllForMaster() возвращает таблицу
- * где ПЕРВАЯ колонка = VideoID (скрытая, но нужна для Detail).
- * Колонка VideoID скрывается через setMinWidth(0) + setMaxWidth(0).
- */
 public class MasterDetailPanel extends JPanel {
 
     private final VideoDAO    videoDAO    = new VideoDAO();
@@ -26,11 +19,23 @@ public class MasterDetailPanel extends JPanel {
     private final TablePanel masterPanel;
     private final TablePanel detailPanel;
 
+    // ── конструктор по умолчанию (без ограничений) ──────────────────
     public MasterDetailPanel() {
+        this(false);
+    }
+
+    // ── основной конструктор ─────────────────────────────────────────
+    public MasterDetailPanel(boolean isOperator) {
         setLayout(new BorderLayout());
 
         masterPanel = new TablePanel("panel.master", true);
         detailPanel = new TablePanel("panel.detail", true);
+
+        // Если оператор — сразу блокируем CRUD в обеих панелях
+        if (isOperator) {
+            masterPanel.setCrudEnabled(false);
+            detailPanel.setCrudEnabled(false);
+        }
 
         // При выборе строки в master — загрузить кассеты
         masterPanel.getTable().getSelectionModel().addListSelectionListener(
@@ -121,14 +126,10 @@ public class MasterDetailPanel extends JPanel {
         try {
             javax.swing.table.DefaultTableModel model = videoDAO.getAllWithId();
             masterPanel.loadData(model);
-            // Скрыть первую колонку (VideoID) — она нужна только для Detail
             hideColumn(0);
         } catch (SQLException e) { err(e); }
     }
 
-    /**
-     * Скрыть колонку по индексу в JTable (данные остаются, колонка не видна).
-     */
     private void hideColumn(int colIndex) {
         JTable table = masterPanel.getTable();
         if (table.getColumnCount() <= colIndex) return;
@@ -149,16 +150,11 @@ public class MasterDetailPanel extends JPanel {
         } catch (SQLException e) { err(e); }
     }
 
-    /**
-     * Получить VideoID из скрытой первой колонки выбранной строки Master.
-     * Возвращает -1 если ничего не выбрано или ID не число.
-     */
     private int getSelectedVideoId() {
         int modelRow = masterPanel.getSelectedModelRow();
         if (modelRow < 0) return -1;
         Object val = masterPanel.getTableModel().getValueAt(modelRow, 0);
         if (val instanceof Number) return ((Number) val).intValue();
-        // Попробовать парсить строку
         try { return Integer.parseInt(val.toString()); }
         catch (Exception e) { return -1; }
     }
@@ -172,6 +168,4 @@ public class MasterDetailPanel extends JPanel {
                 "Ошибка БД:\n" + e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
     }
-
-
 }

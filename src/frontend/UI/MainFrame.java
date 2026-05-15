@@ -46,46 +46,46 @@ public class MainFrame extends JFrame {
     private static final String C_QUERIES  = "queries";
     private static final String C_CHARTS   = "charts";
     private static final String C_REPORTS  = "reports";
-    private static final String C_VIEWS = "views";
+    private static final String C_VIEWS    = "views";
 
     private TablePanel pOwners, pVideo, pFilm, pCassette, pReceipt;
     private TablePanel pDistrict, pService, pQuality, pDirector, pStudio, pCountry;
 
-
-    private JLabel       statusBar;
-//    private JToggleButton btnTheme;
+    private JLabel            statusBar;
     private JComboBox<String> langCombo;
-    // Храним ссылки на все компоненты toolbar для Future переиспользования (если понадобится)
-    private JPanel       toolbarPanel;
-    private JPanel fadePanel;
-    private JLabel       lblLang;
-//    private JSeparator   toolbarSep;
+    private JPanel            toolbarPanel;
+    private JPanel            fadePanel;
+    private JLabel            lblLang;
 
     private JMenuBar menuBar;
     private JMenu menuTables, menuViews, menuQueries, menuCharts, menuReports, menuHelp;
 
     public MainFrame(User user) {
+
         super("🎬 Видеопрокат — Информационная система");
+
         this.user = user;
+
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1280, 800);
         setMinimumSize(new Dimension(1000, 650));
         setLocationRelativeTo(null);
 
+        // ===== UI =====
         buildToolBar();
         buildMenu();
         buildCards();
         buildStatusBar();
         initFadeLayer();
 
+        // ===== ограничения ролей (вызываем напрямую, БЕЗ invokeLater) =====
+        applyRolePermissions();
+
+        // ===== стартовая вкладка =====
         showCard(C_MASTER);
+
+        // ===== проверка подключения =====
         checkConnection();
-
-        // ThemeManager теперь отвечает только за логический флаг isDark()
-        // I18n.addListener(this::rebuildMenuTexts);
-        // I18n.addListener(this::updateToolbarTexts);
-
-        // Обновление темы через FlatLaf уже применяется в main
     }
 
 
@@ -105,14 +105,12 @@ public class MainFrame extends JFrame {
         langCombo.setPreferredSize(new Dimension(140, 28));
         langCombo.setFocusable(false);
 
-        // 🔥 смена языка + обновление UI
         langCombo.addActionListener(e -> {
             I18n.setLang(
                     langCombo.getSelectedIndex() == 0
                             ? I18n.Lang.RU
                             : I18n.Lang.EN
             );
-
             updateToolbarTexts();
             rebuildMenuTexts();
         });
@@ -121,15 +119,6 @@ public class MainFrame extends JFrame {
         toolbarPanel.add(langCombo);
 
         add(toolbarPanel, BorderLayout.NORTH);
-    }
-
-    private void styleToggle(JToggleButton btn) {
-        btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
-        btn.setOpaque(true);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btn.setBorder(BorderFactory.createEmptyBorder(5, 14, 5, 14));
     }
 
     private void updateToolbarTexts() {
@@ -141,38 +130,8 @@ public class MainFrame extends JFrame {
         fadePanel.setOpaque(true);
         fadePanel.setBackground(new Color(0, 0, 0, 0));
         fadePanel.setVisible(false);
-
         setGlassPane(fadePanel);
     }
-
-    // ══════════════════════════════════════════════════
-    //  ТЕМА ЧЕРЕЗ FlatLaf (переключение Dark/Light)
-    // ══════════════════════════════════════════════════
-
-//    private void toggleTheme() {
-//        boolean dark = ThemeManager.getInstance().isDark();
-//
-//        fadeOut(() -> {
-//            try {
-//                UIManager.setLookAndFeel(
-//                        dark ? new FlatLightLaf() : new FlatDarkLaf()
-//                );
-//
-//                ThemeManager.getInstance().setDark(!dark);
-//
-//                for (Window w : Window.getWindows()) {
-//                    SwingUtilities.updateComponentTreeUI(w);
-//                }
-//
-//                updateToolbarTexts();
-//
-//                fadeIn();
-//
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            }
-//        });
-//    }
 
     // ══════════════════════════════════════════════════
     //  МЕНЮ
@@ -187,7 +146,7 @@ public class MainFrame extends JFrame {
         menuReports = new JMenu(); menuHelp    = new JMenu();
 
         Font mf = new Font("Segoe UI", Font.PLAIN, 13);
-        for (JMenu m : new JMenu[]{menuTables,menuViews,menuQueries,menuCharts,menuReports,menuHelp})
+        for (JMenu m : new JMenu[]{menuTables, menuViews, menuQueries, menuCharts, menuReports, menuHelp})
             m.setFont(mf);
 
         fillMenuTables(); fillMenuViews(); fillMenuQueries();
@@ -202,20 +161,20 @@ public class MainFrame extends JFrame {
 
     private void fillMenuTables() {
         menuTables.setText(I18n.t("menu.tables")); menuTables.removeAll();
-        menuTables.add(mi(I18n.t("table.owners"),      () -> { showCard(C_OWNERS);   refreshOwners(); }));
-        menuTables.add(mi(I18n.t("table.video"),       () -> { showCard(C_VIDEO);    refreshVideo(); }));
-        menuTables.add(mi(I18n.t("table.film"),        () -> { showCard(C_FILM);     refreshFilm(); }));
-        menuTables.add(mi(I18n.t("table.cassette"),    () -> { showCard(C_CASSETTE); refreshCassette(); }));
-        menuTables.add(mi(I18n.t("table.receipt"),     () -> { showCard(C_RECEIPT);  refreshReceipt(); }));
+        menuTables.add(mi(I18n.t("table.owners"),       () -> { showCard(C_OWNERS);   refreshOwners(); }));
+        menuTables.add(mi(I18n.t("table.video"),        () -> { showCard(C_VIDEO);    refreshVideo(); }));
+        menuTables.add(mi(I18n.t("table.film"),         () -> { showCard(C_FILM);     refreshFilm(); }));
+        menuTables.add(mi(I18n.t("table.cassette"),     () -> { showCard(C_CASSETTE); refreshCassette(); }));
+        menuTables.add(mi(I18n.t("table.receipt"),      () -> { showCard(C_RECEIPT);  refreshReceipt(); }));
         menuTables.addSeparator();
-        menuTables.add(mi(I18n.t("table.districts"),   () -> { showCard(C_DISTRICT); refreshDistrict(); }));
-        menuTables.add(mi(I18n.t("table.service"),     () -> { showCard(C_SERVICE);  refreshService(); }));
-        menuTables.add(mi(I18n.t("table.quality"),     () -> { showCard(C_QUALITY);  refreshQuality(); }));
-        menuTables.add(mi(I18n.t("table.director"),    () -> { showCard(C_DIRECTOR); refreshDirector(); }));
-        menuTables.add(mi(I18n.t("table.studio"),      () -> { showCard(C_STUDIO);   refreshStudio(); }));
-        menuTables.add(mi(I18n.t("table.country"),     () -> { showCard(C_COUNTRY);  refreshCountry(); }));
+        menuTables.add(mi(I18n.t("table.districts"),    () -> { showCard(C_DISTRICT); refreshDistrict(); }));
+        menuTables.add(mi(I18n.t("table.service"),      () -> { showCard(C_SERVICE);  refreshService(); }));
+        menuTables.add(mi(I18n.t("table.quality"),      () -> { showCard(C_QUALITY);  refreshQuality(); }));
+        menuTables.add(mi(I18n.t("table.director"),     () -> { showCard(C_DIRECTOR); refreshDirector(); }));
+        menuTables.add(mi(I18n.t("table.studio"),       () -> { showCard(C_STUDIO);   refreshStudio(); }));
+        menuTables.add(mi(I18n.t("table.country"),      () -> { showCard(C_COUNTRY);  refreshCountry(); }));
         menuTables.addSeparator();
-        menuTables.add(mi(I18n.t("table.masterdetail"),() -> showCard(C_MASTER)));
+        menuTables.add(mi(I18n.t("table.masterdetail"), () -> showCard(C_MASTER)));
     }
 
     private void fillMenuViews() {
@@ -249,7 +208,6 @@ public class MainFrame extends JFrame {
         fillMenuTables(); fillMenuViews(); fillMenuQueries();
         fillMenuCharts(); fillMenuReports(); fillMenuHelp();
         menuBar.revalidate(); menuBar.repaint();
-
     }
 
     private JMenuItem mi(String text, Runnable action) {
@@ -276,26 +234,26 @@ public class MainFrame extends JFrame {
         pStudio   = new TablePanel("panel.studio",   true);
         pCountry  = new TablePanel("panel.country",  true);
 
-
         wireOwnerCrud(); wireVideoCrud(); wireFilmCrud();
         wireCassetteCrud(); wireReceiptCrud(); wireSimpleCrud();
 
-        MasterDetailPanel masterDetail = new MasterDetailPanel();
+        boolean isOperator = user != null && "operator".equalsIgnoreCase(user.getRoleName());
+        MasterDetailPanel masterDetail = new MasterDetailPanel(isOperator);
         ViewSimplePanel   viewSimple   = new ViewSimplePanel();
         QueryPanel        queryPanel   = new QueryPanel();
         DiagramPanel      chartPanel   = new DiagramPanel();
         ReportPanel       reportPanel  = new ReportPanel();
-        ViewPanel viewPanel = new ViewPanel();
-        cardPanel.add(viewPanel, C_VIEWS);
+        ViewPanel         viewPanel    = new ViewPanel();
 
-        cardPanel.add(pOwners,    C_OWNERS);   cardPanel.add(pVideo,     C_VIDEO);
-        cardPanel.add(pFilm,      C_FILM);     cardPanel.add(pCassette,  C_CASSETTE);
-        cardPanel.add(pReceipt,   C_RECEIPT);  cardPanel.add(pDistrict,  C_DISTRICT);
-        cardPanel.add(pService,   C_SERVICE);  cardPanel.add(pQuality,   C_QUALITY);
-        cardPanel.add(pDirector,  C_DIRECTOR); cardPanel.add(pStudio,    C_STUDIO);
-        cardPanel.add(pCountry,   C_COUNTRY);  cardPanel.add(masterDetail,C_MASTER);
-        cardPanel.add(queryPanel, C_QUERIES);
-        cardPanel.add(chartPanel, C_CHARTS);   cardPanel.add(reportPanel,C_REPORTS);
+        cardPanel.add(viewPanel,    C_VIEWS);
+        cardPanel.add(pOwners,      C_OWNERS);   cardPanel.add(pVideo,      C_VIDEO);
+        cardPanel.add(pFilm,        C_FILM);     cardPanel.add(pCassette,   C_CASSETTE);
+        cardPanel.add(pReceipt,     C_RECEIPT);  cardPanel.add(pDistrict,   C_DISTRICT);
+        cardPanel.add(pService,     C_SERVICE);  cardPanel.add(pQuality,    C_QUALITY);
+        cardPanel.add(pDirector,    C_DIRECTOR); cardPanel.add(pStudio,     C_STUDIO);
+        cardPanel.add(pCountry,     C_COUNTRY);  cardPanel.add(masterDetail, C_MASTER);
+        cardPanel.add(queryPanel,   C_QUERIES);
+        cardPanel.add(chartPanel,   C_CHARTS);   cardPanel.add(reportPanel,  C_REPORTS);
 
         add(cardPanel, BorderLayout.CENTER);
     }
@@ -309,35 +267,20 @@ public class MainFrame extends JFrame {
     }
 
     // ══════════════════════════════════════════════════
-    //  ПЕРЕКРАСКА ФРЕЙМА
+    //  FADE
     // ══════════════════════════════════════════════════
-
-    // ВСЁ ОБНОВЛЕНО ЧЕРЕЗ SwingUtilities.updateComponentTreeUI(this)
-    // Ручная перекраска через setBackground(...), UI-цвета и т.п. УДАЛЕНА.
-    // Если нужно — можно оставить только repaint/revalidate для локальных панелей.
-    private void applyFrameTheme() {
-        repaint();
-        revalidate();
-    }
 
     private void fadeOut(Runnable after) {
         fadePanel.setVisible(true);
-
         new Thread(() -> {
             try {
                 for (int i = 0; i <= 60; i += 5) {
                     int alpha = i;
-                    SwingUtilities.invokeLater(() -> {
-                        fadePanel.setBackground(new Color(0, 0, 0, alpha));
-                    });
+                    SwingUtilities.invokeLater(() -> fadePanel.setBackground(new Color(0, 0, 0, alpha)));
                     Thread.sleep(15);
                 }
-
                 SwingUtilities.invokeLater(after);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            } catch (Exception e) { e.printStackTrace(); }
         }).start();
     }
 
@@ -346,17 +289,11 @@ public class MainFrame extends JFrame {
             try {
                 for (int i = 60; i >= 0; i -= 5) {
                     int alpha = i;
-                    SwingUtilities.invokeLater(() -> {
-                        fadePanel.setBackground(new Color(0, 0, 0, alpha));
-                    });
+                    SwingUtilities.invokeLater(() -> fadePanel.setBackground(new Color(0, 0, 0, alpha)));
                     Thread.sleep(15);
                 }
-
                 SwingUtilities.invokeLater(() -> fadePanel.setVisible(false));
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            } catch (Exception e) { e.printStackTrace(); }
         }).start();
     }
 
@@ -511,7 +448,7 @@ public class MainFrame extends JFrame {
     private void wireSimpleCrud() {
         wireSingle(pDistrict,
                 n -> simpleDAO.insertDistrict(n),
-                (id,n) -> simpleDAO.updateDistrict(id,n),
+                (id, n) -> simpleDAO.updateDistrict(id, n),
                 id -> simpleDAO.deleteDistrict(id),
                 () -> simpleDAO.getDistrictList().stream()
                         .map(d -> new Object[]{d.getDistrictId(), d.getDistrictName()})
@@ -520,7 +457,7 @@ public class MainFrame extends JFrame {
 
         wireSingle(pService,
                 n -> simpleDAO.insertService(n),
-                (id,n) -> simpleDAO.updateService(id,n),
+                (id, n) -> simpleDAO.updateService(id, n),
                 id -> simpleDAO.deleteService(id),
                 () -> simpleDAO.getServiceList().stream()
                         .map(s -> new Object[]{s.getServiceId(), s.getServiceName()})
@@ -529,7 +466,7 @@ public class MainFrame extends JFrame {
 
         wireSingle(pQuality,
                 n -> simpleDAO.insertQuality(n),
-                (id,n) -> simpleDAO.updateQuality(id,n),
+                (id, n) -> simpleDAO.updateQuality(id, n),
                 id -> simpleDAO.deleteQuality(id),
                 () -> simpleDAO.getQualityList().stream()
                         .map(q -> new Object[]{q.getQualityId(), q.getQualityName()})
@@ -538,7 +475,7 @@ public class MainFrame extends JFrame {
 
         wireSingle(pCountry,
                 n -> simpleDAO.insertCountry(n),
-                (id,n) -> simpleDAO.updateCountry(id,n),
+                (id, n) -> simpleDAO.updateCountry(id, n),
                 id -> simpleDAO.deleteCountry(id),
                 () -> simpleDAO.getCountryList().stream()
                         .map(c -> new Object[]{c.getCountryId(), c.getCountryName()})
@@ -610,8 +547,8 @@ public class MainFrame extends JFrame {
             }
             @Override public void onEdit(int row) {
                 if (row < 0) { noSel(); return; }
-                Object idObj  = p.getSelectedValue(0);
-                Object nameObj= p.getSelectedValue(1);
+                Object idObj   = p.getSelectedValue(0);
+                Object nameObj = p.getSelectedValue(1);
                 if (idObj == null) return;
                 int id = ((Number) idObj).intValue();
                 String cur = nameObj != null ? nameObj.toString() : "";
@@ -635,18 +572,65 @@ public class MainFrame extends JFrame {
     //  REFRESH
     // ══════════════════════════════════════════════════
 
-    private void refreshOwners()   { try { pOwners.loadData(ownerDAO.getAll()); }           catch (SQLException e) { dbErr(e); } }
-    private void refreshVideo()    { try { pVideo.loadData(videoDAO.getAll()); }             catch (SQLException e) { dbErr(e); } }
-    private void refreshFilm()     { try { pFilm.loadData(filmDAO.getAll()); }               catch (SQLException e) { dbErr(e); } }
-    private void refreshCassette() { try { pCassette.loadData(cassetteDAO.getAll()); }       catch (SQLException e) { dbErr(e); } }
-    private void refreshReceipt()  { try { pReceipt.loadData(receiptDAO.getAll()); }         catch (SQLException e) { dbErr(e); } }
-    private void refreshDistrict() { try { pDistrict.loadData(simpleDAO.getDistricts()); }   catch (SQLException e) { dbErr(e); } }
-    private void refreshService()  { try { pService.loadData(simpleDAO.getServices()); }     catch (SQLException e) { dbErr(e); } }
-    private void refreshQuality()  { try { pQuality.loadData(simpleDAO.getQualities()); }    catch (SQLException e) { dbErr(e); } }
-    private void refreshDirector() { try { pDirector.loadData(simpleDAO.getDirectors()); }   catch (SQLException e) { dbErr(e); } }
-    private void refreshStudio()   { try { pStudio.loadData(simpleDAO.getStudios()); }       catch (SQLException e) { dbErr(e); } }
-    private void refreshCountry()  { try { pCountry.loadData(simpleDAO.getCountries()); }    catch (SQLException e) { dbErr(e); } }
+    private void refreshOwners()   { try { pOwners.loadData(ownerDAO.getAll()); }          catch (SQLException e) { dbErr(e); } }
+    private void refreshVideo()    { try { pVideo.loadData(videoDAO.getAll()); }            catch (SQLException e) { dbErr(e); } }
+    private void refreshFilm()     { try { pFilm.loadData(filmDAO.getAll()); }              catch (SQLException e) { dbErr(e); } }
+    private void refreshCassette() { try { pCassette.loadData(cassetteDAO.getAll()); }      catch (SQLException e) { dbErr(e); } }
+    private void refreshReceipt()  { try { pReceipt.loadData(receiptDAO.getAll()); }        catch (SQLException e) { dbErr(e); } }
+    private void refreshDistrict() { try { pDistrict.loadData(simpleDAO.getDistricts()); }  catch (SQLException e) { dbErr(e); } }
+    private void refreshService()  { try { pService.loadData(simpleDAO.getServices()); }    catch (SQLException e) { dbErr(e); } }
+    private void refreshQuality()  { try { pQuality.loadData(simpleDAO.getQualities()); }   catch (SQLException e) { dbErr(e); } }
+    private void refreshDirector() { try { pDirector.loadData(simpleDAO.getDirectors()); }  catch (SQLException e) { dbErr(e); } }
+    private void refreshStudio()   { try { pStudio.loadData(simpleDAO.getStudios()); }      catch (SQLException e) { dbErr(e); } }
+    private void refreshCountry()  { try { pCountry.loadData(simpleDAO.getCountries()); }   catch (SQLException e) { dbErr(e); } }
 
+    // ══════════════════════════════════════════════════
+    //  РОЛИ
+    // ══════════════════════════════════════════════════
+
+    /**
+     * Единственный метод ограничения ролей.
+     * Проверяет roleName через user.getRoleName() — именно это поле
+     * заполняется конструктором User(userId, login, roleName).
+     */
+    private void applyRolePermissions() {
+
+        if (user == null) return;
+
+        // ФИХ: сравниваем roleName, а не role (role всегда null)
+        boolean isOperator = "operator".equalsIgnoreCase(user.getRoleName());
+
+        if (!isOperator) return;
+
+        // Скрываем кнопки CRUD во всех панелях
+        pOwners.setCrudEnabled(false);
+        pVideo.setCrudEnabled(false);
+        pFilm.setCrudEnabled(false);
+        pCassette.setCrudEnabled(false);
+        pReceipt.setCrudEnabled(false);
+        pDistrict.setCrudEnabled(false);
+        pService.setCrudEnabled(false);
+        pQuality.setCrudEnabled(false);
+        pDirector.setCrudEnabled(false);
+        pStudio.setCrudEnabled(false);
+        pCountry.setCrudEnabled(false);
+
+        // Скрываем меню отчётов и графиков
+        menuReports.setVisible(false);
+        menuCharts.setVisible(false);
+
+        // Уведомление оператору — через invokeLater, чтобы окно успело отрисоваться
+        SwingUtilities.invokeLater(() ->
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Вы вошли как OPERATOR.\n\n" +
+                                "Доступен только просмотр данных.\n" +
+                                "Добавление, редактирование и удаление запрещены.",
+                        "Ограниченный доступ",
+                        JOptionPane.INFORMATION_MESSAGE
+                )
+        );
+    }
 
     // ══════════════════════════════════════════════════
     //  УТИЛИТЫ
@@ -662,7 +646,7 @@ public class MainFrame extends JFrame {
                 try {
                     boolean ok = get();
                     statusBar.setText("  " + I18n.t(ok ? "msg.connected" : "msg.no_conn"));
-                    statusBar.setForeground(ok ? new Color(34,197,94) : new Color(239,68,68));
+                    statusBar.setForeground(ok ? new Color(34, 197, 94) : new Color(239, 68, 68));
                 } catch (Exception e) { e.printStackTrace(); }
             }
         }.execute();
@@ -672,10 +656,12 @@ public class MainFrame extends JFrame {
         JOptionPane.showMessageDialog(this, I18n.t("msg.select_row"),
                 I18n.t("msg.warning"), JOptionPane.WARNING_MESSAGE);
     }
+
     private boolean confirm(String msg) {
         return JOptionPane.showConfirmDialog(this, msg,
                 I18n.t("msg.confirm_title"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
     }
+
     private void dbErr(SQLException e) {
         JOptionPane.showMessageDialog(this,
                 I18n.t("msg.db_error") + "\n" + e.getMessage(),
@@ -683,48 +669,38 @@ public class MainFrame extends JFrame {
         e.printStackTrace();
     }
 
+    // ══════════════════════════════════════════════════
+    //  MAIN
+    // ══════════════════════════════════════════════════
+
     public static void main(String[] args) {
         try {
-            // Фиксируем единый серый FlatLaf (тёмная тема)
             FlatDarkLaf.setup();
-
-            // Улучшаем вид title bar (если используется FlatLaf decoration)
             JFrame.setDefaultLookAndFeelDecorated(true);
             JDialog.setDefaultLookAndFeelDecorated(true);
-
             UIManager.put("TitlePane.unifiedBackground", true);
             UIManager.put("TitlePane.background", new Color(60, 63, 65));
             UIManager.put("TitlePane.foreground", new Color(220, 220, 220));
             UIManager.put("TitlePane.centerTitle", true);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         SwingUtilities.invokeLater(() -> {
 
-            // ===== АВТОРИЗАЦИЯ =====
-
+            // ===== LOGIN =====
             LoginDialog loginDialog = new LoginDialog(null);
-
             loginDialog.setVisible(true);
 
             User user = loginDialog.getUser();
-
-            // Если окно закрыли или авторизация не прошла
-
             if (user == null) {
-
                 System.exit(0);
-
             }
 
-            // ===== ЗАПУСК ГЛАВНОГО ОКНА =====
-
+            // ===== ГЛАВНОЕ ОКНО =====
+            // applyRolePermissions() вызывается внутри конструктора
             MainFrame frame = new MainFrame(user);
-
             frame.setVisible(true);
-
         });
     }
 }

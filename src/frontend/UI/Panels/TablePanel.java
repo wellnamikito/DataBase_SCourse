@@ -19,6 +19,7 @@ public class TablePanel extends JPanel {
 
     private final JLabel lblTitle;
     private final JLabel lblSearch;
+
     private JButton btnAdd, btnEdit, btnDelete, btnRefresh, btnClear;
 
     private final String titleKey;
@@ -27,14 +28,16 @@ public class TablePanel extends JPanel {
     private JPanel northPanel, searchPanel, btnPanel;
     private JScrollPane scrollPane;
 
+    private CrudListener crudListener;
+
+    private boolean crudEnabled = true;
+
     public interface CrudListener {
         void onAdd();
         void onEdit(int selectedRow);
         void onDelete(int selectedRow);
         void onRefresh();
     }
-
-    private CrudListener crudListener;
 
     public TablePanel(String titleKey, boolean showCrud) {
         this.titleKey = titleKey;
@@ -60,7 +63,7 @@ public class TablePanel extends JPanel {
             }
         });
 
-        btnClear = new JButton("X");
+        btnClear = new JButton(I18n.t("btn.clear_search"));
         btnClear.addActionListener(e -> {
             searchField.setText("");
             applyFilter();
@@ -86,27 +89,28 @@ public class TablePanel extends JPanel {
 
         scrollPane = new JScrollPane(table);
 
-        // ===== CRUD =====
+        // ===== CRUD BUTTONS =====
         btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         if (showCrud) {
-            btnAdd = new JButton("Add");
-            btnEdit = new JButton("Edit");
-            btnDelete = new JButton("Delete");
-            btnRefresh = new JButton("Refresh");
+            btnAdd     = new JButton(I18n.t("btn.add"));
+            btnEdit    = new JButton(I18n.t("btn.edit"));
+            btnDelete  = new JButton(I18n.t("btn.delete"));
+            btnRefresh = new JButton(I18n.t("btn.refresh"));
 
             btnAdd.addActionListener(e -> {
+                if (!crudEnabled) { warn(); return; }
                 if (crudListener != null) crudListener.onAdd();
             });
 
             btnEdit.addActionListener(e -> {
-                if (crudListener != null)
-                    crudListener.onEdit(getSelectedModelRow());
+                if (!crudEnabled) { warn(); return; }
+                if (crudListener != null) crudListener.onEdit(getSelectedModelRow());
             });
 
             btnDelete.addActionListener(e -> {
-                if (crudListener != null)
-                    crudListener.onDelete(getSelectedModelRow());
+                if (!crudEnabled) { warn(); return; }
+                if (crudListener != null) crudListener.onDelete(getSelectedModelRow());
             });
 
             btnRefresh.addActionListener(e -> {
@@ -121,7 +125,7 @@ public class TablePanel extends JPanel {
 
         // ===== LAYOUT =====
         northPanel = new JPanel(new BorderLayout());
-        northPanel.add(lblTitle, BorderLayout.NORTH);
+        northPanel.add(lblTitle,    BorderLayout.NORTH);
         northPanel.add(searchPanel, BorderLayout.CENTER);
 
         add(northPanel, BorderLayout.NORTH);
@@ -130,12 +134,50 @@ public class TablePanel extends JPanel {
         if (showCrud) add(btnPanel, BorderLayout.SOUTH);
 
         applyTheme();
+
+        // ===== СЛУШАТЕЛЬ СМЕНЫ ЯЗЫКА =====
+        I18n.addListener(this::updateTexts);
+    }
+
+    // ══════════════════════════════════════════════════
+    //  ОБНОВЛЕНИЕ ТЕКСТОВ ПРИ СМЕНЕ ЯЗЫКА
+    // ══════════════════════════════════════════════════
+
+    private void updateTexts() {
+        lblTitle.setText("  " + resolveTitle());
+        lblSearch.setText(I18n.t("search.label"));
+        btnClear.setText(I18n.t("btn.clear_search"));
+
+        if (showCrud) {
+            btnAdd.setText(I18n.t("btn.add"));
+            btnEdit.setText(I18n.t("btn.edit"));
+            btnDelete.setText(I18n.t("btn.delete"));
+            btnRefresh.setText(I18n.t("btn.refresh"));
+        }
+
+        revalidate();
+        repaint();
+    }
+
+    // ══════════════════════════════════════════════════
+    //  ПРЕДУПРЕЖДЕНИЕ (режим только просмотра)
+    // ══════════════════════════════════════════════════
+
+    private void warn() {
+        JOptionPane.showMessageDialog(this,
+                I18n.t("msg.access_denied"),
+                I18n.t("msg.warning"),
+                JOptionPane.WARNING_MESSAGE);
     }
 
     private String resolveTitle() {
         String t = I18n.t(titleKey);
         return (t.startsWith("[") ? titleKey : t);
     }
+
+    // ══════════════════════════════════════════════════
+    //  ТЕМА
+    // ══════════════════════════════════════════════════
 
     public void applyTheme() {
         setBackground(ThemeManager.bgPanel());
@@ -152,6 +194,10 @@ public class TablePanel extends JPanel {
         table.setSelectionBackground(ThemeManager.bgSelected());
     }
 
+    // ══════════════════════════════════════════════════
+    //  ФИЛЬТР
+    // ══════════════════════════════════════════════════
+
     public void applyFilter() {
         String text = searchField.getText().trim();
         if (text.isEmpty()) {
@@ -160,6 +206,10 @@ public class TablePanel extends JPanel {
             sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
         }
     }
+
+    // ══════════════════════════════════════════════════
+    //  ДАННЫЕ
+    // ══════════════════════════════════════════════════
 
     public void loadData(DefaultTableModel model) {
         tableModel.setDataVector(
@@ -183,6 +233,10 @@ public class TablePanel extends JPanel {
         return cols;
     }
 
+    // ══════════════════════════════════════════════════
+    //  ВЫБОР СТРОКИ
+    // ══════════════════════════════════════════════════
+
     public int getSelectedModelRow() {
         int viewRow = table.getSelectedRow();
         if (viewRow < 0) return -1;
@@ -195,17 +249,28 @@ public class TablePanel extends JPanel {
         return tableModel.getValueAt(row, column);
     }
 
-    public JTable getTable() {
-        return table;
-    }
+    public JTable getTable() { return table; }
 
-    public DefaultTableModel getTableModel() {
-        return tableModel;
-    }
+    public DefaultTableModel getTableModel() { return tableModel; }
 
-    public void setCrudListener(CrudListener l) {
-        this.crudListener = l;
-    }
+    public void setCrudListener(CrudListener l) { this.crudListener = l; }
 
-    
+    // ══════════════════════════════════════════════════
+    //  РОЛИ
+    // ══════════════════════════════════════════════════
+
+    public void setCrudEnabled(boolean enabled) {
+        this.crudEnabled = enabled;
+
+        if (!showCrud) return;
+
+        if (btnPanel != null)   btnPanel.setVisible(enabled);
+        if (btnAdd != null)     btnAdd.setEnabled(enabled);
+        if (btnEdit != null)    btnEdit.setEnabled(enabled);
+        if (btnDelete != null)  btnDelete.setEnabled(enabled);
+        if (btnRefresh != null) btnRefresh.setEnabled(true); // Refresh всегда доступен
+
+        revalidate();
+        repaint();
+    }
 }

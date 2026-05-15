@@ -268,6 +268,51 @@ public class I18n {
         p("dlg.edit_director","Редактировать режиссёра",   "Edit Director");
         p("dlg.add_item",     "Добавить запись",           "Add Record");
         p("dlg.edit_item",    "Редактировать запись",      "Edit Record");
+
+        // === Представления (ViewDAO) ===
+        p("view.films_directors",       "Фильмы + режиссеры",           "Films + Directors");
+        p("view.cassettes_films",       "Кассеты + фильмы",             "Cassettes + Films");
+        p("view.receipts_services",     "Квитанции + услуги",           "Receipts + Services");
+        p("view.video_cassettes",       "Видео + кассеты",              "Video + Cassettes");
+        p("view.total_revenue",         "Общая выручка",                "Total Revenue");
+        p("view.people",                "Все люди",                     "All People");
+        p("view.receipt_category",      "Категории квитанций",          "Receipt Categories");
+        p("view.used_cassettes",        "Использованные кассеты",       "Used Cassettes");
+        p("view.unused_cassettes",      "Неиспользованные кассеты",     "Unused Cassettes");
+        p("view.without_receipts",      "Видео без квитанций",          "Videos Without Receipts");
+        p("view.above_average",         "Фильмы выше среднего",         "Films Above Average");
+        p("view.best_worst",            "Лучшие/худшие видеосалоны",    "Best/Worst Stores");
+        p("view.revenue_diff",          "Разница выручки",              "Revenue Difference");
+        p("view.night_video",           "Ночные видеотеки",             "Night Video Stores");
+        p("view.avg_clients",           "Среднее число клиентов",       "Average Client Count");
+        p("view.editable",              "Редактируемое VIEW",           "Editable VIEW");
+
+        p("msg.access_denied", "Доступ запрещён (режим только просмотра)", "Access denied (read-only mode)");
+
+        // === Запросы (QueryDAO) ===
+        p("query.service_stats",         "Статистика по услугам",           "Service Statistics");
+        p("query.videos_by_owner",       "Видеосалоны по владельцу",        "Video Stores by Owner");
+        p("query.cassettes_by_quality",  "Кассеты по качеству",             "Cassettes by Quality");
+        p("query.receipts_by_period",    "Квитанции по периоду",            "Receipts by Period");
+        p("query.operations_from_date",  "Операции начиная с даты",         "Operations From Date");
+        p("query.revenue_over",          "Выручка выше суммы",              "Revenue Over Amount");
+        p("query.revenue_by_period",     "Выручка за период",               "Revenue by Period");
+        p("query.revenue_by_mask",       "Выручка видеосалонов по маске",   "Revenue by Store Mask");
+        p("query.receipts_by_price",     "Квитанции по точной цене",        "Receipts by Exact Price");
+        p("query.receipts_price_over",   "Квитанции выше цены",             "Receipts Price Over");
+        p("query.studios_by_year_revenue","Студии по году и выручке",       "Studios by Year and Revenue");
+
+// === Параметры запросов ===
+        p("query.param.service_name",    "Название услуги",   "Service Name");
+        p("query.param.year",            "Год",               "Year");
+        p("query.param.last_name",       "Фамилия",           "Last Name");
+        p("query.param.quality",         "Качество",          "Quality");
+        p("query.param.date_from",       "Дата от",           "Date From");
+        p("query.param.date_to",         "Дата до",           "Date To");
+        p("query.param.date",            "Дата",              "Date");
+        p("query.param.min_revenue",     "Минимальная выручка","Min Revenue");
+        p("query.param.mask",            "Маска",             "Mask");
+        p("query.param.price",           "Цена",              "Price");
     }
 
     private static void p(String key, String ru, String en) {
