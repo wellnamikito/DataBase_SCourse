@@ -4408,7 +4408,183 @@ false Zulu
       <BaseTypeId>23</BaseTypeId>
       <OwnerName>postgres</OwnerName>
     </object-type>
-    <routine id="281" parent="273" name="get_cassettes_by_quality">
+    <routine id="281" parent="273" name="fn_cassette_bi">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17177</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>125</SourceTextLength>
+      <StateNumber>1155</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="282" parent="273" name="fn_country_bi">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17173</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>124</SourceTextLength>
+      <StateNumber>1151</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="283" parent="273" name="fn_director_bi">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17172</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>127</SourceTextLength>
+      <StateNumber>1150</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="284" parent="273" name="fn_districts_bi">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17169</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>128</SourceTextLength>
+      <StateNumber>1147</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="285" parent="273" name="fn_film_bi">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17175</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>115</SourceTextLength>
+      <StateNumber>1153</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="286" parent="273" name="fn_owner_bd">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17162</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>192</SourceTextLength>
+      <StateNumber>1135</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="287" parent="273" name="fn_owners_bi">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17168</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>119</SourceTextLength>
+      <StateNumber>1146</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="288" parent="273" name="fn_quality_bi">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17170</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>124</SourceTextLength>
+      <StateNumber>1148</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="289" parent="273" name="fn_receipt_ad">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17164</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>114</SourceTextLength>
+      <StateNumber>1137</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="290" parent="273" name="fn_receipt_ai">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17158</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>114</SourceTextLength>
+      <StateNumber>1131</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="291" parent="273" name="fn_receipt_bi">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17178</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>124</SourceTextLength>
+      <StateNumber>1156</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="292" parent="273" name="fn_receipt_bu">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17160</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>121</SourceTextLength>
+      <StateNumber>1163</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="293" parent="273" name="fn_service_bi">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17171</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>124</SourceTextLength>
+      <StateNumber>1149</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="294" parent="273" name="fn_studio_bi">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17174</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>121</SourceTextLength>
+      <StateNumber>1152</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="295" parent="273" name="fn_video_au">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17166</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>112</SourceTextLength>
+      <StateNumber>1139</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="296" parent="273" name="fn_video_bi">
+      <DetailsLevel>3</DetailsLevel>
+      <ObjectId>17176</ObjectId>
+      <PgRoutineKind>pg-trigger</PgRoutineKind>
+      <ResultsDefinition>trigger</ResultsDefinition>
+      <Rows>0.0</Rows>
+      <SourceTextLength>118</SourceTextLength>
+      <StateNumber>1154</StateNumber>
+      <LanguageName>plpgsql</LanguageName>
+      <OwnerName>postgres</OwnerName>
+    </routine>
+    <routine id="297" parent="273" name="get_cassettes_by_quality">
       <ArgumentsDefinition>p_quality_name text</ArgumentsDefinition>
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17108</ObjectId>
@@ -4419,7 +4595,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <routine id="282" parent="273" name="get_operations_from_date">
+    <routine id="298" parent="273" name="get_operations_from_date">
       <ArgumentsDefinition>p_service_name text, p_date date</ArgumentsDefinition>
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17110</ObjectId>
@@ -4430,7 +4606,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <routine id="283" parent="273" name="get_receipts_by_price">
+    <routine id="299" parent="273" name="get_receipts_by_price">
       <ArgumentsDefinition>p_price integer</ArgumentsDefinition>
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17114</ObjectId>
@@ -4441,7 +4617,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <routine id="284" parent="273" name="get_receipts_by_service_period">
+    <routine id="300" parent="273" name="get_receipts_by_service_period">
       <ArgumentsDefinition>p_service_name text, p_date_from date, p_date_to date</ArgumentsDefinition>
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17109</ObjectId>
@@ -4452,7 +4628,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <routine id="285" parent="273" name="get_receipts_price_over">
+    <routine id="301" parent="273" name="get_receipts_price_over">
       <ArgumentsDefinition>p_price integer</ArgumentsDefinition>
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17115</ObjectId>
@@ -4463,7 +4639,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <routine id="286" parent="273" name="get_revenue_by_period">
+    <routine id="302" parent="273" name="get_revenue_by_period">
       <ArgumentsDefinition>p_date_from date, p_date_to date</ArgumentsDefinition>
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17112</ObjectId>
@@ -4474,7 +4650,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <routine id="287" parent="273" name="get_service_stats">
+    <routine id="303" parent="273" name="get_service_stats">
       <ArgumentsDefinition>service_name text, year integer</ArgumentsDefinition>
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17106</ObjectId>
@@ -4485,7 +4661,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <routine id="288" parent="273" name="get_studios_by_year_revenue">
+    <routine id="304" parent="273" name="get_studios_by_year_revenue">
       <ArgumentsDefinition>p_year character varying, p_min_revenue integer</ArgumentsDefinition>
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17116</ObjectId>
@@ -4496,7 +4672,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <routine id="289" parent="273" name="get_video_revenue_over">
+    <routine id="305" parent="273" name="get_video_revenue_over">
       <ArgumentsDefinition>p_min_revenue integer</ArgumentsDefinition>
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17111</ObjectId>
@@ -4507,7 +4683,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <routine id="290" parent="273" name="get_videos_by_mask">
+    <routine id="306" parent="273" name="get_videos_by_mask">
       <ArgumentsDefinition>p_mask text</ArgumentsDefinition>
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17113</ObjectId>
@@ -4518,7 +4694,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <routine id="291" parent="273" name="get_videos_by_owner">
+    <routine id="307" parent="273" name="get_videos_by_owner">
       <ArgumentsDefinition>p_familia text</ArgumentsDefinition>
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17107</ObjectId>
@@ -4529,7 +4705,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <routine id="292" parent="273" name="get_videos_revenue_by_mask">
+    <routine id="308" parent="273" name="get_videos_revenue_by_mask">
       <ArgumentsDefinition>p_mask text</ArgumentsDefinition>
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17129</ObjectId>
@@ -4540,7 +4716,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <routine id="293" parent="273" name="trg_vw_video_edit">
+    <routine id="309" parent="273" name="trg_vw_video_edit">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17121</ObjectId>
       <PgRoutineKind>pg-trigger</PgRoutineKind>
@@ -4551,7 +4727,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <routine id="294" parent="273" name="update_video_view">
+    <routine id="310" parent="273" name="update_video_view">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>16958</ObjectId>
       <PgRoutineKind>pg-trigger</PgRoutineKind>
@@ -4562,7 +4738,7 @@ false Zulu
       <LanguageName>plpgsql</LanguageName>
       <OwnerName>postgres</OwnerName>
     </routine>
-    <sequence id="295" parent="273" name="cassette_casseteid_seq">
+    <sequence id="311" parent="273" name="cassette_casseteid_seq">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16547</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
@@ -4571,7 +4747,7 @@ false Zulu
       <StoredType>integer|0s</StoredType>
       <OwnerName>kirillkuklin</OwnerName>
     </sequence>
-    <sequence id="296" parent="273" name="country_countryid_seq">
+    <sequence id="312" parent="273" name="country_countryid_seq">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16484</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
@@ -4580,7 +4756,7 @@ false Zulu
       <StoredType>integer|0s</StoredType>
       <OwnerName>kirillkuklin</OwnerName>
     </sequence>
-    <sequence id="297" parent="273" name="director_directorid_seq">
+    <sequence id="313" parent="273" name="director_directorid_seq">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16467</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
@@ -4589,7 +4765,7 @@ false Zulu
       <StoredType>integer|0s</StoredType>
       <OwnerName>kirillkuklin</OwnerName>
     </sequence>
-    <sequence id="298" parent="273" name="districts_districtid_seq">
+    <sequence id="314" parent="273" name="districts_districtid_seq">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16443</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
@@ -4598,7 +4774,7 @@ false Zulu
       <StoredType>integer|0s</StoredType>
       <OwnerName>kirillkuklin</OwnerName>
     </sequence>
-    <sequence id="299" parent="273" name="film_filmid_seq">
+    <sequence id="315" parent="273" name="film_filmid_seq">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16507</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
@@ -4607,7 +4783,7 @@ false Zulu
       <StoredType>integer|0s</StoredType>
       <OwnerName>kirillkuklin</OwnerName>
     </sequence>
-    <sequence id="300" parent="273" name="owners_ownerid_seq">
+    <sequence id="316" parent="273" name="owners_ownerid_seq">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16435</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
@@ -4616,7 +4792,7 @@ false Zulu
       <StoredType>integer|0s</StoredType>
       <OwnerName>kirillkuklin</OwnerName>
     </sequence>
-    <sequence id="301" parent="273" name="quality_qualityid_seq">
+    <sequence id="317" parent="273" name="quality_qualityid_seq">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16451</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
@@ -4625,7 +4801,7 @@ false Zulu
       <StoredType>integer|0s</StoredType>
       <OwnerName>kirillkuklin</OwnerName>
     </sequence>
-    <sequence id="302" parent="273" name="receipt_receiptid_seq">
+    <sequence id="318" parent="273" name="receipt_receiptid_seq">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16572</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
@@ -4634,7 +4810,7 @@ false Zulu
       <StoredType>integer|0s</StoredType>
       <OwnerName>kirillkuklin</OwnerName>
     </sequence>
-    <sequence id="303" parent="273" name="service_serviceid_seq">
+    <sequence id="319" parent="273" name="service_serviceid_seq">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16459</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
@@ -4643,7 +4819,7 @@ false Zulu
       <StoredType>integer|0s</StoredType>
       <OwnerName>kirillkuklin</OwnerName>
     </sequence>
-    <sequence id="304" parent="273" name="studio_studioid_seq">
+    <sequence id="320" parent="273" name="studio_studioid_seq">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16492</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
@@ -4652,7 +4828,7 @@ false Zulu
       <StoredType>integer|0s</StoredType>
       <OwnerName>kirillkuklin</OwnerName>
     </sequence>
-    <sequence id="305" parent="273" name="video_videoid_seq">
+    <sequence id="321" parent="273" name="video_videoid_seq">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16527</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
@@ -4661,375 +4837,446 @@ false Zulu
       <StoredType>integer|0s</StoredType>
       <OwnerName>kirillkuklin</OwnerName>
     </sequence>
-    <table id="306" parent="273" name="appusers">
+    <table id="322" parent="273" name="appusers">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>17132</ObjectId>
       <StateNumber>1101</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>postgres</OwnerName>
     </table>
-    <table id="307" parent="273" name="cassette">
+    <table id="323" parent="273" name="auditlog">
+      <DetailsLevel>2</DetailsLevel>
+      <ObjectId>17150</ObjectId>
+      <StateNumber>1130</StateNumber>
+      <AccessMethodId>2</AccessMethodId>
+      <OwnerName>postgres</OwnerName>
+    </table>
+    <table id="324" parent="273" name="cassette">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16548</ObjectId>
       <StateNumber>1018</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>kirillkuklin</OwnerName>
     </table>
-    <table id="308" parent="273" name="country">
+    <table id="325" parent="273" name="country">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16485</ObjectId>
       <StateNumber>1018</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>kirillkuklin</OwnerName>
     </table>
-    <table id="309" parent="273" name="director">
+    <table id="326" parent="273" name="director">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16468</ObjectId>
       <StateNumber>1018</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>kirillkuklin</OwnerName>
     </table>
-    <table id="310" parent="273" name="districts">
+    <table id="327" parent="273" name="districts">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16444</ObjectId>
       <StateNumber>1018</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>kirillkuklin</OwnerName>
     </table>
-    <table id="311" parent="273" name="film">
+    <table id="328" parent="273" name="film">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16508</ObjectId>
       <StateNumber>1018</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>kirillkuklin</OwnerName>
     </table>
-    <table id="312" parent="273" name="owners">
+    <table id="329" parent="273" name="owners">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16436</ObjectId>
       <StateNumber>1018</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>kirillkuklin</OwnerName>
     </table>
-    <table id="313" parent="273" name="quality">
+    <table id="330" parent="273" name="quality">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16452</ObjectId>
       <StateNumber>1018</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>kirillkuklin</OwnerName>
     </table>
-    <table id="314" parent="273" name="receipt">
+    <table id="331" parent="273" name="receipt">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16573</ObjectId>
       <StateNumber>1018</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>kirillkuklin</OwnerName>
     </table>
-    <table id="315" parent="273" name="service">
+    <table id="332" parent="273" name="service">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16460</ObjectId>
       <StateNumber>1018</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>kirillkuklin</OwnerName>
     </table>
-    <table id="316" parent="273" name="studio">
+    <table id="333" parent="273" name="studio">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16493</ObjectId>
       <StateNumber>1018</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>kirillkuklin</OwnerName>
     </table>
-    <table id="317" parent="273" name="video">
+    <table id="334" parent="273" name="video">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16528</ObjectId>
       <StateNumber>1018</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>kirillkuklin</OwnerName>
     </table>
-    <view id="318" parent="273" name="vw_avg_clients">
+    <view id="335" parent="273" name="vw_avg_clients">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17101</ObjectId>
       <SourceTextLength>750</SourceTextLength>
       <StateNumber>1050</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="319" parent="273" name="vw_best_worst_videos">
+    <view id="336" parent="273" name="vw_best_worst_videos">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17087</ObjectId>
       <SourceTextLength>448</SourceTextLength>
       <StateNumber>1047</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="320" parent="273" name="vw_cassettes_full">
+    <view id="337" parent="273" name="vw_cassettes_full">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17044</ObjectId>
       <SourceTextLength>181</SourceTextLength>
       <StateNumber>1037</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="321" parent="273" name="vw_films_above_average">
+    <view id="338" parent="273" name="vw_films_above_average">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17082</ObjectId>
       <SourceTextLength>289</SourceTextLength>
       <StateNumber>1046</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="322" parent="273" name="vw_films_full">
+    <view id="339" parent="273" name="vw_films_full">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17040</ObjectId>
       <SourceTextLength>191</SourceTextLength>
       <StateNumber>1036</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="323" parent="273" name="vw_night_video_percent">
+    <view id="340" parent="273" name="vw_night_video_percent">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17096</ObjectId>
       <SourceTextLength>306</SourceTextLength>
       <StateNumber>1049</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="324" parent="273" name="vw_people">
+    <view id="341" parent="273" name="vw_people">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17062</ObjectId>
       <SourceTextLength>134</SourceTextLength>
       <StateNumber>1041</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="325" parent="273" name="vw_receipt_category">
+    <view id="342" parent="273" name="vw_receipt_category">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17066</ObjectId>
       <SourceTextLength>307</SourceTextLength>
       <StateNumber>1042</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="326" parent="273" name="vw_receipts_full">
+    <view id="343" parent="273" name="vw_receipts_full">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>16932</ObjectId>
       <SourceTextLength>174</SourceTextLength>
       <StateNumber>1003</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="327" parent="273" name="vw_receipts_services">
+    <view id="344" parent="273" name="vw_receipts_services">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17049</ObjectId>
       <SourceTextLength>174</SourceTextLength>
       <StateNumber>1038</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="328" parent="273" name="vw_revenue_difference">
+    <view id="345" parent="273" name="vw_revenue_difference">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17092</ObjectId>
       <SourceTextLength>169</SourceTextLength>
       <StateNumber>1048</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="329" parent="273" name="vw_total_revenue">
+    <view id="346" parent="273" name="vw_total_revenue">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17057</ObjectId>
       <SourceTextLength>353</SourceTextLength>
       <StateNumber>1040</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="330" parent="273" name="vw_unused_cassettes">
+    <view id="347" parent="273" name="vw_unused_cassettes">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17074</ObjectId>
       <SourceTextLength>223</SourceTextLength>
       <StateNumber>1099</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="331" parent="273" name="vw_used_cassettes">
+    <view id="348" parent="273" name="vw_used_cassettes">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17070</ObjectId>
       <SourceTextLength>179</SourceTextLength>
       <StateNumber>1043</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="332" parent="273" name="vw_video_edit">
+    <view id="349" parent="273" name="vw_video_edit">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17117</ObjectId>
       <SourceTextLength>54</SourceTextLength>
       <StateNumber>1083</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="333" parent="273" name="vw_video_simple">
+    <view id="350" parent="273" name="vw_video_simple">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>16954</ObjectId>
       <SourceTextLength>56</SourceTextLength>
       <StateNumber>1012</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="334" parent="273" name="vw_video_with_cassettes">
+    <view id="351" parent="273" name="vw_video_with_cassettes">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17053</ObjectId>
       <SourceTextLength>100</SourceTextLength>
       <StateNumber>1039</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <view id="335" parent="273" name="vw_videos_without_receipts">
+    <view id="352" parent="273" name="vw_videos_without_receipts">
       <DetailsLevel>3</DetailsLevel>
       <ObjectId>17078</ObjectId>
       <SourceTextLength>127</SourceTextLength>
       <StateNumber>1045</StateNumber>
       <OwnerName>postgres</OwnerName>
     </view>
-    <check id="336" parent="274" name="amount_domain_check">
+    <check id="353" parent="274" name="amount_domain_check">
       <ObjectId>17125</ObjectId>
       <Predicate>VALUE &gt; 0</Predicate>
       <StateNumber>1067</StateNumber>
     </check>
-    <check id="337" parent="276" name="fio_domain_check">
+    <check id="354" parent="276" name="fio_domain_check">
       <ObjectId>16805</ObjectId>
       <Predicate>(VALUE)::text ~ &apos;^[A-Za-zА-Яа-яЁё\- ]+$&apos;::text</Predicate>
       <StateNumber>972</StateNumber>
     </check>
-    <check id="338" parent="277" name="hour_domain_check">
+    <check id="355" parent="277" name="hour_domain_check">
       <ObjectId>16794</ObjectId>
       <Predicate>(VALUE &gt;= 0) AND (VALUE &lt;= 23)</Predicate>
       <StateNumber>968</StateNumber>
     </check>
-    <check id="339" parent="278" name="licence_domain_check">
+    <check id="356" parent="278" name="licence_domain_check">
       <ObjectId>16808</ObjectId>
       <Predicate>(VALUE)::text ~ &apos;ЛИЦ-[0-9]{1,6}$&apos;::text</Predicate>
       <StateNumber>973</StateNumber>
     </check>
-    <check id="340" parent="279" name="phone_domain_check">
+    <check id="357" parent="279" name="phone_domain_check">
       <ObjectId>16802</ObjectId>
       <Predicate>(VALUE)::text ~ &apos;^\+7[0-9]{10}$&apos;::text</Predicate>
       <StateNumber>971</StateNumber>
     </check>
-    <check id="341" parent="280" name="price_domain_check">
+    <check id="358" parent="280" name="price_domain_check">
       <ObjectId>16797</ObjectId>
       <Predicate>VALUE &gt; 0</Predicate>
       <StateNumber>969</StateNumber>
     </check>
-    <argument id="342" parent="281">
+    <argument id="359" parent="281">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="360" parent="282">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="361" parent="283">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="362" parent="284">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="363" parent="285">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="364" parent="286">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="365" parent="287">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="366" parent="288">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="367" parent="289">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="368" parent="290">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="369" parent="291">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="370" parent="292">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="371" parent="293">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="372" parent="294">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="373" parent="295">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="374" parent="296">
+      <ArgumentDirection>R</ArgumentDirection>
+      <StoredType>trigger|0s</StoredType>
+    </argument>
+    <argument id="375" parent="297">
       <ArgumentDirection>T</ArgumentDirection>
       <StoredType>table(&quot;film_caption&quot; varchar, &quot;quality_name&quot; varchar)|0v</StoredType>
     </argument>
-    <argument id="343" parent="281" name="p_quality_name">
+    <argument id="376" parent="297" name="p_quality_name">
       <Position>1</Position>
       <StoredType>text|0s</StoredType>
     </argument>
-    <argument id="344" parent="282">
+    <argument id="377" parent="298">
       <ArgumentDirection>T</ArgumentDirection>
       <StoredType>table(&quot;receipt_date&quot; date, &quot;receipt_price&quot; integer, &quot;service_name&quot; varchar)|0v</StoredType>
     </argument>
-    <argument id="345" parent="282" name="p_service_name">
+    <argument id="378" parent="298" name="p_service_name">
       <Position>1</Position>
       <StoredType>text|0s</StoredType>
     </argument>
-    <argument id="346" parent="282" name="p_date">
+    <argument id="379" parent="298" name="p_date">
       <Position>2</Position>
       <StoredType>date|0s</StoredType>
     </argument>
-    <argument id="347" parent="283">
+    <argument id="380" parent="299">
       <ArgumentDirection>T</ArgumentDirection>
       <StoredType>table(&quot;receipt_id&quot; integer, &quot;cassette_id&quot; integer, &quot;video_id&quot; integer, &quot;service_id&quot; integer, &quot;receipt_date&quot; date, &quot;receipt_price&quot; integer)|0v</StoredType>
     </argument>
-    <argument id="348" parent="283" name="p_price">
+    <argument id="381" parent="299" name="p_price">
       <Position>1</Position>
       <StoredType>integer|0s</StoredType>
     </argument>
-    <argument id="349" parent="284">
+    <argument id="382" parent="300">
       <ArgumentDirection>T</ArgumentDirection>
       <StoredType>table(&quot;receipt_date&quot; date, &quot;receipt_price&quot; integer, &quot;service_name&quot; varchar)|0v</StoredType>
     </argument>
-    <argument id="350" parent="284" name="p_service_name">
+    <argument id="383" parent="300" name="p_service_name">
       <Position>1</Position>
       <StoredType>text|0s</StoredType>
     </argument>
-    <argument id="351" parent="284" name="p_date_from">
+    <argument id="384" parent="300" name="p_date_from">
       <Position>2</Position>
       <StoredType>date|0s</StoredType>
     </argument>
-    <argument id="352" parent="284" name="p_date_to">
+    <argument id="385" parent="300" name="p_date_to">
       <Position>3</Position>
       <StoredType>date|0s</StoredType>
     </argument>
-    <argument id="353" parent="285">
+    <argument id="386" parent="301">
       <ArgumentDirection>T</ArgumentDirection>
       <StoredType>table(&quot;receipt_id&quot; integer, &quot;cassette_id&quot; integer, &quot;video_id&quot; integer, &quot;service_id&quot; integer, &quot;receipt_date&quot; date, &quot;receipt_price&quot; integer)|0v</StoredType>
     </argument>
-    <argument id="354" parent="285" name="p_price">
+    <argument id="387" parent="301" name="p_price">
       <Position>1</Position>
       <StoredType>integer|0s</StoredType>
     </argument>
-    <argument id="355" parent="286">
+    <argument id="388" parent="302">
       <ArgumentDirection>T</ArgumentDirection>
       <StoredType>table(&quot;video_caption&quot; varchar, &quot;total_revenue&quot; bigint)|0v</StoredType>
     </argument>
-    <argument id="356" parent="286" name="p_date_from">
+    <argument id="389" parent="302" name="p_date_from">
       <Position>1</Position>
       <StoredType>date|0s</StoredType>
     </argument>
-    <argument id="357" parent="286" name="p_date_to">
+    <argument id="390" parent="302" name="p_date_to">
       <Position>2</Position>
       <StoredType>date|0s</StoredType>
     </argument>
-    <argument id="358" parent="287">
+    <argument id="391" parent="303">
       <ArgumentDirection>T</ArgumentDirection>
       <StoredType>table(&quot;service&quot; text, &quot;clients_cnt&quot; bigint, &quot;total_spent&quot; bigint)|0v</StoredType>
     </argument>
-    <argument id="359" parent="287" name="service_name">
+    <argument id="392" parent="303" name="service_name">
       <Position>1</Position>
       <StoredType>text|0s</StoredType>
     </argument>
-    <argument id="360" parent="287" name="year">
+    <argument id="393" parent="303" name="year">
       <Position>2</Position>
       <StoredType>integer|0s</StoredType>
     </argument>
-    <argument id="361" parent="288">
+    <argument id="394" parent="304">
       <ArgumentDirection>T</ArgumentDirection>
       <StoredType>table(&quot;studio_name&quot; varchar, &quot;total_revenue&quot; bigint)|0v</StoredType>
     </argument>
-    <argument id="362" parent="288" name="p_year">
+    <argument id="395" parent="304" name="p_year">
       <Position>1</Position>
       <StoredType>varchar|0s</StoredType>
     </argument>
-    <argument id="363" parent="288" name="p_min_revenue">
+    <argument id="396" parent="304" name="p_min_revenue">
       <Position>2</Position>
       <StoredType>integer|0s</StoredType>
     </argument>
-    <argument id="364" parent="289">
+    <argument id="397" parent="305">
       <ArgumentDirection>T</ArgumentDirection>
       <StoredType>table(&quot;video_caption&quot; varchar, &quot;total_revenue&quot; bigint)|0v</StoredType>
     </argument>
-    <argument id="365" parent="289" name="p_min_revenue">
+    <argument id="398" parent="305" name="p_min_revenue">
       <Position>1</Position>
       <StoredType>integer|0s</StoredType>
     </argument>
-    <argument id="366" parent="290">
+    <argument id="399" parent="306">
       <ArgumentDirection>T</ArgumentDirection>
       <StoredType>table(&quot;video_caption&quot; varchar)|0v</StoredType>
     </argument>
-    <argument id="367" parent="290" name="p_mask">
+    <argument id="400" parent="306" name="p_mask">
       <Position>1</Position>
       <StoredType>text|0s</StoredType>
     </argument>
-    <argument id="368" parent="291">
+    <argument id="401" parent="307">
       <ArgumentDirection>T</ArgumentDirection>
       <StoredType>table(&quot;video_caption&quot; varchar, &quot;video_address&quot; varchar, &quot;owner_familia&quot; varchar, &quot;owner_name&quot; varchar, &quot;owner_otchestvo&quot; varchar)|0v</StoredType>
     </argument>
-    <argument id="369" parent="291" name="p_familia">
+    <argument id="402" parent="307" name="p_familia">
       <Position>1</Position>
       <StoredType>text|0s</StoredType>
     </argument>
-    <argument id="370" parent="292">
+    <argument id="403" parent="308">
       <ArgumentDirection>T</ArgumentDirection>
       <StoredType>table(&quot;video_caption&quot; varchar, &quot;total_revenue&quot; numeric)|0v</StoredType>
     </argument>
-    <argument id="371" parent="292" name="p_mask">
+    <argument id="404" parent="308" name="p_mask">
       <Position>1</Position>
       <StoredType>text|0s</StoredType>
     </argument>
-    <argument id="372" parent="293">
+    <argument id="405" parent="309">
       <ArgumentDirection>R</ArgumentDirection>
       <StoredType>trigger|0s</StoredType>
     </argument>
-    <argument id="373" parent="294">
+    <argument id="406" parent="310">
       <ArgumentDirection>R</ArgumentDirection>
       <StoredType>trigger|0s</StoredType>
     </argument>
-    <column id="374" parent="306" name="userid">
+    <column id="407" parent="322" name="userid">
       <DefaultExpression>nextval(&apos;appusers_userid_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -5038,28 +5285,28 @@ false Zulu
       <SequenceId>17131</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="375" parent="306" name="login">
+    <column id="408" parent="322" name="login">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>1101</StateNumber>
       <StoredType>varchar(50)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="376" parent="306" name="passwordhash">
+    <column id="409" parent="322" name="passwordhash">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>1101</StateNumber>
       <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="377" parent="306" name="rolename">
+    <column id="410" parent="322" name="rolename">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StateNumber>1101</StateNumber>
       <StoredType>varchar(50)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <index id="378" parent="306" name="appusers_pkey">
+    <index id="411" parent="322" name="appusers_pkey">
       <ColNames>userid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>17140</ObjectId>
@@ -5068,7 +5315,7 @@ false Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <index id="379" parent="306" name="appusers_login_key">
+    <index id="412" parent="322" name="appusers_login_key">
       <ColNames>login</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>17142</ObjectId>
@@ -5079,7 +5326,7 @@ false Zulu
       <CollationIds>100</CollationIds>
       <CollationParentNames>pg_catalog</CollationParentNames>
     </index>
-    <index id="380" parent="306" name="appusers_passwordhash_key">
+    <index id="413" parent="322" name="appusers_passwordhash_key">
       <ColNames>passwordhash</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>17144</ObjectId>
@@ -5090,26 +5337,70 @@ false Zulu
       <CollationIds>100</CollationIds>
       <CollationParentNames>pg_catalog</CollationParentNames>
     </index>
-    <key id="381" parent="306" name="appusers_pkey">
+    <key id="414" parent="322" name="appusers_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>17141</ObjectId>
       <Primary>1</Primary>
       <StateNumber>1101</StateNumber>
       <UnderlyingIndexId>17140</UnderlyingIndexId>
     </key>
-    <key id="382" parent="306" name="appusers_login_key">
+    <key id="415" parent="322" name="appusers_login_key">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>17143</ObjectId>
       <StateNumber>1101</StateNumber>
       <UnderlyingIndexId>17142</UnderlyingIndexId>
     </key>
-    <key id="383" parent="306" name="appusers_passwordhash_key">
+    <key id="416" parent="322" name="appusers_passwordhash_key">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>17145</ObjectId>
       <StateNumber>1101</StateNumber>
       <UnderlyingIndexId>17144</UnderlyingIndexId>
     </key>
-    <column id="384" parent="307" name="casseteid">
+    <column id="417" parent="323" name="logid">
+      <DefaultExpression>nextval(&apos;auditlog_logid_seq&apos;::regclass)</DefaultExpression>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StateNumber>1130</StateNumber>
+      <StoredType>integer|0s</StoredType>
+      <SequenceId>17149</SequenceId>
+      <TypeId>23</TypeId>
+    </column>
+    <column id="418" parent="323" name="tablename">
+      <Position>2</Position>
+      <StateNumber>1130</StateNumber>
+      <StoredType>varchar(100)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="419" parent="323" name="operationtype">
+      <Position>3</Position>
+      <StateNumber>1130</StateNumber>
+      <StoredType>varchar(50)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="420" parent="323" name="operationdate">
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+      <Position>4</Position>
+      <StateNumber>1130</StateNumber>
+      <StoredType>timestamp|0s</StoredType>
+      <TypeId>1114</TypeId>
+    </column>
+    <index id="421" parent="323" name="auditlog_pkey">
+      <ColNames>logid</ColNames>
+      <NameSurrogate>1</NameSurrogate>
+      <ObjectId>17156</ObjectId>
+      <Primary>1</Primary>
+      <StateNumber>1130</StateNumber>
+      <Unique>1</Unique>
+      <AccessMethodId>403</AccessMethodId>
+    </index>
+    <key id="422" parent="323" name="auditlog_pkey">
+      <NameSurrogate>1</NameSurrogate>
+      <ObjectId>17157</ObjectId>
+      <Primary>1</Primary>
+      <StateNumber>1130</StateNumber>
+      <UnderlyingIndexId>17156</UnderlyingIndexId>
+    </key>
+    <column id="423" parent="324" name="casseteid">
       <DefaultExpression>nextval(&apos;cassette_casseteid_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -5118,37 +5409,37 @@ false Zulu
       <SequenceId>16547</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="385" parent="307" name="filmid">
+    <column id="424" parent="324" name="filmid">
       <Position>2</Position>
       <StateNumber>816</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="386" parent="307" name="videoid">
+    <column id="425" parent="324" name="videoid">
       <Position>3</Position>
       <StateNumber>816</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="387" parent="307" name="qualityid">
+    <column id="426" parent="324" name="qualityid">
       <Position>4</Position>
       <StateNumber>816</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="388" parent="307" name="photo">
+    <column id="427" parent="324" name="photo">
       <Position>5</Position>
       <StateNumber>816</StateNumber>
       <StoredType>bytea|0s</StoredType>
       <TypeId>17</TypeId>
     </column>
-    <column id="389" parent="307" name="demand">
+    <column id="428" parent="324" name="demand">
       <Position>6</Position>
       <StateNumber>816</StateNumber>
       <StoredType>boolean|0s</StoredType>
       <TypeId>16</TypeId>
     </column>
-    <foreign-key id="390" parent="307" name="cassette_filmid_fkey">
+    <foreign-key id="429" parent="324" name="cassette_filmid_fkey">
       <ColNames>filmid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16557</ObjectId>
@@ -5156,7 +5447,7 @@ false Zulu
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16508</RefTableId>
     </foreign-key>
-    <foreign-key id="391" parent="307" name="cassette_videoid_fkey">
+    <foreign-key id="430" parent="324" name="cassette_videoid_fkey">
       <ColNames>videoid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16562</ObjectId>
@@ -5164,7 +5455,7 @@ false Zulu
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16528</RefTableId>
     </foreign-key>
-    <foreign-key id="392" parent="307" name="cassette_qualityid_fkey">
+    <foreign-key id="431" parent="324" name="cassette_qualityid_fkey">
       <ColNames>qualityid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16567</ObjectId>
@@ -5172,7 +5463,7 @@ false Zulu
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16452</RefTableId>
     </foreign-key>
-    <index id="393" parent="307" name="cassette_pkey">
+    <index id="432" parent="324" name="cassette_pkey">
       <ColNames>casseteid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16555</ObjectId>
@@ -5181,14 +5472,14 @@ false Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="394" parent="307" name="cassette_pkey">
+    <key id="433" parent="324" name="cassette_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16556</ObjectId>
       <Primary>1</Primary>
       <StateNumber>816</StateNumber>
       <UnderlyingIndexId>16555</UnderlyingIndexId>
     </key>
-    <column id="395" parent="308" name="countryid">
+    <column id="434" parent="325" name="countryid">
       <DefaultExpression>nextval(&apos;country_countryid_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -5197,13 +5488,13 @@ false Zulu
       <SequenceId>16484</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="396" parent="308" name="countryname">
+    <column id="435" parent="325" name="countryname">
       <Position>2</Position>
       <StateNumber>784</StateNumber>
       <StoredType>varchar(200)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <index id="397" parent="308" name="country_pkey">
+    <index id="436" parent="325" name="country_pkey">
       <ColNames>countryid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16490</ObjectId>
@@ -5212,14 +5503,14 @@ false Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="398" parent="308" name="country_pkey">
+    <key id="437" parent="325" name="country_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16491</ObjectId>
       <Primary>1</Primary>
       <StateNumber>784</StateNumber>
       <UnderlyingIndexId>16490</UnderlyingIndexId>
     </key>
-    <column id="399" parent="309" name="directorid">
+    <column id="438" parent="326" name="directorid">
       <DefaultExpression>nextval(&apos;director_directorid_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -5228,25 +5519,25 @@ false Zulu
       <SequenceId>16467</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="400" parent="309" name="familia">
+    <column id="439" parent="326" name="familia">
       <Position>2</Position>
       <StateNumber>777</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="401" parent="309" name="name">
+    <column id="440" parent="326" name="name">
       <Position>3</Position>
       <StateNumber>777</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="402" parent="309" name="otchestvo">
+    <column id="441" parent="326" name="otchestvo">
       <Position>4</Position>
       <StateNumber>777</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <index id="403" parent="309" name="director_pkey">
+    <index id="442" parent="326" name="director_pkey">
       <ColNames>directorid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16473</ObjectId>
@@ -5255,14 +5546,14 @@ false Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="404" parent="309" name="director_pkey">
+    <key id="443" parent="326" name="director_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16474</ObjectId>
       <Primary>1</Primary>
       <StateNumber>777</StateNumber>
       <UnderlyingIndexId>16473</UnderlyingIndexId>
     </key>
-    <column id="405" parent="310" name="districtid">
+    <column id="444" parent="327" name="districtid">
       <DefaultExpression>nextval(&apos;districts_districtid_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -5271,13 +5562,13 @@ false Zulu
       <SequenceId>16443</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="406" parent="310" name="districtname">
+    <column id="445" parent="327" name="districtname">
       <Position>2</Position>
       <StateNumber>774</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <index id="407" parent="310" name="districts_pkey">
+    <index id="446" parent="327" name="districts_pkey">
       <ColNames>districtid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16449</ObjectId>
@@ -5286,14 +5577,14 @@ false Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="408" parent="310" name="districts_pkey">
+    <key id="447" parent="327" name="districts_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16450</ObjectId>
       <Primary>1</Primary>
       <StateNumber>774</StateNumber>
       <UnderlyingIndexId>16449</UnderlyingIndexId>
     </key>
-    <column id="409" parent="311" name="filmid">
+    <column id="448" parent="328" name="filmid">
       <DefaultExpression>nextval(&apos;film_filmid_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -5302,43 +5593,43 @@ false Zulu
       <SequenceId>16507</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="410" parent="311" name="caption">
+    <column id="449" parent="328" name="caption">
       <Position>2</Position>
       <StateNumber>802</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="411" parent="311" name="year">
+    <column id="450" parent="328" name="year">
       <Position>3</Position>
       <StateNumber>802</StateNumber>
       <StoredType>varchar(4)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="412" parent="311" name="duration">
+    <column id="451" parent="328" name="duration">
       <Position>4</Position>
       <StateNumber>802</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="413" parent="311" name="information">
+    <column id="452" parent="328" name="information">
       <Position>5</Position>
       <StateNumber>802</StateNumber>
       <StoredType>varchar(1000)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="414" parent="311" name="directorid">
+    <column id="453" parent="328" name="directorid">
       <Position>6</Position>
       <StateNumber>802</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="415" parent="311" name="studioid">
+    <column id="454" parent="328" name="studioid">
       <Position>7</Position>
       <StateNumber>802</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <foreign-key id="416" parent="311" name="film_directorid_fkey">
+    <foreign-key id="455" parent="328" name="film_directorid_fkey">
       <ColNames>directorid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16517</ObjectId>
@@ -5346,7 +5637,7 @@ false Zulu
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16468</RefTableId>
     </foreign-key>
-    <foreign-key id="417" parent="311" name="film_studioid_fkey">
+    <foreign-key id="456" parent="328" name="film_studioid_fkey">
       <ColNames>studioid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16522</ObjectId>
@@ -5354,7 +5645,7 @@ false Zulu
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16493</RefTableId>
     </foreign-key>
-    <index id="418" parent="311" name="film_pkey">
+    <index id="457" parent="328" name="film_pkey">
       <ColNames>filmid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16515</ObjectId>
@@ -5363,14 +5654,14 @@ false Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="419" parent="311" name="film_pkey">
+    <key id="458" parent="328" name="film_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16516</ObjectId>
       <Primary>1</Primary>
       <StateNumber>802</StateNumber>
       <UnderlyingIndexId>16515</UnderlyingIndexId>
     </key>
-    <column id="420" parent="312" name="ownerid">
+    <column id="459" parent="329" name="ownerid">
       <DefaultExpression>nextval(&apos;owners_ownerid_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -5379,25 +5670,25 @@ false Zulu
       <SequenceId>16435</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="421" parent="312" name="familia">
+    <column id="460" parent="329" name="familia">
       <Position>2</Position>
       <StateNumber>773</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="422" parent="312" name="name">
+    <column id="461" parent="329" name="name">
       <Position>3</Position>
       <StateNumber>773</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="423" parent="312" name="otchestvo">
+    <column id="462" parent="329" name="otchestvo">
       <Position>4</Position>
       <StateNumber>773</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <index id="424" parent="312" name="owners_pkey">
+    <index id="463" parent="329" name="owners_pkey">
       <ColNames>ownerid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16441</ObjectId>
@@ -5406,14 +5697,21 @@ false Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="425" parent="312" name="owners_pkey">
+    <key id="464" parent="329" name="owners_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16442</ObjectId>
       <Primary>1</Primary>
       <StateNumber>773</StateNumber>
       <UnderlyingIndexId>16441</UnderlyingIndexId>
     </key>
-    <column id="426" parent="313" name="qualityid">
+    <trigger id="465" parent="329" name="trg_owner_bd">
+      <Events>D</Events>
+      <ObjectId>17163</ObjectId>
+      <StateNumber>1136</StateNumber>
+      <Turn>before-row</Turn>
+      <CallRoutineId>17162</CallRoutineId>
+    </trigger>
+    <column id="466" parent="330" name="qualityid">
       <DefaultExpression>nextval(&apos;quality_qualityid_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -5422,13 +5720,13 @@ false Zulu
       <SequenceId>16451</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="427" parent="313" name="qualityname">
+    <column id="467" parent="330" name="qualityname">
       <Position>2</Position>
       <StateNumber>775</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <index id="428" parent="313" name="quality_pkey">
+    <index id="468" parent="330" name="quality_pkey">
       <ColNames>qualityid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16457</ObjectId>
@@ -5437,14 +5735,14 @@ false Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="429" parent="313" name="quality_pkey">
+    <key id="469" parent="330" name="quality_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16458</ObjectId>
       <Primary>1</Primary>
       <StateNumber>775</StateNumber>
       <UnderlyingIndexId>16457</UnderlyingIndexId>
     </key>
-    <column id="430" parent="314" name="receiptid">
+    <column id="470" parent="331" name="receiptid">
       <DefaultExpression>nextval(&apos;receipt_receiptid_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -5453,37 +5751,37 @@ false Zulu
       <SequenceId>16572</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="431" parent="314" name="cassetteid">
+    <column id="471" parent="331" name="cassetteid">
       <Position>2</Position>
       <StateNumber>817</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="432" parent="314" name="videoid">
+    <column id="472" parent="331" name="videoid">
       <Position>3</Position>
       <StateNumber>817</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="433" parent="314" name="serviceid">
+    <column id="473" parent="331" name="serviceid">
       <Position>4</Position>
       <StateNumber>817</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="434" parent="314" name="date">
+    <column id="474" parent="331" name="date">
       <Position>5</Position>
       <StateNumber>817</StateNumber>
       <StoredType>date|0s</StoredType>
       <TypeId>1082</TypeId>
     </column>
-    <column id="435" parent="314" name="price">
+    <column id="475" parent="331" name="price">
       <Position>6</Position>
       <StateNumber>817</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <foreign-key id="436" parent="314" name="receipt_cassetteid_fkey">
+    <foreign-key id="476" parent="331" name="receipt_cassetteid_fkey">
       <ColNames>cassetteid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16580</ObjectId>
@@ -5491,7 +5789,7 @@ false Zulu
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16548</RefTableId>
     </foreign-key>
-    <foreign-key id="437" parent="314" name="receipt_videoid_fkey">
+    <foreign-key id="477" parent="331" name="receipt_videoid_fkey">
       <ColNames>videoid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16585</ObjectId>
@@ -5499,7 +5797,7 @@ false Zulu
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16528</RefTableId>
     </foreign-key>
-    <foreign-key id="438" parent="314" name="receipt_serviceid_fkey">
+    <foreign-key id="478" parent="331" name="receipt_serviceid_fkey">
       <ColNames>serviceid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16590</ObjectId>
@@ -5507,7 +5805,7 @@ false Zulu
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16460</RefTableId>
     </foreign-key>
-    <index id="439" parent="314" name="receipt_pkey">
+    <index id="479" parent="331" name="receipt_pkey">
       <ColNames>receiptid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16578</ObjectId>
@@ -5516,20 +5814,39 @@ false Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <index id="440" parent="314" name="idx_receipts_price">
+    <index id="480" parent="331" name="idx_receipts_price">
       <ColNames>price</ColNames>
       <ObjectId>16927</ObjectId>
       <StateNumber>1018</StateNumber>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="441" parent="314" name="receipt_pkey">
+    <key id="481" parent="331" name="receipt_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16579</ObjectId>
       <Primary>1</Primary>
       <StateNumber>817</StateNumber>
       <UnderlyingIndexId>16578</UnderlyingIndexId>
     </key>
-    <column id="442" parent="315" name="serviceid">
+    <trigger id="482" parent="331" name="trg_receipt_bu">
+      <Events>IU</Events>
+      <ObjectId>17180</ObjectId>
+      <StateNumber>1171</StateNumber>
+      <Turn>before-row</Turn>
+      <CallRoutineId>17160</CallRoutineId>
+    </trigger>
+    <trigger id="483" parent="331" name="trg_receipt_ai">
+      <Events>I</Events>
+      <ObjectId>17159</ObjectId>
+      <StateNumber>1132</StateNumber>
+      <CallRoutineId>17158</CallRoutineId>
+    </trigger>
+    <trigger id="484" parent="331" name="trg_receipt_ad">
+      <Events>D</Events>
+      <ObjectId>17165</ObjectId>
+      <StateNumber>1138</StateNumber>
+      <CallRoutineId>17164</CallRoutineId>
+    </trigger>
+    <column id="485" parent="332" name="serviceid">
       <DefaultExpression>nextval(&apos;service_serviceid_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -5538,13 +5855,13 @@ false Zulu
       <SequenceId>16459</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="443" parent="315" name="servicename">
+    <column id="486" parent="332" name="servicename">
       <Position>2</Position>
       <StateNumber>776</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <index id="444" parent="315" name="service_pkey">
+    <index id="487" parent="332" name="service_pkey">
       <ColNames>serviceid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16465</ObjectId>
@@ -5553,14 +5870,14 @@ false Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="445" parent="315" name="service_pkey">
+    <key id="488" parent="332" name="service_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16466</ObjectId>
       <Primary>1</Primary>
       <StateNumber>776</StateNumber>
       <UnderlyingIndexId>16465</UnderlyingIndexId>
     </key>
-    <column id="446" parent="316" name="studioid">
+    <column id="489" parent="333" name="studioid">
       <DefaultExpression>nextval(&apos;studio_studioid_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -5569,19 +5886,19 @@ false Zulu
       <SequenceId>16492</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="447" parent="316" name="studioname">
+    <column id="490" parent="333" name="studioname">
       <Position>2</Position>
       <StateNumber>787</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="448" parent="316" name="countryid">
+    <column id="491" parent="333" name="countryid">
       <Position>3</Position>
       <StateNumber>787</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <foreign-key id="449" parent="316" name="studio_countryid_fkey">
+    <foreign-key id="492" parent="333" name="studio_countryid_fkey">
       <ColNames>countryid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16500</ObjectId>
@@ -5589,7 +5906,7 @@ false Zulu
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16485</RefTableId>
     </foreign-key>
-    <index id="450" parent="316" name="studio_pkey">
+    <index id="493" parent="333" name="studio_pkey">
       <ColNames>studioid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16498</ObjectId>
@@ -5598,14 +5915,14 @@ false Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="451" parent="316" name="studio_pkey">
+    <key id="494" parent="333" name="studio_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16499</ObjectId>
       <Primary>1</Primary>
       <StateNumber>787</StateNumber>
       <UnderlyingIndexId>16498</UnderlyingIndexId>
     </key>
-    <column id="452" parent="317" name="videoid">
+    <column id="495" parent="334" name="videoid">
       <DefaultExpression>nextval(&apos;video_videoid_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -5614,67 +5931,67 @@ false Zulu
       <SequenceId>16527</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="453" parent="317" name="caption">
+    <column id="496" parent="334" name="caption">
       <Position>2</Position>
       <StateNumber>808</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="454" parent="317" name="districtid">
+    <column id="497" parent="334" name="districtid">
       <Position>3</Position>
       <StateNumber>808</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="455" parent="317" name="address">
+    <column id="498" parent="334" name="address">
       <Position>4</Position>
       <StateNumber>808</StateNumber>
       <StoredType>varchar(1000)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="456" parent="317" name="type">
+    <column id="499" parent="334" name="type">
       <Position>5</Position>
       <StateNumber>808</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="457" parent="317" name="phone">
+    <column id="500" parent="334" name="phone">
       <Position>6</Position>
       <StateNumber>808</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="458" parent="317" name="licence">
+    <column id="501" parent="334" name="licence">
       <Position>7</Position>
       <StateNumber>808</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <column id="459" parent="317" name="timestart">
+    <column id="502" parent="334" name="timestart">
       <Position>8</Position>
       <StateNumber>808</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="460" parent="317" name="timeend">
+    <column id="503" parent="334" name="timeend">
       <Position>9</Position>
       <StateNumber>808</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="461" parent="317" name="amount">
+    <column id="504" parent="334" name="amount">
       <Position>10</Position>
       <StateNumber>808</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="462" parent="317" name="ownerid">
+    <column id="505" parent="334" name="ownerid">
       <Position>11</Position>
       <StateNumber>808</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <foreign-key id="463" parent="317" name="video_districtid_fkey">
+    <foreign-key id="506" parent="334" name="video_districtid_fkey">
       <ColNames>districtid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16537</ObjectId>
@@ -5682,7 +5999,7 @@ false Zulu
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16444</RefTableId>
     </foreign-key>
-    <foreign-key id="464" parent="317" name="video_ownerid_fkey">
+    <foreign-key id="507" parent="334" name="video_ownerid_fkey">
       <ColNames>ownerid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16542</ObjectId>
@@ -5690,7 +6007,7 @@ false Zulu
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16436</RefTableId>
     </foreign-key>
-    <index id="465" parent="317" name="video_pkey">
+    <index id="508" parent="334" name="video_pkey">
       <ColNames>videoid</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16535</ObjectId>
@@ -5699,298 +6016,304 @@ false Zulu
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="466" parent="317" name="video_pkey">
+    <key id="509" parent="334" name="video_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16536</ObjectId>
       <Primary>1</Primary>
       <StateNumber>808</StateNumber>
       <UnderlyingIndexId>16535</UnderlyingIndexId>
     </key>
-    <column id="467" parent="318" name="district">
+    <trigger id="510" parent="334" name="trg_video_au">
+      <Events>U</Events>
+      <ObjectId>17167</ObjectId>
+      <StateNumber>1140</StateNumber>
+      <CallRoutineId>17166</CallRoutineId>
+    </trigger>
+    <column id="511" parent="335" name="district">
       <Position>1</Position>
       <StateNumber>1050</StateNumber>
       <StoredType>varchar|0s</StoredType>
     </column>
-    <column id="468" parent="318" name="video">
+    <column id="512" parent="335" name="video">
       <Position>2</Position>
       <StateNumber>1050</StateNumber>
       <StoredType>varchar|0s</StoredType>
     </column>
-    <column id="469" parent="318" name="avg_clients">
+    <column id="513" parent="335" name="avg_clients">
       <Position>3</Position>
       <StateNumber>1050</StateNumber>
       <StoredType>numeric|0s</StoredType>
     </column>
-    <column id="470" parent="319" name="caption">
+    <column id="514" parent="336" name="caption">
       <Position>1</Position>
       <StateNumber>1047</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="471" parent="319" name="totalrevenue">
+    <column id="515" parent="336" name="totalrevenue">
       <Position>2</Position>
       <StateNumber>1047</StateNumber>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="472" parent="319" name="category">
+    <column id="516" parent="336" name="category">
       <Position>3</Position>
       <StateNumber>1047</StateNumber>
       <StoredType>text|0s</StoredType>
     </column>
-    <column id="473" parent="320" name="casseteid">
+    <column id="517" parent="337" name="casseteid">
       <Position>1</Position>
       <StateNumber>1037</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="474" parent="320" name="filmcaption">
+    <column id="518" parent="337" name="filmcaption">
       <Position>2</Position>
       <StateNumber>1037</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="475" parent="320" name="videocaption">
+    <column id="519" parent="337" name="videocaption">
       <Position>3</Position>
       <StateNumber>1037</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="476" parent="321" name="caption">
+    <column id="520" parent="338" name="caption">
       <Position>1</Position>
       <StateNumber>1046</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="477" parent="322" name="caption">
+    <column id="521" parent="339" name="caption">
       <Position>1</Position>
       <StateNumber>1036</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="478" parent="322" name="familia">
+    <column id="522" parent="339" name="familia">
       <Position>2</Position>
       <StateNumber>1036</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="479" parent="322" name="name">
+    <column id="523" parent="339" name="name">
       <Position>3</Position>
       <StateNumber>1036</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="480" parent="322" name="otchestvo">
+    <column id="524" parent="339" name="otchestvo">
       <Position>4</Position>
       <StateNumber>1036</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="481" parent="322" name="studioname">
+    <column id="525" parent="339" name="studioname">
       <Position>5</Position>
       <StateNumber>1036</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="482" parent="323" name="districtname">
+    <column id="526" parent="340" name="districtname">
       <Position>1</Position>
       <StateNumber>1049</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="483" parent="323" name="night_percent">
+    <column id="527" parent="340" name="night_percent">
       <Position>2</Position>
       <StateNumber>1049</StateNumber>
       <StoredType>numeric|0s</StoredType>
     </column>
-    <column id="484" parent="324" name="familia">
+    <column id="528" parent="341" name="familia">
       <Position>1</Position>
       <StateNumber>1041</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="485" parent="324" name="name">
+    <column id="529" parent="341" name="name">
       <Position>2</Position>
       <StateNumber>1041</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="486" parent="324" name="otchestvo">
+    <column id="530" parent="341" name="otchestvo">
       <Position>3</Position>
       <StateNumber>1041</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="487" parent="325" name="receiptid">
+    <column id="531" parent="342" name="receiptid">
       <Position>1</Position>
       <StateNumber>1042</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="488" parent="325" name="price_category">
+    <column id="532" parent="342" name="price_category">
       <Position>2</Position>
       <StateNumber>1042</StateNumber>
       <StoredType>text|0s</StoredType>
     </column>
-    <column id="489" parent="326" name="receiptid">
+    <column id="533" parent="343" name="receiptid">
       <Position>1</Position>
       <StateNumber>1003</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="490" parent="326" name="servicename">
+    <column id="534" parent="343" name="servicename">
       <Position>2</Position>
       <StateNumber>1003</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="491" parent="326" name="caption">
+    <column id="535" parent="343" name="caption">
       <Position>3</Position>
       <StateNumber>1003</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="492" parent="326" name="date">
+    <column id="536" parent="343" name="date">
       <Position>4</Position>
       <StateNumber>1003</StateNumber>
       <StoredType>date|0s</StoredType>
     </column>
-    <column id="493" parent="327" name="receiptid">
+    <column id="537" parent="344" name="receiptid">
       <Position>1</Position>
       <StateNumber>1038</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="494" parent="327" name="servicename">
+    <column id="538" parent="344" name="servicename">
       <Position>2</Position>
       <StateNumber>1038</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="495" parent="327" name="caption">
+    <column id="539" parent="344" name="caption">
       <Position>3</Position>
       <StateNumber>1038</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="496" parent="327" name="date">
+    <column id="540" parent="344" name="date">
       <Position>4</Position>
       <StateNumber>1038</StateNumber>
       <StoredType>date|0s</StoredType>
     </column>
-    <column id="497" parent="328" name="revenuedifference">
+    <column id="541" parent="345" name="revenuedifference">
       <Position>1</Position>
       <StateNumber>1048</StateNumber>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="498" parent="329" name="caption">
+    <column id="542" parent="346" name="caption">
       <Position>1</Position>
       <StateNumber>1040</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="499" parent="329" name="total_amount">
+    <column id="543" parent="346" name="total_amount">
       <Position>2</Position>
       <StateNumber>1040</StateNumber>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="500" parent="329" name="rent_revenue">
+    <column id="544" parent="346" name="rent_revenue">
       <Position>3</Position>
       <StateNumber>1040</StateNumber>
       <StoredType>bigint|0s</StoredType>
     </column>
-    <column id="501" parent="330" name="casseteid">
+    <column id="545" parent="347" name="casseteid">
       <Position>1</Position>
       <StateNumber>1044</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="502" parent="330" name="filmid">
+    <column id="546" parent="347" name="filmid">
       <Position>2</Position>
       <StateNumber>1044</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="503" parent="330" name="videoid">
+    <column id="547" parent="347" name="videoid">
       <Position>3</Position>
       <StateNumber>1044</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="504" parent="330" name="qualityid">
+    <column id="548" parent="347" name="qualityid">
       <Position>4</Position>
       <StateNumber>1044</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="505" parent="330" name="photo">
+    <column id="549" parent="347" name="photo">
       <Position>5</Position>
       <StateNumber>1044</StateNumber>
       <StoredType>bytea|0s</StoredType>
     </column>
-    <column id="506" parent="330" name="demand">
+    <column id="550" parent="347" name="demand">
       <Position>6</Position>
       <StateNumber>1044</StateNumber>
       <StoredType>boolean|0s</StoredType>
     </column>
-    <column id="507" parent="331" name="casseteid">
+    <column id="551" parent="348" name="casseteid">
       <Position>1</Position>
       <StateNumber>1043</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="508" parent="331" name="filmid">
+    <column id="552" parent="348" name="filmid">
       <Position>2</Position>
       <StateNumber>1043</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="509" parent="331" name="videoid">
+    <column id="553" parent="348" name="videoid">
       <Position>3</Position>
       <StateNumber>1043</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="510" parent="331" name="qualityid">
+    <column id="554" parent="348" name="qualityid">
       <Position>4</Position>
       <StateNumber>1043</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="511" parent="331" name="photo">
+    <column id="555" parent="348" name="photo">
       <Position>5</Position>
       <StateNumber>1043</StateNumber>
       <StoredType>bytea|0s</StoredType>
     </column>
-    <column id="512" parent="331" name="demand">
+    <column id="556" parent="348" name="demand">
       <Position>6</Position>
       <StateNumber>1043</StateNumber>
       <StoredType>boolean|0s</StoredType>
     </column>
-    <column id="513" parent="332" name="videoid">
+    <column id="557" parent="349" name="videoid">
       <Position>1</Position>
       <StateNumber>1062</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="514" parent="332" name="caption">
+    <column id="558" parent="349" name="caption">
       <Position>2</Position>
       <StateNumber>1062</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="515" parent="332" name="address">
+    <column id="559" parent="349" name="address">
       <Position>3</Position>
       <StateNumber>1062</StateNumber>
       <StoredType>varchar(1000)|0s</StoredType>
     </column>
-    <trigger id="516" parent="332" name="tg_update_video_view">
+    <trigger id="560" parent="349" name="tg_update_video_view">
       <Events>U</Events>
       <ObjectId>17130</ObjectId>
       <StateNumber>1086</StateNumber>
       <Turn>instead-of</Turn>
       <CallRoutineId>17121</CallRoutineId>
     </trigger>
-    <column id="517" parent="333" name="videoid">
+    <column id="561" parent="350" name="videoid">
       <Position>1</Position>
       <StateNumber>1010</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="518" parent="333" name="caption">
+    <column id="562" parent="350" name="caption">
       <Position>2</Position>
       <StateNumber>1010</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="519" parent="333" name="address">
+    <column id="563" parent="350" name="address">
       <Position>3</Position>
       <StateNumber>1010</StateNumber>
       <StoredType>varchar(1000)|0s</StoredType>
     </column>
-    <trigger id="520" parent="333" name="trg_update_video">
+    <trigger id="564" parent="350" name="trg_update_video">
       <Events>U</Events>
       <ObjectId>16959</ObjectId>
       <StateNumber>1012</StateNumber>
       <Turn>instead-of</Turn>
       <CallRoutineId>16958</CallRoutineId>
     </trigger>
-    <column id="521" parent="334" name="caption">
+    <column id="565" parent="351" name="caption">
       <Position>1</Position>
       <StateNumber>1039</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="522" parent="334" name="casseteid">
+    <column id="566" parent="351" name="casseteid">
       <Position>2</Position>
       <StateNumber>1039</StateNumber>
       <StoredType>integer|0s</StoredType>
     </column>
-    <column id="523" parent="335" name="caption">
+    <column id="567" parent="352" name="caption">
       <Position>1</Position>
       <StateNumber>1045</StateNumber>
       <StoredType>varchar(100)|0s</StoredType>

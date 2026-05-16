@@ -12,6 +12,8 @@ import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -58,7 +60,10 @@ public class MainFrame extends JFrame {
     private JLabel            lblLang;
 
     private JMenuBar menuBar;
-    private JMenu menuTables, menuViews, menuQueries, menuCharts, menuReports, menuHelp;
+    private JMenu menuTables, menuViews, menuQueries,
+            menuCharts, menuReports,
+            menuAdmin,
+            menuHelp;
 
     public MainFrame(User user) {
 
@@ -138,24 +143,56 @@ public class MainFrame extends JFrame {
     // ══════════════════════════════════════════════════
 
     private void buildMenu() {
+
         menuBar = new JMenuBar();
         menuBar.setBorder(BorderFactory.createEmptyBorder());
 
-        menuTables  = new JMenu(); menuViews   = new JMenu();
-        menuQueries = new JMenu(); menuCharts  = new JMenu();
-        menuReports = new JMenu(); menuHelp    = new JMenu();
+        menuTables  = new JMenu();
+        menuViews   = new JMenu();
+        menuQueries = new JMenu();
+        menuCharts  = new JMenu();
+        menuReports = new JMenu();
+        menuAdmin   = new JMenu();
+        menuHelp    = new JMenu();
 
         Font mf = new Font("Segoe UI", Font.PLAIN, 13);
-        for (JMenu m : new JMenu[]{menuTables, menuViews, menuQueries, menuCharts, menuReports, menuHelp})
+
+        for (JMenu m : new JMenu[]{
+                menuTables,
+                menuViews,
+                menuQueries,
+                menuCharts,
+                menuReports,
+                menuAdmin,
+                menuHelp
+        }) {
             m.setFont(mf);
+        }
 
-        fillMenuTables(); fillMenuViews(); fillMenuQueries();
-        fillMenuCharts(); fillMenuReports(); fillMenuHelp();
+        fillMenuTables();
+        fillMenuViews();
+        fillMenuQueries();
+        fillMenuCharts();
+        fillMenuReports();
+        fillMenuAdmin();
+        fillMenuHelp();
 
-        menuBar.add(menuTables); menuBar.add(menuViews); menuBar.add(menuQueries);
-        menuBar.add(menuCharts); menuBar.add(menuReports);
+        menuBar.add(menuTables);
+        menuBar.add(menuViews);
+        menuBar.add(menuQueries);
+        menuBar.add(menuCharts);
+        menuBar.add(menuReports);
+
+        if (user != null &&
+                "admin".equalsIgnoreCase(user.getRoleName())) {
+
+            menuBar.add(menuAdmin);
+        }
+
         menuBar.add(Box.createHorizontalGlue());
         menuBar.add(menuHelp);
+
+        // ВАЖНО
         setJMenuBar(menuBar);
     }
 
@@ -238,6 +275,26 @@ public class MainFrame extends JFrame {
         wireCassetteCrud(); wireReceiptCrud(); wireSimpleCrud();
 
         boolean isOperator = user != null && "operator".equalsIgnoreCase(user.getRoleName());
+
+        // Двойной клик на кассете — детальный просмотр с фото
+        pCassette.getTable().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int viewRow = pCassette.getTable().getSelectedRow();
+                    if (viewRow < 0) return;
+                    int modelRow = pCassette.getTable().convertRowIndexToModel(viewRow);
+                    Object idVal = pCassette.getTableModel().getValueAt(modelRow, 0);
+                    if (!(idVal instanceof Number)) return;
+                    int cassetteId = ((Number) idVal).intValue();
+                    CassetteDetailDialog dlg = new CassetteDetailDialog(
+                            MainFrame.this, cassetteId, isOperator);
+                    dlg.setVisible(true);
+                    if (dlg.isSaved()) refreshCassette();
+                }
+            }
+        });
+
         MasterDetailPanel masterDetail = new MasterDetailPanel(isOperator);
         ViewSimplePanel   viewSimple   = new ViewSimplePanel();
         QueryPanel        queryPanel   = new QueryPanel();
@@ -575,7 +632,17 @@ public class MainFrame extends JFrame {
     private void refreshOwners()   { try { pOwners.loadData(ownerDAO.getAll()); }          catch (SQLException e) { dbErr(e); } }
     private void refreshVideo()    { try { pVideo.loadData(videoDAO.getAll()); }            catch (SQLException e) { dbErr(e); } }
     private void refreshFilm()     { try { pFilm.loadData(filmDAO.getAll()); }              catch (SQLException e) { dbErr(e); } }
-    private void refreshCassette() { try { pCassette.loadData(cassetteDAO.getAll()); }      catch (SQLException e) { dbErr(e); } }
+    private void refreshCassette() {
+        try {
+            pCassette.loadData(cassetteDAO.getAll());
+            // Скрыть колонку ID (колонка 0) — нужна только для двойного клика
+            SwingUtilities.invokeLater(() -> {
+                var col = pCassette.getTable().getColumnModel().getColumn(0);
+                col.setMinWidth(0); col.setMaxWidth(0);
+                col.setWidth(0);    col.setPreferredWidth(0);
+            });
+        } catch (SQLException e) { dbErr(e); }
+    }
     private void refreshReceipt()  { try { pReceipt.loadData(receiptDAO.getAll()); }        catch (SQLException e) { dbErr(e); } }
     private void refreshDistrict() { try { pDistrict.loadData(simpleDAO.getDistricts()); }  catch (SQLException e) { dbErr(e); } }
     private void refreshService()  { try { pService.loadData(simpleDAO.getServices()); }    catch (SQLException e) { dbErr(e); } }
@@ -615,16 +682,14 @@ public class MainFrame extends JFrame {
         pStudio.setCrudEnabled(false);
         pCountry.setCrudEnabled(false);
 
-        // Скрываем меню отчётов и графиков
-        menuReports.setVisible(false);
-        menuCharts.setVisible(false);
+        // Меню отчётов и диаграмм доступны оператору (только просмотр)
 
         // Уведомление оператору — через invokeLater, чтобы окно успело отрисоваться
         SwingUtilities.invokeLater(() ->
                 JOptionPane.showMessageDialog(
                         this,
                         "Вы вошли как OPERATOR.\n\n" +
-                                "Доступен только просмотр данных.\n" +
+                                "Доступен просмотр данных, диаграмм и отчётов.\n" +
                                 "Добавление, редактирование и удаление запрещены.",
                         "Ограниченный доступ",
                         JOptionPane.INFORMATION_MESSAGE
@@ -667,6 +732,29 @@ public class MainFrame extends JFrame {
                 I18n.t("msg.db_error") + "\n" + e.getMessage(),
                 I18n.t("msg.error"), JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
+    }
+
+    private void fillMenuAdmin() {
+
+        menuAdmin.setText("Администрирование");
+
+        menuAdmin.removeAll();
+
+        JMenuItem usersItem =
+                new JMenuItem("👤 Управление пользователями");
+
+        usersItem.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+
+        usersItem.addActionListener(e -> {
+
+            UserManagementDialog dialog =
+                    new UserManagementDialog(this);
+
+            dialog.setVisible(true);
+
+        });
+
+        menuAdmin.add(usersItem);
     }
 
     // ══════════════════════════════════════════════════

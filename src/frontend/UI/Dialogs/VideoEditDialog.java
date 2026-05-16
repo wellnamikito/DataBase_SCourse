@@ -4,16 +4,18 @@ import backend.dao.OwnerDAO;
 import backend.dao.SimpleDAO;
 import backend.dao.VideoDAO;
 import backend.model.*;
+import backend.util.SaveGuard;
 
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.List;
 
-/** Диалог добавления/редактирования видеосалона */
 public class VideoEditDialog extends JDialog {
 
     private boolean saved = false;
+    private final SaveGuard saveGuard = new SaveGuard();
+
     private final Video video;
     private final VideoDAO videoDAO = new VideoDAO();
     private final SimpleDAO simpleDAO = new SimpleDAO();
@@ -41,7 +43,6 @@ public class VideoEditDialog extends JDialog {
 
         this.video = video;
 
-        // справочники
         try {
             districts = simpleDAO.getDistrictList();
             owners    = ownerDAO.getAllList();
@@ -74,7 +75,6 @@ public class VideoEditDialog extends JDialog {
         form.add(new JLabel("Кол-во клиентов:")); form.add(fAmount);
         form.add(new JLabel("Владелец:")); form.add(ownerCombo);
 
-        // заполнение при редактировании
         if (video != null) {
             fCaption.setText(video.getCaption());
             fAddress.setText(video.getAddress());
@@ -98,7 +98,11 @@ public class VideoEditDialog extends JDialog {
         JButton btnSave   = new JButton("💾 Сохранить");
         JButton btnCancel = new JButton("Отмена");
 
-        btnSave.addActionListener(e -> save());
+        // ❌ УБРАЛИ дублирование listener
+        btnSave.addActionListener(e ->
+                saveGuard.run(this::save)
+        );
+
         btnCancel.addActionListener(e -> dispose());
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -112,14 +116,15 @@ public class VideoEditDialog extends JDialog {
         pack();
         setLocationRelativeTo(parent);
 
-        btnSave.addActionListener(e -> save());
-        btnCancel.addActionListener(e -> dispose());
+        // Enter = save (через SaveGuard-safe кнопку)
+        getRootPane().setDefaultButton(btnSave);
 
-        // клавиатура (Enter + Tab поведение)
-        setupKeyboardBehavior(btnSave);
+        setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
+        setFocusTraversalPolicyProvider(true);
     }
 
     private void save() {
+
         String caption = fCaption.getText().trim();
         String address = fAddress.getText().trim();
         String type    = fType.getText().trim();
@@ -161,13 +166,13 @@ public class VideoEditDialog extends JDialog {
             v.setOwnerId(ownIdx >= 0 ? owners.get(ownIdx).getOwnerID() : 0);
 
             if (video == null) {
-                videoDAO.insert(v); // TABLE insert
+                videoDAO.insert(v);
             } else {
                 videoDAO.updateViaView(
                         v.getVideoId(),
                         v.getCaption(),
                         v.getAddress()
-                ); // 🔥 VIEW update (TRIGGER)
+                );
             }
 
             saved = true;
@@ -183,29 +188,5 @@ public class VideoEditDialog extends JDialog {
 
     public boolean isSaved() {
         return saved;
-    }
-
-    /**
-     * Enter → сохранить
-     * Tab → нормальная навигация по форме
-     */
-    private void setupKeyboardBehavior(JButton defaultButton) {
-
-        // ENTER = кнопка Save
-        getRootPane().setDefaultButton(defaultButton);
-
-        // корректный Tab order (GridLayout иногда ломает порядок)
-        setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
-        setFocusTraversalPolicyProvider(true);
-
-        KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                .setDefaultFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
-
-        // Enter прямо в текстовых полях = сохранить
-        fCaption.addActionListener(e -> defaultButton.doClick());
-        fAddress.addActionListener(e -> defaultButton.doClick());
-        fType.addActionListener(e -> defaultButton.doClick());
-        fPhone.addActionListener(e -> defaultButton.doClick());
-        fLicence.addActionListener(e -> defaultButton.doClick());
     }
 }

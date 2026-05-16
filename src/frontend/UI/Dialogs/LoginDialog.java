@@ -17,7 +17,7 @@ public class LoginDialog extends JDialog {
     public LoginDialog(Window parent) {
         super(parent, "Авторизация", ModalityType.APPLICATION_MODAL);
 
-        JPanel panel = new JPanel(new GridLayout(6,1,20,20));
+        JPanel panel = new JPanel(new GridLayout(6, 1, 20, 20));
 
         panel.add(new JLabel("БД: Сеть видеосалонов"));
         panel.add(new JLabel("Разработчик: Куклин Кирилл Викторович"));
@@ -30,24 +30,27 @@ public class LoginDialog extends JDialog {
 
         JButton btnLogin = new JButton("Войти");
 
+        // ❗ ЕДИНАЯ ТОЧКА ЛОГИНА
         btnLogin.addActionListener(e -> doLogin());
 
         setLayout(new BorderLayout());
-
         add(panel, BorderLayout.CENTER);
         add(btnLogin, BorderLayout.SOUTH);
 
+        // 🔥 ВАЖНО: только ОДИН Enter handler
         getRootPane().setDefaultButton(btnLogin);
 
-        UIUtils.enableEnterToNextField(panel);
+        // ❌ УБРАТЬ Enter-trigger с password field
+        // fPassword.addActionListener(e -> doLogin());  ← удаляем
 
-        fPassword.addActionListener(e -> doLogin());
+        // ❌ НЕ используем Enter-navigation здесь вообще
+        // UIUtils.enableEnterToNextField(panel);        ← убираем
+
         pack();
         setLocationRelativeTo(parent);
     }
 
     private void doLogin() {
-
         try {
             AuthDAO dao = new AuthDAO();
 
@@ -61,8 +64,6 @@ public class LoginDialog extends JDialog {
                         "Неверный логин или пароль");
                 return;
             }
-
-            System.out.println("LOGIN OK");
 
             user = u;
             dispose();

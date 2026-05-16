@@ -3,6 +3,7 @@ package frontend.UI.Dialogs;
 import backend.dao.SimpleDAO;
 import backend.model.Director;
 import backend.util.UIUtils;
+import backend.util.SaveGuard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,8 +13,10 @@ import java.sql.SQLException;
 public class DirectorEditDialog extends JDialog {
 
     private boolean saved = false;
+
     private final Director director;
     private final SimpleDAO simpleDAO = new SimpleDAO();
+    private final SaveGuard saveGuard = new SaveGuard();
 
     private final JTextField fFam  = new JTextField(20);
     private final JTextField fName = new JTextField(20);
@@ -26,12 +29,27 @@ public class DirectorEditDialog extends JDialog {
 
         this.director = director;
 
+        buildUI(parent);
+
+        pack();
+        setLocationRelativeTo(parent);
+    }
+
+    // ─────────────────────────────────────────────
+
+    private void buildUI(Window parent) {
+
         JPanel form = new JPanel(new GridLayout(3, 2, 8, 8));
         form.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
 
-        form.add(new JLabel("Фамилия:"));   form.add(fFam);
-        form.add(new JLabel("Имя:"));       form.add(fName);
-        form.add(new JLabel("Отчество:"));  form.add(fOtch);
+        form.add(new JLabel("Фамилия:"));
+        form.add(fFam);
+
+        form.add(new JLabel("Имя:"));
+        form.add(fName);
+
+        form.add(new JLabel("Отчество:"));
+        form.add(fOtch);
 
         if (director != null) {
             fFam.setText(director.getFamilia());
@@ -39,10 +57,10 @@ public class DirectorEditDialog extends JDialog {
             fOtch.setText(director.getOtchestvo());
         }
 
-        JButton btnSave   = new JButton("💾 Сохранить");
+        JButton btnSave = new JButton("💾 Сохранить");
         JButton btnCancel = new JButton("Отмена");
 
-        btnSave.addActionListener(e -> save());
+        btnSave.addActionListener(e -> saveGuard.run(this::save));
         btnCancel.addActionListener(e -> dispose());
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -53,35 +71,43 @@ public class DirectorEditDialog extends JDialog {
         add(form, BorderLayout.CENTER);
         add(btnPanel, BorderLayout.SOUTH);
 
-
-        // 🔥 ENTER + TAB UX
+        // ── UX ───────────────────────────────
 
         UIUtils.enableEnterToNextField(form);
 
-        // Enter в последнем поле → сохранить
-        fOtch.addActionListener(e -> save());
-
-        // Enter = кнопка по умолчанию
+        // единая точка Enter → save
         getRootPane().setDefaultButton(btnSave);
-
-        pack();
-        setLocationRelativeTo(parent);
     }
+
+    // ─────────────────────────────────────────────
 
     private void save() {
         try {
             Director d = director != null ? director : new Director();
+
             d.setFamilia(fFam.getText().trim());
             d.setName(fName.getText().trim());
             d.setOtchestvo(fOtch.getText().trim());
-            if (director == null) simpleDAO.insertDirector(d);
-            else                   simpleDAO.updateDirector(d);
+
+            if (director == null) {
+                simpleDAO.insertDirector(d);
+            } else {
+                simpleDAO.updateDirector(d);
+            }
+
             saved = true;
             dispose();
+
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Ошибка: " + e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+            saveGuard.reset();
+            JOptionPane.showMessageDialog(this,
+                    "Ошибка: " + e.getMessage(),
+                    "Ошибка",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    public boolean isSaved() { return saved; }
+    public boolean isSaved() {
+        return saved;
+    }
 }

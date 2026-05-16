@@ -5,7 +5,8 @@ import backend.dao.SimpleDAO;
 import backend.model.Director;
 import backend.model.Film;
 import backend.model.Studio;
-import backend.util.*;
+import backend.util.UIUtils;
+import backend.util.SaveGuard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,37 +17,58 @@ import java.util.List;
 public class FilmEditDialog extends JDialog {
 
     private boolean saved = false;
+
     private final Film film;
     private final FilmDAO filmDAO = new FilmDAO();
     private final SimpleDAO simpleDAO = new SimpleDAO();
+    private final SaveGuard saveGuard = new SaveGuard();
 
     private final JTextField fCaption  = new JTextField(25);
     private final JTextField fYear     = new JTextField(5);
     private final JSpinner   fDuration = new JSpinner(new SpinnerNumberModel(90, 1, 999, 1));
     private final JTextArea  fInfo     = new JTextArea(3, 25);
+
     private JComboBox<String> directorCombo;
     private JComboBox<String> studioCombo;
+
     private List<Director> directors;
     private List<Studio> studios;
 
     public FilmEditDialog(Window parent, Film film) {
-        super(parent, film == null ? "Добавить фильм" : "Редактировать фильм",
+        super(parent,
+                film == null ? "Добавить фильм" : "Редактировать фильм",
                 ModalityType.APPLICATION_MODAL);
+
         this.film = film;
 
         try {
             directors = simpleDAO.getDirectorList();
             studios   = simpleDAO.getStudioList();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(parent, "Ошибка: " + e.getMessage());
-            dispose(); return;
+            JOptionPane.showMessageDialog(parent,
+                    "Ошибка: " + e.getMessage(),
+                    "Ошибка",
+                    JOptionPane.ERROR_MESSAGE);
+            dispose();
+            return;
         }
+
+        buildUI(parent);
+
+        pack();
+        setLocationRelativeTo(parent);
+    }
+
+    // ─────────────────────────────────────────────
+
+    private void buildUI(Window parent) {
 
         directorCombo = new JComboBox<>(directors.stream().map(Director::toString).toArray(String[]::new));
         studioCombo   = new JComboBox<>(studios.stream().map(Studio::toString).toArray(String[]::new));
 
         JPanel form = new JPanel(new GridBagLayout());
         form.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(4, 4, 4, 4);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -57,23 +79,21 @@ public class FilmEditDialog extends JDialog {
         addRow(form, gbc, 3, "Режиссер:", directorCombo);
         addRow(form, gbc, 4, "Студия:", studioCombo);
 
-        gbc.gridx = 0; gbc.gridy = 5; form.add(new JLabel("Описание:"), gbc);
-        gbc.gridx = 1; form.add(new JScrollPane(fInfo), gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        form.add(new JLabel("Описание:"), gbc);
+
+        gbc.gridx = 1;
+        form.add(new JScrollPane(fInfo), gbc);
 
         if (film != null) {
-            fCaption.setText(film.getCaption());
-            fYear.setText(film.getYear());
-            fDuration.setValue(film.getDuration() > 0 ? film.getDuration() : 90);
-            fInfo.setText(film.getInformation());
-            for (int i = 0; i < directors.size(); i++)
-                if (directors.get(i).getDirectorId() == film.getDirectorId()) { directorCombo.setSelectedIndex(i); break; }
-            for (int i = 0; i < studios.size(); i++)
-                if (studios.get(i).getStudioId() == film.getStudioId()) { studioCombo.setSelectedIndex(i); break; }
+            fillForm(film);
         }
 
         JButton btnSave   = new JButton("💾 Сохранить");
         JButton btnCancel = new JButton("Отмена");
-        btnSave.addActionListener(e -> save());
+
+        btnSave.addActionListener(e -> saveGuard.run(this::save));
         btnCancel.addActionListener(e -> dispose());
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -83,56 +103,88 @@ public class FilmEditDialog extends JDialog {
         setLayout(new BorderLayout());
         add(new JScrollPane(form), BorderLayout.CENTER);
         add(btnPanel, BorderLayout.SOUTH);
-        pack();
-        setLocationRelativeTo(parent);
 
-        // ==============================
-        // 🔥 KEYBOARD NAVIGATION (ENTER / TAB)
-        // ==============================
+        // ── UX ───────────────────────────────
 
-        // Tab + Enter по полям (кроме textarea)
         UIUtils.enableEnterToNextField(form);
 
-        // JTextArea не поддерживает Enter-логику как поле ввода → пропускаем
-
-        // Enter в последнем поле формы → сохранить
-        studioCombo.addActionListener(e -> save());
-
-        // Enter в year тоже можно оставить как переход/сохранение
-        fYear.addActionListener(e -> fDuration.requestFocus());
-
-        // Enter в caption → year
-        fCaption.addActionListener(e -> fYear.requestFocus());
-
-        // Enter = кнопка "Сохранить"
+        // стандартный Enter = save
         getRootPane().setDefaultButton(btnSave);
+
+        // JTextArea не участвует в tab-flow (оставляем как есть)
     }
+
+    // ─────────────────────────────────────────────
+
+    private void fillForm(Film film) {
+
+        fCaption.setText(film.getCaption());
+        fYear.setText(film.getYear());
+        fDuration.setValue(film.getDuration() > 0 ? film.getDuration() : 90);
+        fInfo.setText(film.getInformation());
+
+        for (int i = 0; i < directors.size(); i++) {
+            if (directors.get(i).getDirectorId() == film.getDirectorId()) {
+                directorCombo.setSelectedIndex(i);
+                break;
+            }
+        }
+
+        for (int i = 0; i < studios.size(); i++) {
+            if (studios.get(i).getStudioId() == film.getStudioId()) {
+                studioCombo.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────
 
     private void addRow(JPanel p, GridBagConstraints gbc, int row, String label, JComponent comp) {
-        gbc.gridx = 0; gbc.gridy = row; p.add(new JLabel(label), gbc);
-        gbc.gridx = 1; p.add(comp, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        p.add(new JLabel(label), gbc);
+
+        gbc.gridx = 1;
+        p.add(comp, gbc);
     }
+
+    // ─────────────────────────────────────────────
 
     private void save() {
         try {
             Film f = (film != null) ? film : new Film();
+
             f.setCaption(fCaption.getText().trim());
             f.setYear(fYear.getText().trim());
             f.setDuration((Integer) fDuration.getValue());
             f.setInformation(fInfo.getText().trim());
+
             int dIdx = directorCombo.getSelectedIndex();
             f.setDirectorId(dIdx >= 0 ? directors.get(dIdx).getDirectorId() : 0);
+
             int sIdx = studioCombo.getSelectedIndex();
             f.setStudioId(sIdx >= 0 ? studios.get(sIdx).getStudioId() : 0);
 
-            if (film == null) filmDAO.insert(f);
-            else              filmDAO.update(f);
+            if (film == null) {
+                filmDAO.insert(f);
+            } else {
+                filmDAO.update(f);
+            }
+
             saved = true;
             dispose();
+
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Ошибка БД:\n" + e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+            saveGuard.reset();
+            JOptionPane.showMessageDialog(this,
+                    "Ошибка БД:\n" + e.getMessage(),
+                    "Ошибка",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    public boolean isSaved() { return saved; }
+    public boolean isSaved() {
+        return saved;
+    }
 }

@@ -23,11 +23,8 @@ public class I18n {
     private static final String PREF_LANG = "app_lang";
 
     static {
-        // Загрузить сохранённый язык
         String saved = prefs.get(PREF_LANG, "RU");
         current = saved.equals("EN") ? Lang.EN : Lang.RU;
-
-        // Формат: ключ -> [RU, EN]
 
         // === Меню ===
         p("menu.tables",        "📂 Таблицы",           "📂 Tables");
@@ -64,7 +61,7 @@ public class I18n {
         p("btn.edit",           "✏️  Редактировать",    "✏️  Edit");
         p("btn.delete",         "🗑️  Удалить",          "🗑️  Delete");
         p("btn.refresh",        "🔄  Обновить",         "🔄  Refresh");
-        p("btn.save",           "💾 Сохранить",         "💾 Save");
+        p("btn.save",           "Сохранить",            "Save");
         p("btn.cancel",         "Отмена",               "Cancel");
         p("btn.run",            "▶  Выполнить",         "▶  Run");
         p("btn.export",         "📥 Экспорт в Excel",   "📥 Export to Excel");
@@ -72,6 +69,8 @@ public class I18n {
         p("btn.run_func",       "▶ Выполнить",          "▶ Run");
         p("btn.edit_view",      "✏️ Редактировать через VIEW", "✏️ Edit via VIEW");
         p("btn.clear_search",   "✕",                    "✕");
+        p("btn.upload_photo",   "📂 Загрузить фото",    "📂 Upload Photo");
+        p("btn.remove_photo",   "🗑 Удалить фото",      "🗑 Remove Photo");
 
         // === Поиск ===
         p("search.label",       "🔍 Поиск:",            "🔍 Search:");
@@ -103,7 +102,6 @@ public class I18n {
         // === Отчёты ===
         p("report.title",        "📋 Отчёты",             "📋 Reports");
         p("report.select_title", "Выбор отчёта",          "Select Report");
-        p("query.result_title",  "Результат",             "Result");
         p("report.single",      "👤 Однотабличный",     "👤 Single Table");
         p("report.single_sub",  "(Владельцы)",          "(Owners)");
         p("report.multi",       "🎞️ Многотабличный",   "🎞️ Multi-Table");
@@ -129,12 +127,15 @@ public class I18n {
         p("chart.axis_sum",     "Сумма (руб.)",         "Amount (RUB)");
         p("chart.series",       "Выручка",              "Revenue");
 
-        // === VIEW simple ===
+        // === VIEW ===
         p("view.simple.info",
                 "<html><b>📝 Обновляемое представление vw_video_simple</b><br>" +
                         "<i>Изменения записываются через триггер trg_update_video в таблицу Video</i></html>",
                 "<html><b>📝 Updatable view vw_video_simple</b><br>" +
                         "<i>Changes go via trigger trg_update_video to the Video table</i></html>");
+        p("view.simple.info_short",
+                "Изменения через триггер tg_update_video_view → таблица Video",
+                "Changes via trigger tg_update_video_view → Video table");
         p("view.simple.saved",
                 "✅ Обновлено через VIEW (триггер выполнен)",
                 "✅ Updated via VIEW (trigger fired)");
@@ -153,10 +154,29 @@ public class I18n {
         p("msg.db_error",       "Ошибка БД:",                  "Database error:");
         p("msg.error",          "Ошибка",                      "Error");
         p("msg.warning",        "Предупреждение",              "Warning");
-        p("msg.connected",      "✅ Подключено к PostgreSQL (localhost:5432/videorental)",
+        p("msg.access_denied",  "Доступ запрещён (режим только просмотра)", "Access denied (read-only mode)");
+        p("msg.connected",
+                "✅ Подключено к PostgreSQL (localhost:5432/videorental)",
                 "✅ Connected to PostgreSQL (localhost:5432/videorental)");
-        p("msg.no_conn",        "❌ Нет подключения к БД — проверьте DatabaseConnection.java",
+        p("msg.no_conn",
+                "❌ Нет подключения к БД — проверьте DatabaseConnection.java",
                 "❌ No database connection — check DatabaseConnection.java");
+
+        // === Кассета — диалог деталей ===
+        p("cassette.dlg.title",         "Кассета #",                    "Cassette #");
+        p("cassette.dlg.title.readonly","Кассета # (просмотр)",         "Cassette # (view only)");
+        p("cassette.dlg.photo_border",  "Фотография",                   "Photo");
+        p("cassette.dlg.data_border",   "Данные кассеты",               "Cassette Data");
+        p("cassette.dlg.no_photo",      "Нет фото",                     "No photo");
+        p("cassette.dlg.photo_uploaded","✅ Фото загружено (не сохранено)", "✅ Photo loaded (not saved)");
+        p("cassette.dlg.photo_removed", "🗑 Фото удалено (не сохранено)",   "🗑 Photo removed (not saved)");
+        p("cassette.dlg.photo_toobig",  "Файл слишком большой. Максимум 5 МБ.", "File too large. Maximum 5 MB.");
+        p("cassette.dlg.photo_err",     "Ошибка чтения файла:",         "File read error:");
+        p("cassette.dlg.file_filter",   "Изображения (*.jpg, *.jpeg, *.png, *.gif, *.bmp)", "Images (*.jpg, *.jpeg, *.png, *.gif, *.bmp)");
+        p("cassette.dlg.saved",         "✅ Кассета сохранена",          "✅ Cassette saved");
+        p("cassette.dlg.choose_photo",  "Выберите изображение",         "Choose an image");
+        p("cassette.dlg.select_both",   "Выберите фильм и качество",    "Please select film and quality");
+        p("cassette.dlg.id_error",      "Ошибка: VideoID не найден",    "Error: VideoID not found");
 
         // === Валидация ===
         p("val.fam_required",   "Фамилия и Имя обязательны",  "Last name and first name are required");
@@ -203,7 +223,7 @@ public class I18n {
         p("f.country",    "Страна:",                  "Country:");
         p("f.director",   "Режиссёр:",                "Director:");
 
-        // === Заголовки колонок таблиц (без двоеточия) ===
+        // === Заголовки колонок ===
         p("col.receipt_id",     "№ Чека",           "Receipt #");
         p("col.cassette_id",    "ID Кассеты",       "Cassette ID");
         p("col.total_revenue",  "Общая выручка",    "Total Revenue");
@@ -211,34 +231,6 @@ public class I18n {
         p("col.price_category", "Категория цены",   "Price Category");
         p("col.district_name",  "Название района",  "District Name");
         p("col.service_name",   "Название услуги",  "Service Name");
-
-        // Поля без двоеточия (для заголовков таблиц)
-        p("f.familia",    "Фамилия",   "Last Name");
-        p("f.name",       "Имя",       "First Name");
-        p("f.otchestvo",  "Отчество",  "Middle Name");
-        p("f.caption",    "Название",  "Name");
-        p("f.district",   "Район",     "District");
-        p("f.address",    "Адрес",     "Address");
-        p("f.type",       "Тип",       "Type");
-        p("f.phone",      "Телефон",   "Phone");
-        p("f.licence",    "Лицензия",  "Licence");
-        p("f.time_start", "Откр.",     "Opens");
-        p("f.time_end",   "Закр.",     "Closes");
-        p("f.amount",     "Клиентов",  "Clients");
-        p("f.owner",      "Владелец",  "Owner");
-        p("f.film",       "Фильм",     "Film");
-        p("f.quality",    "Качество",  "Quality");
-        p("f.demand",     "Спрос",     "Demand");
-        p("f.year",       "Год",       "Year");
-        p("f.duration",   "Длит.(мин)","Duration(min)");
-        p("f.info",       "Описание",  "Description");
-        p("f.studio",     "Студия",    "Studio");
-        p("f.service",    "Услуга",    "Service");
-        p("f.date",       "Дата",      "Date");
-        p("f.price",      "Цена (руб.)","Price (RUB)");
-        p("f.video",      "Видеосалон","Video Store");
-        p("f.country",    "Страна",    "Country");
-        p("f.director",   "Режиссёр",  "Director");
 
         // === Excel ===
         p("excel.save_as",  "Сохранить отчёт как...", "Save report as...");
@@ -270,56 +262,53 @@ public class I18n {
         p("dlg.edit_item",    "Редактировать запись",      "Edit Record");
 
         // === Представления (ViewDAO) ===
-        p("view.films_directors",       "Фильмы + режиссеры",           "Films + Directors");
-        p("view.cassettes_films",       "Кассеты + фильмы",             "Cassettes + Films");
-        p("view.receipts_services",     "Квитанции + услуги",           "Receipts + Services");
-        p("view.video_cassettes",       "Видео + кассеты",              "Video + Cassettes");
-        p("view.total_revenue",         "Общая выручка",                "Total Revenue");
-        p("view.people",                "Все люди",                     "All People");
-        p("view.receipt_category",      "Категории квитанций",          "Receipt Categories");
-        p("view.used_cassettes",        "Использованные кассеты",       "Used Cassettes");
-        p("view.unused_cassettes",      "Неиспользованные кассеты",     "Unused Cassettes");
-        p("view.without_receipts",      "Видео без квитанций",          "Videos Without Receipts");
-        p("view.above_average",         "Фильмы выше среднего",         "Films Above Average");
-        p("view.best_worst",            "Лучшие/худшие видеосалоны",    "Best/Worst Stores");
-        p("view.revenue_diff",          "Разница выручки",              "Revenue Difference");
-        p("view.night_video",           "Ночные видеотеки",             "Night Video Stores");
-        p("view.avg_clients",           "Среднее число клиентов",       "Average Client Count");
-        p("view.editable",              "Редактируемое VIEW",           "Editable VIEW");
-
-        p("msg.access_denied", "Доступ запрещён (режим только просмотра)", "Access denied (read-only mode)");
+        p("view.films_directors",        "Фильмы + режиссеры",          "Films + Directors");
+        p("view.cassettes_films",        "Кассеты + фильмы",            "Cassettes + Films");
+        p("view.receipts_services",      "Квитанции + услуги",          "Receipts + Services");
+        p("view.video_cassettes",        "Видео + кассеты",             "Video + Cassettes");
+        p("view.total_revenue",          "Общая выручка",               "Total Revenue");
+        p("view.people",                 "Все люди",                    "All People");
+        p("view.receipt_category",       "Категории квитанций",         "Receipt Categories");
+        p("view.used_cassettes",         "Использованные кассеты",      "Used Cassettes");
+        p("view.unused_cassettes",       "Неиспользованные кассеты",    "Unused Cassettes");
+        p("view.without_receipts",       "Видео без квитанций",         "Videos Without Receipts");
+        p("view.above_average",          "Фильмы выше среднего",        "Films Above Average");
+        p("view.best_worst",             "Лучшие/худшие видеосалоны",   "Best/Worst Stores");
+        p("view.revenue_diff",           "Разница выручки",             "Revenue Difference");
+        p("view.night_video",            "Ночные видеотеки",            "Night Video Stores");
+        p("view.avg_clients",            "Среднее число клиентов",      "Average Client Count");
+        p("view.editable",               "Редактируемое VIEW",          "Editable VIEW");
 
         // === Запросы (QueryDAO) ===
-        p("query.service_stats",         "Статистика по услугам",           "Service Statistics");
-        p("query.videos_by_owner",       "Видеосалоны по владельцу",        "Video Stores by Owner");
-        p("query.cassettes_by_quality",  "Кассеты по качеству",             "Cassettes by Quality");
-        p("query.receipts_by_period",    "Квитанции по периоду",            "Receipts by Period");
-        p("query.operations_from_date",  "Операции начиная с даты",         "Operations From Date");
-        p("query.revenue_over",          "Выручка выше суммы",              "Revenue Over Amount");
-        p("query.revenue_by_period",     "Выручка за период",               "Revenue by Period");
-        p("query.revenue_by_mask",       "Выручка видеосалонов по маске",   "Revenue by Store Mask");
-        p("query.receipts_by_price",     "Квитанции по точной цене",        "Receipts by Exact Price");
-        p("query.receipts_price_over",   "Квитанции выше цены",             "Receipts Price Over");
+        p("query.service_stats",          "Статистика по услугам",          "Service Statistics");
+        p("query.videos_by_owner",        "Видеосалоны по владельцу",       "Video Stores by Owner");
+        p("query.cassettes_by_quality",   "Кассеты по качеству",            "Cassettes by Quality");
+        p("query.receipts_by_period",     "Квитанции по периоду",           "Receipts by Period");
+        p("query.operations_from_date",   "Операции начиная с даты",        "Operations From Date");
+        p("query.revenue_over",           "Выручка выше суммы",             "Revenue Over Amount");
+        p("query.revenue_by_period",      "Выручка за период",              "Revenue by Period");
+        p("query.revenue_by_mask",        "Выручка видеосалонов по маске",  "Revenue by Store Mask");
+        p("query.receipts_by_price",      "Квитанции по точной цене",       "Receipts by Exact Price");
+        p("query.receipts_price_over",    "Квитанции выше цены",            "Receipts Price Over");
         p("query.studios_by_year_revenue","Студии по году и выручке",       "Studios by Year and Revenue");
 
-// === Параметры запросов ===
-        p("query.param.service_name",    "Название услуги",   "Service Name");
-        p("query.param.year",            "Год",               "Year");
-        p("query.param.last_name",       "Фамилия",           "Last Name");
-        p("query.param.quality",         "Качество",          "Quality");
-        p("query.param.date_from",       "Дата от",           "Date From");
-        p("query.param.date_to",         "Дата до",           "Date To");
-        p("query.param.date",            "Дата",              "Date");
-        p("query.param.min_revenue",     "Минимальная выручка","Min Revenue");
-        p("query.param.mask",            "Маска",             "Mask");
-        p("query.param.price",           "Цена",              "Price");
+        // === Параметры запросов ===
+        p("query.param.service_name",  "Название услуги",    "Service Name");
+        p("query.param.year",          "Год",                "Year");
+        p("query.param.last_name",     "Фамилия",            "Last Name");
+        p("query.param.quality",       "Качество",           "Quality");
+        p("query.param.date_from",     "Дата от",            "Date From");
+        p("query.param.date_to",       "Дата до",            "Date To");
+        p("query.param.date",          "Дата",               "Date");
+        p("query.param.min_revenue",   "Минимальная выручка","Min Revenue");
+        p("query.param.mask",          "Маска",              "Mask");
+        p("query.param.price",         "Цена",               "Price");
     }
 
     private static void p(String key, String ru, String en) {
         str.put(key, new String[]{ru, en});
     }
 
-    /** Получить строку на текущем языке */
     public static String t(String key) {
         String[] arr = str.get(key);
         if (arr == null) return "[" + key + "]";

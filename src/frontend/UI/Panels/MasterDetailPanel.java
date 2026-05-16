@@ -3,12 +3,15 @@ package frontend.UI.Panels;
 import backend.dao.CassetteDAO;
 import backend.dao.VideoDAO;
 import backend.model.Video;
+import frontend.UI.Dialogs.CassetteDetailDialog;
 import frontend.UI.Dialogs.CassetteEditDialog;
 import frontend.UI.Dialogs.VideoEditDialog;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 
 public class MasterDetailPanel extends JPanel {
@@ -43,6 +46,28 @@ public class MasterDetailPanel extends JPanel {
                     if (!e.getValueIsAdjusting()) refreshDetail();
                 }
         );
+
+        // Двойной клик на кассете — открыть детальный просмотр с фото
+        detailPanel.getTable().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int viewRow = detailPanel.getTable().getSelectedRow();
+                    if (viewRow < 0) return;
+                    int modelRow = detailPanel.getTable().convertRowIndexToModel(viewRow);
+                    Object idVal = detailPanel.getTableModel().getValueAt(modelRow, 0);
+                    if (!(idVal instanceof Number)) return;
+                    int cassetteId = ((Number) idVal).intValue();
+                    CassetteDetailDialog dlg = new CassetteDetailDialog(
+                            SwingUtilities.getWindowAncestor(MasterDetailPanel.this),
+                            cassetteId,
+                            isOperator   // оператор видит без возможности редактирования
+                    );
+                    dlg.setVisible(true);
+                    if (dlg.isSaved()) refreshDetail();
+                }
+            }
+        });
 
         // CRUD Master (Video)
         masterPanel.setCrudListener(new TablePanel.CrudListener() {

@@ -1,5 +1,7 @@
 package frontend.UI.Dialogs;
 
+import backend.util.SaveGuard;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.function.Consumer;
@@ -11,6 +13,8 @@ public class SimpleEditDialog extends JDialog {
 
     private boolean saved = false;
     private final JTextField field = new JTextField(25);
+
+    private final SaveGuard saveGuard = new SaveGuard();
 
     public SimpleEditDialog(Window parent, String title, String currentValue, Consumer<String> onSave) {
         super(parent, title, ModalityType.APPLICATION_MODAL);
@@ -24,16 +28,7 @@ public class SimpleEditDialog extends JDialog {
 
         JButton btnSave   = new JButton("💾 Сохранить");
         JButton btnCancel = new JButton("Отмена");
-        btnSave.addActionListener(e -> {
-            String val = field.getText().trim();
-            if (val.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Поле не может быть пустым");
-                return;
-            }
-            onSave.accept(val);
-            saved = true;
-            dispose();
-        });
+
         btnCancel.addActionListener(e -> dispose());
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -43,46 +38,34 @@ public class SimpleEditDialog extends JDialog {
         setLayout(new BorderLayout());
         add(form, BorderLayout.CENTER);
         add(btnPanel, BorderLayout.SOUTH);
+
         pack();
         setLocationRelativeTo(parent);
 
-        btnSave.addActionListener(e -> {
-            String val = field.getText().trim();
-            if (val.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Поле не может быть пустым");
-                return;
-            }
-            onSave.accept(val);
-            saved = true;
-            dispose();
-        });
+        // 🔥 ЕДИНАЯ точка сохранения (без дублей)
+        saveGuard.bindSaveButton(btnSave, () -> save(onSave));
 
-        btnCancel.addActionListener(e -> dispose());
-
-        //  клавиатура
-        setupKeyboardBehavior(btnSave);
+        getRootPane().setDefaultButton(btnSave);
     }
 
-    public boolean isSaved() { return saved; }
+    private void save(Consumer<String> onSave) {
 
-    /**
-     * Enter = сохранить
-     * Tab = стандартная навигация
-     */
-    private void setupKeyboardBehavior(JButton defaultButton) {
+        String val = field.getText().trim();
 
-        // Enter → кнопка Save
-        getRootPane().setDefaultButton(defaultButton);
+        if (val.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Поле не может быть пустым");
 
-        // нормальный TAB flow
-        setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
-        setFocusTraversalPolicyProvider(true);
+            // разблокируем SaveGuard при ошибке
+            saveGuard.reset();
+            return;
+        }
 
-        // стабилизация Swing traversal
-        KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                .setDefaultFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
+        onSave.accept(val);
+        saved = true;
+        dispose();
+    }
 
-        // Enter прямо в поле тоже сохраняет
-        field.addActionListener(e -> defaultButton.doClick());
+    public boolean isSaved() {
+        return saved;
     }
 }
