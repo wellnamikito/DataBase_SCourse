@@ -3,7 +3,7 @@ name: Build Installers
 on:
   push:
     branches:
-      - main
+      - detached8
   workflow_dispatch:
 
 jobs:
