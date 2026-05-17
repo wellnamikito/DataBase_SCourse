@@ -1,0 +1,84 @@
+name: Build Installers
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  build-windows:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: DataBase_SCourse
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build Maven
+        run: mvn clean package
+
+      - name: Show target
+        run: dir target
+
+      - name: Create EXE
+        run: |
+          jpackage ^
+          --type exe ^
+          --name VideoRental ^
+          --input target ^
+          --main-jar DataBase_SCourse-1.0-SNAPSHOT-jar-with-dependencies.jar ^
+          --main-class frontend.UI.MainFrame ^
+          --dest installer
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: DataBase_SCourse/installer/*.exe
+
+  build-macos:
+    runs-on: macos-latest
+
+    defaults:
+      run:
+        working-directory: DataBase_SCourse
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build Maven
+        run: mvn clean package
+
+      - name: List target
+        run: ls target
+
+      - name: Create DMG
+        run: |
+          jpackage \
+          --type dmg \
+          --name VideoRental \
+          --input target \
+          --main-jar DataBase_SCourse-1.0-SNAPSHOT-jar-with-dependencies.jar \
+          --main-class frontend.UI.MainFrame \
+          --dest installer
+
+      - name: Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-installer
+          path: DataBase_SCourse/installer/*.dmg
