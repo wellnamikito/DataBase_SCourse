@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="dbSrc:///4ac04d4/05888099-556b-4928-a326-b163a9fdf141/database/postgres/schema/public/routine/get_receipts_by_price@(integer).sql" value="05888099-556b-4928-a326-b163a9fdf141" />
+    <file url="dbSrc:///4ac04d4/05888099-556b-4928-a326-b163a9fdf141/database/postgres/schema/public/routine/get_receipts_price_over@(integer).sql" value="05888099-556b-4928-a326-b163a9fdf141" />
+    <file url="dbSrc:///4ac04d4/05888099-556b-4928-a326-b163a9fdf141/database/postgres/schema/public/routine/get_studios_by_year_revenue@(integer,integer).sql" value="05888099-556b-4928-a326-b163a9fdf141" />
+    <file url="dbSrc:///4ac04d4/05888099-556b-4928-a326-b163a9fdf141/database/postgres/schema/public/routine/get_video_revenue_over@(integer).sql" value="05888099-556b-4928-a326-b163a9fdf141" />
+  </component>
+</project>

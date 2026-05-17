@@ -1,0 +1,87 @@
+name: Build Installers
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build JAR
+        run: mvn clean package
+
+      - name: Create app image
+        run: |
+          jpackage ^
+          --type app-image ^
+          --name VideoRental ^
+          --input target ^
+          --main-jar DataBase_SCourse-1.0-SNAPSHOT-jar-with-dependencies.jar ^
+          --main-class frontend.UI.MainFrame ^
+          --dest installer
+
+      - name: Create EXE installer
+        run: |
+          jpackage ^
+          --type exe ^
+          --name VideoRental ^
+          --input target ^
+          --main-jar DataBase_SCourse-1.0-SNAPSHOT-jar-with-dependencies.jar ^
+          --main-class frontend.UI.MainFrame ^
+          --dest installer ^
+          --win-dir-chooser ^
+          --win-menu ^
+          --win-shortcut
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: installer/*.exe
+
+
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build JAR
+        run: mvn clean package
+
+      - name: Create DMG installer
+        run: |
+          jpackage \
+          --type dmg \
+          --name VideoRental \
+          --input target \
+          --main-jar DataBase_SCourse-1.0-SNAPSHOT-jar-with-dependencies.jar \
+          --main-class frontend.UI.MainFrame \
+          --dest installer
+
+      - name: Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-installer
+          path: installer/*.dmg
