@@ -17,8 +17,9 @@ public class UserManagementDialog extends JDialog {
     private JTable table;
     private DefaultTableModel tableModel;
 
-    private static final String ROLE_ADMIN    = "admin";
-    private static final String ROLE_OPERATOR = "operator";
+    // ✔ ВАЖНО: должно совпадать с БД (ADMIN / OPERATOR)
+    private static final String ROLE_ADMIN    = "ADMIN";
+    private static final String ROLE_OPERATOR = "OPERATOR";
 
     public UserManagementDialog(Window parent) {
         super(parent, "👤 Управление пользователями", ModalityType.APPLICATION_MODAL);
@@ -38,8 +39,11 @@ public class UserManagementDialog extends JDialog {
                 BorderFactory.createEmptyBorder(10, 12, 10, 12));
 
         tableModel = new DefaultTableModel(
-                new String[]{"ID", "Логин", "Роль"}, 0) {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+                new String[]{"ID", "Логин", "Роль"}, 0
+        ) {
+            @Override public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
 
         table = new JTable(tableModel);
@@ -117,6 +121,7 @@ public class UserManagementDialog extends JDialog {
         JTextField fLogin = new JTextField(18);
         JPasswordField fPass = new JPasswordField(18);
         JPasswordField fPass2 = new JPasswordField(18);
+
         JComboBox<String> roleCombo =
                 new JComboBox<>(new String[]{ROLE_OPERATOR, ROLE_ADMIN});
 
@@ -128,7 +133,8 @@ public class UserManagementDialog extends JDialog {
 
         int res = JOptionPane.showConfirmDialog(
                 this, form, "Добавить пользователя",
-                JOptionPane.OK_CANCEL_OPTION);
+                JOptionPane.OK_CANCEL_OPTION
+        );
 
         if (res != JOptionPane.OK_OPTION) return;
 
@@ -137,8 +143,13 @@ public class UserManagementDialog extends JDialog {
         String pass2 = new String(fPass2.getPassword());
         String role = (String) roleCombo.getSelectedItem();
 
-        if (login.isEmpty() || pass.isEmpty() || !pass.equals(pass2)) {
-            warn("Проверьте данные");
+        if (login.isEmpty() || pass.isEmpty()) {
+            warn("Логин и пароль не могут быть пустыми");
+            return;
+        }
+
+        if (!pass.equals(pass2)) {
+            warn("Пароли не совпадают");
             return;
         }
 
@@ -159,6 +170,7 @@ public class UserManagementDialog extends JDialog {
     // ───────────────────────── ROLE ─────────────────────────
 
     private void changeRole() {
+
         int[] sel = getSelected();
         if (sel == null) return;
 
@@ -209,7 +221,8 @@ public class UserManagementDialog extends JDialog {
 
         int res = JOptionPane.showConfirmDialog(
                 this, form, "Пароль: " + login,
-                JOptionPane.OK_CANCEL_OPTION);
+                JOptionPane.OK_CANCEL_OPTION
+        );
 
         if (res != JOptionPane.OK_OPTION) return;
 
